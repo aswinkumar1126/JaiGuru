@@ -1,0 +1,185 @@
+/* ProfilePage.css */
+.profile-page-container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 1rem;
+    background: #f9f9f9;
+    min-height: 100vh;
+    font-family: 'Arial, sans-serif';
+    animation: fadeIn 0.5s ease-out forwards;
+}
+
+/* Responsive padding */
+@media (min-width: 640px) {
+
+    /* sm breakpoint */
+    .profile-page-container {
+        padding: 1.5rem;
+    }
+}
+
+@media (min-width: 1024px) {
+
+    /* lg breakpoint */
+    .profile-page-container {
+        padding: 2rem;
+    }
+}
+
+/* Title styling */
+.profile-page-container h2 {
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: #333;
+    text-align: center;
+    margin-bottom: 1.5rem;
+    transition: color 0.3s ease;
+}
+
+.profile-page-container h2:hover {
+    color: #007bff;
+}
+
+/* Responsive title */
+@media (max-width: 640px) {
+    .profile-page-container h2 {
+        font-size: 1.5rem;
+    }
+}
+
+/* Profile details container */
+.profile-details {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 1.5rem;
+    animation: slideIn 0.5s ease-out forwards;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.profile-details:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Responsive profile details padding */
+@media (min-width: 768px) {
+    .profile-details {
+        padding: 2rem;
+    }
+}
+
+@media (max-width: 640px) {
+    .profile-details {
+        padding: 1rem;
+    }
+}
+
+/* Profile details text */
+.profile-details p {
+    font-size: 1rem;
+    color: #555;
+    margin: 0.5rem 0;
+    display: flex;
+    justify-content: space-between;
+}
+
+.profile-details p strong {
+    color: #333;
+    font-weight: 500;
+}
+
+/* Responsive text size */
+@media (max-width: 640px) {
+    .profile-details p {
+        font-size: 0.9rem;
+    }
+}
+
+/* Profile actions container */
+.profile-actions {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+/* Button styling */
+.profile-button {
+    padding: 0.6rem 1.2rem;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Profile button */
+.profile-button.profile {
+    background: #28a745;
+    color: white;
+}
+
+.profile-button.profile:hover {
+    background: #218838;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Logout button */
+.profile-button.logout {
+    background: #dc3545;
+    color: white;
+}
+
+.profile-button.logout:hover {
+    background: #b02a37;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Close button */
+.profile-button.close {
+    background: #007bff;
+    color: white;
+}
+
+.profile-button.close:hover {
+    background: #0056b3;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Responsive button sizes */
+@media (max-width: 640px) {
+    .profile-button {
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+    }
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(15px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

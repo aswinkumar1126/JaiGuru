@@ -1,0 +1,209 @@
+.manage-rates-container {
+    padding: 1.5rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background-color: #f9fafb;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.table-header {
+    margin-bottom: 1.5rem;
+}
+
+.table-heading {
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: #1f2937;
+}
+
+.table-subheading {
+    font-size: 0.875rem;
+    color: #6b7280;
+    margin-top: 0.25rem;
+}
+
+.error-message,
+.success-message {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    margin: 0.75rem 0;
+}
+
+.error-message {
+    background-color: #fef2f2;
+    color: #dc2626;
+}
+
+.success-message {
+    background-color: #f0fdf4;
+    color: #16a34a;
+}
+
+.message-icon {
+    width: 16px;
+    height: 16px;
+    fill: currentColor;
+}
+
+.rates-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #ffffff;
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.rates-table th,
+.rates-table td {
+    padding: 0.75rem;
+    text-align: left;
+    font-size: 0.875rem;
+    color: #374151;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.rates-table th {
+    background-color: #f3f4f6;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.edit-input {
+    width: 100%;
+    max-width: 150px;
+    padding: 0.5rem;
+    border: 1px solid #d1d5db;
+    border-radius: 4px;
+    font-size: 0.875rem;
+    color: #374151;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.edit-input:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.action-button {
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.action-button:hover:not(:disabled) {
+    transform: translateY(-1px);
+}
+
+.action-button:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+}
+
+.action-button:disabled {
+    background-color: #d1d5db;
+    cursor: not-allowed;
+}
+
+.primary-button {
+    background-color: #3b82f6;
+    color: #ffffff;
+}
+
+.primary-button:hover:not(:disabled) {
+    background-color: #2563eb;
+}
+
+.secondary-button {
+    background-color: #6b7280;
+    color: #ffffff;
+}
+
+.secondary-button:hover:not(:disabled) {
+    background-color: #4b5563;
+}
+
+.danger-button {
+    background-color: #ef4444;
+    color: #ffffff;
+}
+
+.danger-button:hover:not(:disabled) {
+    background-color: #dc2626;
+}
+
+.loading-text,
+.no-data-text {
+    font-size: 0.875rem;
+    color: #6b7280;
+    text-align: center;
+    padding: 1rem;
+}
+
+@media (max-width: 768px) {
+    .manage-rates-container {
+        padding: 1rem;
+    }
+
+    .table-heading {
+        font-size: 1.5rem;
+    }
+
+    .rates-table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+
+    .rates-table th,
+    .rates-table td {
+        padding: 0.5rem;
+        font-size: 0.75rem;
+    }
+
+    .edit-input {
+        max-width: 120px;
+        font-size: 0.75rem;
+    }
+
+    .action-button {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.75rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .table-heading {
+        font-size: 1.25rem;
+    }
+
+    .table-subheading {
+        font-size: 0.75rem;
+    }
+
+    .rates-table th,
+    .rates-table td {
+        padding: 0.4rem;
+    }
+
+    .edit-input {
+        max-width: 100px;
+    }
+
+    .action-button {
+        padding: 0.3rem 0.6rem;
+        font-size: 0.7rem;
+    } }

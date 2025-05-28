@@ -1,0 +1,213 @@
+/* ProfileModal.css */
+.profile-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    animation: fadeInOverlay 0.3s ease-out forwards;
+}
+
+/* Modal content */
+.profile-modal {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    max-width: 90%;
+    width: 400px;
+    text-align: center;
+    animation: slideInModal 0.4s ease-out forwards;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Hover effect for modal */
+.profile-modal:hover {
+    transform: scale(1.02);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+}
+
+/* Responsive modal padding and width */
+@media (max-width: 640px) {
+    .profile-modal {
+        padding: 1rem;
+        width: 90%;
+    }
+}
+
+/* Title styling */
+.profile-modal h3 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: #333;
+    transition: color 0.3s ease;
+}
+
+.profile-modal h3:hover {
+    color: #007bff;
+}
+
+/* Paragraph styling */
+.profile-modal p {
+    font-size: 1rem;
+    color: #555;
+    margin: 0.5rem 0;
+}
+
+/* Responsive text sizes */
+@media (max-width: 640px) {
+    .profile-modal h3 {
+        font-size: 1.25rem;
+    }
+
+    .profile-modal p {
+        font-size: 0.9rem;
+    }
+}
+
+/* Button container */
+.profile-modal-buttons {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: center;
+    margin-top: 1.5rem;
+}
+
+/* Button styling */
+.profile-modal-button {
+    padding: 0.6rem 1.2rem;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Logout button */
+.profile-modal-button.logout {
+    background: #dc3545;
+    color: white;
+}
+
+.profile-modal-button.logout:hover {
+    background: #b02a37;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Close button */
+.profile-modal-button.close {
+    background: #007bff;
+    color: white;
+}
+
+.profile-modal-button.close:hover {
+    background: #0056b3;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Responsive button sizes */
+@media (max-width: 640px) {
+    .profile-modal-button {
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+    }
+}
+
+/* Animations */
+@keyframes fadeInOverlay {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideInModal {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}/* DropdownMenu.css */
+.dropdown-menu {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    padding: 0.5rem 0;
+    min-width: 150px;
+    animation: slideInDropdown 0.3s ease-out forwards;
+}
+
+/* Dropdown list */
+.dropdown-menu ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+/* Dropdown item */
+.dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    cursor: pointer;
+    font-size: 0.95rem;
+    color: #333;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+/* Hover effect for dropdown items */
+.dropdown-item:hover {
+    background: #f1f8ff;
+    transform: translateX(5px);
+}
+
+/* Dropdown icon */
+.dropdown-icon {
+    font-size: 1.2rem;
+    color: #555;
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+    .dropdown-menu {
+        min-width: 120px;
+    }
+
+    .dropdown-item {
+        padding: 0.6rem 0.8rem;
+        font-size: 0.9rem;
+    }
+
+    .dropdown-icon {
+        font-size: 1.1rem;
+    }
+}
+
+/* Animation for dropdown */
+@keyframes slideInDropdown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

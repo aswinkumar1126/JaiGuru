@@ -1,0 +1,90 @@
+/* MainContent.css */
+.main-content{
+    flex: 1;
+    background-color: #f5f6fa;
+    padding: 1rem;
+    /* Default padding for smaller screens */
+    min-height: 100vh;
+    overflow-y: auto;
+    transition: all 0.3s ease-in-out;
+    /* Smooth transition for animations */
+}
+
+/* Responsive padding adjustments */
+@media (min-width: 640px) {
+
+    /* Tailwind's sm breakpoint */
+    .main-content {
+        padding: 1.5rem;
+    }
+}
+
+@media (min-width: 768px) {
+
+    /* Tailwind's md breakpoint */
+    .main-content {
+        padding: 2rem;
+    }
+}
+
+@media (min-width: 1024px) {
+
+    /* Tailwind's lg breakpoint */
+    .main-content {
+        padding: 2.5rem;
+    }
+}
+
+/* Animation for main content entrance */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.main-content {
+    animation: fadeIn 0.5s ease-out forwards;
+}
+
+/* Hover effects for child components (assuming DashboardCards and ChartsSection have interactive elements) */
+.main-content .card,
+.main-content .chart-container {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.main-content .card:hover,
+.main-content .chart-container:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Ensure cards and charts are responsive */
+.main-content .card,
+.main-content .chart-container {
+    width: 100%;
+    max-width: 100%;
+}
+
+/* For smaller screens, adjust card and chart sizes */
+@media (max-width: 640px) {
+
+    .main-content .card,
+    .main-content .chart-container {
+        margin-bottom: 1rem;
+    }
+}
+
+/* For larger screens, allow grid layouts if applicable */
+@media (min-width: 768px) {
+
+    .main-content .card,
+    .main-content .chart-container {
+        margin-bottom: 1.5rem;
+    }
+}

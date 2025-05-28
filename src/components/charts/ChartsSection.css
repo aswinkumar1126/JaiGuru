@@ -1,0 +1,111 @@
+/* ChartsSection.css */
+.charts-section {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    /* Default gap for smaller screens */
+    padding: 0;
+}
+
+/* Responsive grid adjustments */
+@media (min-width: 640px) {
+
+    /* sm breakpoint */
+    .charts-section {
+        gap: 1.75rem;
+    }
+}
+
+@media (min-width: 1024px) {
+
+    /* lg breakpoint */
+    .charts-section {
+        gap: 2rem;
+    }
+}
+
+/* Chart box styling */
+.chart-box {
+    background-color: white;
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Responsive padding for chart boxes */
+@media (min-width: 768px) {
+
+    /* md breakpoint */
+    .chart-box {
+        padding: 1.5rem;
+    }
+}
+
+@media (min-width: 1024px) {
+
+    /* lg breakpoint */
+    .chart-box {
+        padding: 2rem;
+    }
+}
+
+/* Animation for chart box entrance */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(15px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.chart-box {
+    animation: slideIn 0.5s ease-out forwards;
+    animation-delay: calc(var(--index) * 0.1s);
+    /* Staggered animation */
+}
+
+/* Hover effects for chart boxes */
+.chart-box:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Ensure charts are fully responsive */
+.chart-box .recharts-responsive-container {
+    width: 100% !important;
+    height: 250px !important;
+}
+
+/* Adjust chart height for smaller screens */
+@media (max-width: 640px) {
+    .chart-box .recharts-responsive-container {
+        height: 200px !important;
+    }
+}
+
+/* Style chart titles */
+.chart-box h4 {
+    margin: 0 0 1rem 0;
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #333;
+    transition: color 0.3s ease;
+}
+
+.chart-box:hover h4 {
+    color: #007bff;
+    /* Blue on hover for visual feedback */
+}
+
+/* Ensure proper spacing for smaller screens */
+@media (max-width: 640px) {
+    .charts-section {
+        grid-template-columns: 1fr;
+        /* Single column on small screens */
+    }
+}
