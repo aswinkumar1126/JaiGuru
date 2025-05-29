@@ -2,12 +2,12 @@ import React from 'react';
 import './DashboardCards.css';
 
 const cardsData = [
-    { title: 'Total Users', value: 1240, color: '#4caf50' },
-    { title: 'Orders', value: 320, color: '#2196f3' },
-    { title: 'Pending', value: 45, color: '#ff9800' },
-    { title: 'Delivered', value: 250, color: '#009688' },
-    { title: 'Cancelled', value: 12, color: '#f44336' },
-    { title: 'Review', value: 85, color: '#9c27b0' },
+    { title: 'Total Users', value: 0, color: '#4caf50' },
+    { title: 'Orders', value: 0, color: '#2196f3' },
+    { title: 'Pending', value: 0, color: '#ff9800' },
+    { title: 'Delivered', value: 0, color: '#009688' },
+    { title: 'Cancelled', value: 0, color: '#f44336' },
+    { title: 'Review', value: 0, color: '#9c27b0' },
 ];
 
 const DashboardCards = () => {

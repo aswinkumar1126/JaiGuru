@@ -22,7 +22,7 @@ const AddRates = () => {
                 setGoldRate("");
                 setSilverRate("");
                 setCreatedBy("");
-            }, 5000);
+            }, 2000);
             return () => clearTimeout(timer);
         }
     }, [isSuccess]);
@@ -51,21 +51,20 @@ const AddRates = () => {
             return;
         }
 
-        createRate(
-            { goldRate: gold, silverRate: silver, createdBy },
-            {
-                onError: (err) => {
-                    console.error("Create rate error:", err);
-                    setError(err.response?.data?.error || "Failed to create rate");
-                },
-            }
-        );
+        const rateData = { goldRate: gold, silverRate: silver, createdBy };
+        createRate(rateData, {
+            
+            onError: (err) => {
+                console.error("Create rate error:", err);
+                setError(err.response?.data?.message || "Failed to create rate");
+            },
+        });
     };
 
     return (
         <motion.div
             className="add-rates-container"
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4 }}
             role="region"

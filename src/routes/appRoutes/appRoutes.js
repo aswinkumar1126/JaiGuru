@@ -15,7 +15,7 @@ import AddRates from '../../pages/rate/add/addRates';
 import ManageRates from '../../pages/rate/manage/manageRates';
 
 const AppRoutes = () => {
-    const adminName = 'Aswinkumar';
+
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
 
@@ -23,7 +23,7 @@ const AppRoutes = () => {
     return (
         <Router>
             <div className="app-layout">
-                <Header adminName={adminName} toggleSidebar={() => setIsSidebarOpen(prev => !prev)} isSidebarOpen={isSidebarOpen} />
+                <Header toggleSidebar={() => setIsSidebarOpen(prev => !prev)} isSidebarOpen={isSidebarOpen} />
                 <div className="layout-body">
                     <Sidebar isOpen={isSidebarOpen} toggleSidebar={() => setIsSidebarOpen(prev => !prev)} />
                     <main className={'main-content'}>

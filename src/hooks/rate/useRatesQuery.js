@@ -1,20 +1,11 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { ratesService } from "../../service/ratesService";
+import { rateService } from "../../service/ratesService";
 
 // GET - Fetch all rates
 export const useRatesQuery = () => {
     return useQuery({
         queryKey: ["rates"],
-        queryFn: ratesService.getRates,
-    });
-};
-
-// GET - Fetch a single rate by ID
-export const useRateByIdQuery = (id) => {
-    return useQuery({
-        queryKey: ["rate", id],
-        queryFn: () => ratesService.getRateById(id),
-        enabled: !!id,
+        queryFn: rateService.getRates,
     });
 };
 
@@ -22,8 +13,7 @@ export const useRateByIdQuery = (id) => {
 export const useCreateRateMutation = () => {
     const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: ({ goldRate, silverRate, createdBy }) =>
-            ratesService.createRate(goldRate, silverRate, createdBy),
+        mutationFn: (rateData) => rateService.createRate(rateData),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["rates"] });
         },
@@ -34,8 +24,7 @@ export const useCreateRateMutation = () => {
 export const useUpdateRateMutation = () => {
     const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: ({ id, goldRate, silverRate, createdBy }) =>
-            ratesService.updateRate(id, goldRate, silverRate, createdBy),
+        mutationFn: ({ id, rateData }) => rateService.updateRate(id, rateData),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["rates"] });
         },
@@ -46,7 +35,7 @@ export const useUpdateRateMutation = () => {
 export const useDeleteRateMutation = () => {
     const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: (id) => ratesService.deleteRate(id),
+        mutationFn: (id) => rateService.deleteRate(id),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["rates"] });
         },

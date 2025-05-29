@@ -43,8 +43,9 @@ const ManageRates = () => {
             return;
         }
 
+        const rateData = { goldRate: gold, silverRate: silver, createdBy: editCreatedBy };
         updateRate(
-            { id, goldRate: gold, silverRate: silver, createdBy: editCreatedBy },
+            { id, rateData },
             {
                 onSuccess: () => {
                     setSuccess("Rate updated successfully!");
@@ -56,7 +57,7 @@ const ManageRates = () => {
                 },
                 onError: (err) => {
                     console.error("Update rate error:", err);
-                    setError(err.response?.data?.error || "Failed to update rate");
+                    setError(err.response?.data?.message || "Failed to update rate");
                 },
             }
         );
@@ -79,7 +80,7 @@ const ManageRates = () => {
                 },
                 onError: (err) => {
                     console.error("Delete rate error:", err);
-                    setError(err.response?.data?.error || "Failed to delete rate");
+                    setError(err.response?.data?.message || "Failed to delete rate");
                 },
             });
         }
@@ -88,7 +89,7 @@ const ManageRates = () => {
     return (
         <motion.div
             className="manage-rates-container"
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4 }}
             role="region"
@@ -133,117 +134,124 @@ const ManageRates = () => {
             </AnimatePresence>
 
             {isLoading ? (
-                <p className="loading-text">Loading rates...</p>
+                <div className="loading-container">
+                    <div className="spinner"></div>
+                    <p className="loading-text">Loading rates...</p>
+                </div>
             ) : queryError ? (
                 <p className="error-message">Error loading rates: {queryError.message}</p>
             ) : !rates?.data?.length ? (
                 <p className="no-data-text">No rates available.</p>
             ) : (
-                <table className="rates-table">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Gold Rate</th>
-                            <th>Silver Rate</th>
-                            <th>Created By</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {rates.data.map((item) => (
-                            <tr key={item.id}>
-                                <td>{item.id}</td>
-                                <td>
-                                    {selectedId === item.id ? (
-                                        <input
-                                            type="number"
-                                            step="0.01"
-                                            value={editGoldRate}
-                                            onChange={(e) => setEditGoldRate(e.target.value)}
-                                            className="edit-input"
-                                            aria-label="Edit Gold Rate"
-                                        />
-                                    ) : (
-                                        `₹${item.goldRate.toFixed(2)}`
-                                    )}
-                                </td>
-                                <td>
-                                    {selectedId === item.id ? (
-                                        <input
-                                            type="number"
-                                            step="0.01"
-                                            value={editSilverRate}
-                                            onChange={(e) => setEditSilverRate(e.target.value)}
-                                            className="edit-input"
-                                            aria-label="Edit Silver Rate"
-                                        />
-                                    ) : (
-                                        `₹${item.silverRate.toFixed(2)}`
-                                    )}
-                                </td>
-                                <td>
-                                    {selectedId === item.id ? (
-                                        <input
-                                            type="text"
-                                            value={editCreatedBy}
-                                            onChange={(e) => setEditCreatedBy(e.target.value)}
-                                            className="edit-input"
-                                            aria-label="Edit Created By"
-                                            maxLength="50"
-                                        />
-                                    ) : (
-                                        item.createdBy
-                                    )}
-                                </td>
-                                <td>
-                                    {selectedId === item.id ? (
-                                        <>
-                                            <motion.button
-                                                onClick={() => handleSaveEdit(item.id)}
-                                                disabled={isUpdating || isDeleting}
-                                                className="action-button primary-button"
-                                                whileHover={{ scale: 1.02 }}
-                                                whileTap={{ scale: 0.98 }}
-                                            >
-                                                {isUpdating ? "Saving..." : "Save"}
-                                            </motion.button>
-                                            <motion.button
-                                                onClick={handleCancelEdit}
-                                                disabled={isUpdating || isDeleting}
-                                                className="action-button secondary-button"
-                                                whileHover={{ scale: 1.02 }}
-                                                whileTap={{ scale: 0.98 }}
-                                            >
-                                                Cancel
-                                            </motion.button>
-                                        </>
-                                    ) : (
-                                        <>
-                                            <motion.button
-                                                onClick={() => handleEditClick(item)}
-                                                disabled={isUpdating || isDeleting}
-                                                className="action-button primary-button"
-                                                whileHover={{ scale: 1.02 }}
-                                                whileTap={{ scale: 0.98 }}
-                                            >
-                                                ✏️ Edit
-                                            </motion.button>
-                                            <motion.button
-                                                onClick={() => handleDelete(item.id)}
-                                                disabled={isUpdating || isDeleting}
-                                                className="action-button danger-button"
-                                                whileHover={{ scale: 1.02 }}
-                                                whileTap={{ scale: 0.98 }}
-                                            >
-                                                🗑️ Delete
-                                            </motion.button>
-                                        </>
-                                    )}
-                                </td>
+                <div className="table-wrapper">
+                    <table className="rates-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Gold Rate (₹/g)</th>
+                                <th>Silver Rate (₹/g)</th>
+                                <th>Created By</th>
+                                <th>Actions</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            {rates.data.map((rate) => (
+                                <tr key={rate.id}>
+                                    <td>{rate.id}</td>
+                                    <td>
+                                        {selectedId === rate.id ? (
+                                            <input
+                                                type="number"
+                                                step="0.01"
+                                                value={editGoldRate}
+                                                onChange={(e) => setEditGoldRate(e.target.value)}
+                                                className="edit-input"
+                                                aria-label="Edit Gold Rate"
+                                            />
+                                        ) : (
+                                                `₹${parseFloat(rate.goldRate || 0).toFixed(2)}`
+
+                                        )}
+                                    </td>
+                                    <td>
+                                        {selectedId === rate.id ? (
+                                            <input
+                                                type="number"
+                                                step="0.01"
+                                                value={editSilverRate}
+                                                onChange={(e) => setEditSilverRate(e.target.value)}
+                                                className="edit-input"
+                                                aria-label="Edit Silver Rate"
+                                            />
+                                        ) : (
+                                                `₹${parseFloat(rate.silverRate || 0).toFixed(2)}`
+
+                                        )}
+                                    </td>
+                                    <td>
+                                        {selectedId === rate.id ? (
+                                            <input
+                                                type="text"
+                                                value={editCreatedBy}
+                                                onChange={(e) => setEditCreatedBy(e.target.value)}
+                                                className="edit-input"
+                                                aria-label="Edit Created By"
+                                                maxLength="50"
+                                            />
+                                        ) : (
+                                            rate.createdBy
+                                        )}
+                                    </td>
+                                    <td className="action-cell">
+                                        {selectedId === rate.id ? (
+                                            <div className="action-buttons">
+                                                <motion.button
+                                                    onClick={() => handleSaveEdit(rate.id)}
+                                                    disabled={isUpdating || isDeleting}
+                                                    className="action-button save-button"
+                                                    whileHover={{ scale: 1.05 }}
+                                                    whileTap={{ scale: 0.95 }}
+                                                >
+                                                    {isUpdating ? "Saving..." : "Save"}
+                                                </motion.button>
+                                                <motion.button
+                                                    onClick={handleCancelEdit}
+                                                    disabled={isUpdating || isDeleting}
+                                                    className="action-button cancel-button"
+                                                    whileHover={{ scale: 1.05 }}
+                                                    whileTap={{ scale: 0.95 }}
+                                                >
+                                                    Cancel
+                                                </motion.button>
+                                            </div>
+                                        ) : (
+                                            <div className="action-buttons">
+                                                <motion.button
+                                                    onClick={() => handleEditClick(rate)}
+                                                    disabled={isUpdating || isDeleting}
+                                                    className="action-button edit-button"
+                                                    whileHover={{ scale: 1.05 }}
+                                                    whileTap={{ scale: 0.95 }}
+                                                >
+                                                    Edit
+                                                </motion.button>
+                                                <motion.button
+                                                    onClick={() => handleDelete(rate.id)}
+                                                    disabled={isUpdating || isDeleting}
+                                                    className="action-button delete-button"
+                                                    whileHover={{ scale: 1.05 }}
+                                                    whileTap={{ scale: 0.95 }}
+                                                >
+                                                    Delete
+                                                </motion.button>
+                                            </div>
+                                        )}
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
             )}
         </motion.div>
     );
