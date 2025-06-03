@@ -1,15 +1,10 @@
-/* MainContent.css */
-.main-content{
+.main {
     flex: 1;
-    background-color: #f5f6fa;
     padding: 1rem;
-    /* Default padding for smaller screens */
     min-height: 100vh;
     overflow-y: auto;
     transition: all 0.3s ease-in-out;
-    /* Smooth transition for animations */
 }
-
 /* Responsive padding adjustments */
 @media (min-width: 640px) {
 

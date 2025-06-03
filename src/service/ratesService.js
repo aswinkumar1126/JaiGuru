@@ -1,6 +1,6 @@
 //import axiosInstance from "../api/axiosInstance";
 import axios from "axios";
-const baseUrl = "http://localhost:8081/api/v1";
+const baseUrl = "http://localhost:8080/api/v1";
 export const rateService = {
 
   

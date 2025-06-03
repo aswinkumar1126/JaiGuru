@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 
 const SearchBar = ({ onSearch }) => {
     const [query, setQuery] = useState('');
-
+ 
     const handleSubmit = (e) => {
         e.preventDefault();
         if (query.trim()) {
@@ -29,25 +29,8 @@ const SearchBar = ({ onSearch }) => {
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
                     aria-label="Search dashboard"
-                />
-                {/* {query && (
-                    <button
-                        type="button"
-                        className="clear-button"
-                        onClick={() => setQuery('')}
-                        aria-label="Clear search"
-                    >
-                        &times;
-                    </button>
-                )} */}
+                /> 
             </div>
-            <button
-                type="submit"
-                className="search-button"
-                aria-label="Submit search"
-            >
-                Search
-            </button>
         </motion.form>
     );
 };

@@ -1,102 +1,71 @@
-/* DashboardCards.css */
 .cards-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-    gap: 1.25rem;
-    /* Default gap for smaller screens */
-    margin-bottom: 1.5rem;
-    padding: 2rem;
-}
-
-/* Responsive grid adjustments */
-@media (min-width: 640px) {
-
-    /* sm breakpoint */
-    .cards-grid {
-        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-        gap: 1.5rem;
-        margin-bottom: 1rem;
-    }
-}
-
-@media (min-width: 1024px) {
-
-    /* lg breakpoint */
-    .cards-grid {
-        gap: 1.5rem;
-        margin-bottom: 0.5rem;
-    }
-}
-
-/* Card styling */
-.card {
-    border-radius: 8px;
-    color: white;
-    padding: 1rem;
-    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
-    transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.3s ease;
-}
-
-/* Responsive padding for cards */
-@media (min-width: 768px) {
-
-    /* md breakpoint */
-    .card {
-        padding: 1.5rem;
-    }
-}
-
-/* Animation for card entrance */
-@keyframes cardFadeIn {
-    from {
-        opacity: 0;
-        transform: scale(0.95);
-    }
-
-    to {
-        opacity: 1;
-        transform: scale(1);
-    }
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+    padding: 20px;
+    width: 100%;
 }
 
 .card {
-    animation: cardFadeIn 0.4s ease-out forwards;
-    animation-delay: calc(var(--index) * 0.1s);
-    /* Staggered animation */
+    color: #fff;
+    padding: 24px 16px;
+    border-radius: 16px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+    text-align: center;
+    min-height: 140px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
-/* Hover effects for cards */
-.card:hover {
-    transform: translateY(-5px) scale(1.02);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
-}
-
-/* Card text styling */
 .card h3 {
-    margin: 0 0 0.5rem 0;
-    font-size: 1.1rem;
+    margin-bottom: 12px;
+    font-size: 1.25rem;
     font-weight: 600;
+    letter-spacing: 0.5px;
 }
 
 .card p {
-    margin: 0;
     font-size: 1.5rem;
     font-weight: bold;
-    color: rgb(255, 255, 255) !important;
+    margin: 0;
 }
 
-/* Adjust text size for smaller screens */
-@media (max-width: 640px) {
+.card:hover {
+    transform: translateY(-6px) scale(1.02);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.15);
+}
+
+@media (max-width: 768px) {
+    .card {
+        padding: 20px 12px;
+    }
+
+    .card h3 {
+        font-size: 1.1rem;
+    }
+
+    .card p {
+        font-size: 1.3rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .cards-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .card {
+        padding: 18px 10px;
+    }
+
     .card h3 {
         font-size: 1rem;
     }
 
     .card p {
-        font-size: 1.25rem;
+        font-size: 1.2rem;
     }
-}
-
-/* Ensure cards are fully responsive */
-.card {
-    width: 100%;
 }

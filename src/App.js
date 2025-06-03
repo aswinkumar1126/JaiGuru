@@ -5,8 +5,8 @@ import {
   QueryClientProvider,
 } from '@tanstack/react-query';
 import { ProductProvider } from './context/product/productContext';
-
-
+import { MyContextProvider } from './context/themeContext/themeContext';
+import { PageTitleProvider } from './context/pageTitle/PageTitleContext';
 function App() {
 
   const queryClient = new QueryClient();
@@ -14,9 +14,15 @@ function App() {
     <div className="App">
 
       <QueryClientProvider client={queryClient}>
+        <MyContextProvider>
         <ProductProvider>
-      < AppRoutes />
+            <PageTitleProvider>   
+
+              < AppRoutes /> 
+
+              </PageTitleProvider>
           </ProductProvider>
+        </MyContextProvider>
     </QueryClientProvider>
     
     </div>

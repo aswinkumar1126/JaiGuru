@@ -1,0 +1,140 @@
+.right-content {
+    padding: 20px 30px;
+}
+
+/* Breadcrumb Styles */
+.page-header {
+    margin-bottom: 20px;
+}
+
+.breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+    background-color: transparent;
+}
+
+.breadcrumb-item {
+    font-size: 14px;
+    font-weight: 500;
+    color: #6c757d;
+}
+
+.breadcrumb-item a {
+    color: #6c757d;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.breadcrumb-item a:hover {
+    color: #2e37a4;
+}
+
+.breadcrumb-item.active {
+    color: rgba(46, 55, 164, 0.5);
+}
+
+.breadcrumb-item i {
+    color: #2e37a4;
+    font-size: 12px;
+}
+
+/* Good Morning Block */
+.good-morning-blk {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 25px;
+}
+
+.good-morning-blk::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 40%;
+    height: 100%;
+    background-image: url(../../assets/images/bg-img-01.png);
+    background-repeat: no-repeat;
+    background-position: top right;
+    background-size: contain;
+    z-index: 1;
+}
+
+.morning-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    z-index: 2;
+}
+
+.morning-text h2 {
+    font-size: 24px;
+    font-weight: 600;
+    margin: 0 0 5px 0;
+}
+
+.morning-text h2 span {
+    color: #2e37a4;
+}
+
+.morning-text p {
+    font-size: 18px;
+    color: rgba(51, 52, 72, 0.5);
+    margin: 0;
+    font-weight: 500;
+}
+
+.morning-img img {
+    height: 200px;
+    width: auto;
+    object-fit: cover;
+    right: 100px;
+
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .right-content {
+        padding: 15px 20px;
+    }
+
+    .good-morning-blk {
+        padding: 15px;
+    }
+
+    .morning-text h2 {
+        font-size: 20px;
+    }
+
+    .morning-img img {
+        height: 60px;
+    }
+}
+
+@media (max-width: 576px) {
+    .morning-content {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+
+    .morning-img {
+        align-self: flex-end;
+    }
+
+    .morning-img img {
+        height: 50px;
+    }
+
+    .good-morning-blk::before {
+        width: 60%;
+        opacity: 0.5;
+    }
+}
