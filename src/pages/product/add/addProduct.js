@@ -3,12 +3,13 @@ import { useProductContext } from '../../../context/product/productContext';
 import './AddProduct.css';
 
 const AddProducts = () => {
-    const { uploadImages, loading } = useProductContext();
+    const { uploadImages, loading } = useProductContext(); // Fixed naming: uploadImages instead of uploadProductImages
+
     const [sno, setSno] = useState('');
+    const [description, setDescription] = useState('');
     const [selectedFiles, setSelectedFiles] = useState([]);
     const [previews, setPreviews] = useState([]);
-    const [error, setError] = useState('');
-    const [success, setSuccess] = useState('');
+    const [feedback, setFeedback] = useState({ error: '', success: '' });
 
     useEffect(() => {
         if (!selectedFiles.length) {
@@ -19,50 +20,21 @@ const AddProducts = () => {
         const objectUrls = selectedFiles.map(file => URL.createObjectURL(file));
         setPreviews(objectUrls);
 
-        return () => {
-            objectUrls.forEach(url => URL.revokeObjectURL(url));
-        };
+        return () => objectUrls.forEach(url => URL.revokeObjectURL(url));
     }, [selectedFiles]);
 
     const handleFileChange = (e) => {
-        setError('');
-        setSuccess('');
+        setFeedback({ error: '', success: '' });
+
         const files = Array.from(e.target.files);
-
-        // Validate file types
         const validTypes = ['image/jpeg', 'image/png', 'image/webp'];
-        const invalidFiles = files.some(file => !validTypes.includes(file.type));
 
-        if (invalidFiles) {
-            setError('Only JPG, PNG, and WEBP images are allowed');
+        if (files.some(file => !validTypes.includes(file.type))) {
+            setFeedback({ error: 'Only JPG, PNG, and WEBP formats are allowed.', success: '' });
             return;
         }
 
         setSelectedFiles(files);
-    };
-
-    const handleUpload = async () => {
-        setError('');
-        setSuccess('');
-
-        if (!sno.trim()) {
-            setError('Please enter a valid product SNO');
-            return;
-        }
-
-        if (selectedFiles.length < 3 || selectedFiles.length > 5) {
-            setError('Please select between 3 to 5 images');
-            return;
-        }
-
-        try {
-            await uploadImages(sno, selectedFiles);
-            setSuccess('Images uploaded successfully!');
-            setSelectedFiles([]);
-            setSno('');
-        } catch (err) {
-            setError(err.message || 'Failed to upload images. Please try again.');
-        }
     };
 
     const removeImage = (index) => {
@@ -71,14 +43,44 @@ const AddProducts = () => {
         setSelectedFiles(newFiles);
     };
 
+    const handleUpload = async () => {
+        setFeedback({ error: '', success: '' });
+
+        if (!sno.trim()) {
+            setFeedback({ error: 'Please enter a valid product serial number.', success: '' });
+            return;
+        }
+
+        if (selectedFiles.length < 3 || selectedFiles.length > 5) {
+            setFeedback({ error: 'Please select between 3 to 5 images.', success: '' });
+            return;
+        }
+
+        if (!description.trim()) {
+            setFeedback({ error: 'Please enter a product description.', success: '' });
+            return;
+        }
+
+        try {
+            await uploadImages(sno, selectedFiles, description);
+            setFeedback({ error: '', success: 'Images and description uploaded successfully!' });
+            setSno('');
+            setDescription('');
+            setSelectedFiles([]);
+        } catch (err) {
+            const errorMessage = err.response?.data?.error || 'Upload failed. Please try again.';
+            setFeedback({ error: errorMessage, success: '' });
+        }
+    };
+
     return (
         <div className="upload-container">
-            <div className="upload-header">
-                <h2 className="upload-title">Product Image Upload</h2>
-                <p className="upload-subtitle">Add product images to the inventory system</p>
-            </div>
+            <header className="upload-header">
+                <h2 className="upload-title">Upload Product Images</h2>
+                <p className="upload-subtitle">Attach images and description to a product entry</p>
+            </header>
 
-            <div className="upload-form">
+            <section className="upload-form">
                 <div className="form-group">
                     <label htmlFor="sno" className="form-label">Product S/N</label>
                     <input
@@ -92,6 +94,18 @@ const AddProducts = () => {
                 </div>
 
                 <div className="form-group">
+                    <label htmlFor="description" className="form-label">Product Description</label>
+                    <textarea
+                        id="description"
+                        value={description}
+                        onChange={(e) => setDescription(e.target.value)}
+                        placeholder="Write a brief description of the product..."
+                        className="form-input"
+                        rows="4"
+                    />
+                </div>
+
+                <div className="form-group">
                     <label htmlFor="fileInput" className="file-upload-label">
                         <div className="file-upload-box">
                             <svg className="upload-icon" viewBox="0 0 24 24">
@@ -100,15 +114,15 @@ const AddProducts = () => {
                             <span className="file-upload-text">
                                 {selectedFiles.length > 0
                                     ? `${selectedFiles.length} file(s) selected`
-                                    : 'Click to browse or drag & drop images'}
+                                    : 'Click or drag images here'}
                             </span>
-                            <span className="file-upload-hint">(3-5 images required)</span>
+                            <span className="file-upload-hint">(Select 3–5 JPG/PNG/WEBP files)</span>
                         </div>
                         <input
                             id="fileInput"
                             type="file"
-                            multiple
                             accept="image/jpeg, image/png, image/webp"
+                            multiple
                             onChange={handleFileChange}
                             className="file-input"
                         />
@@ -121,17 +135,13 @@ const AddProducts = () => {
                         <div className="preview-grid">
                             {previews.map((src, index) => (
                                 <div key={index} className="preview-item">
-                                    <img
-                                        src={src}
-                                        alt={`Preview ${index + 1}`}
-                                        className="preview-image"
-                                    />
+                                    <img src={src} alt={`Preview ${index + 1}`} className="preview-image" />
                                     <button
                                         onClick={() => removeImage(index)}
                                         className="preview-remove"
                                         aria-label="Remove image"
                                     >
-                                        &times;
+                                        ×
                                     </button>
                                 </div>
                             ))}
@@ -139,41 +149,41 @@ const AddProducts = () => {
                     </div>
                 )}
 
-                {error && (
+                {feedback.error && (
                     <div className="alert alert-error">
                         <svg className="alert-icon" viewBox="0 0 24 24">
-                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
+                            <path d="M1 21h22L12 2 1 21zM12 16h-1v-1h1v1zm0-4h-1v-4h1v4z" />
                         </svg>
-                        <span>{error}</span>
+                        <span>{feedback.error}</span>
                     </div>
                 )}
 
-                {success && (
+                {feedback.success && (
                     <div className="alert alert-success">
                         <svg className="alert-icon" viewBox="0 0 24 24">
-                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
+                            <path d="M12 2a10 10 0 1 1-7.07 2.93A10 10 0 0 1 12 2zm-1 15l-5-5 1.41-1.41L11 14.17l7.59-7.59L20 8l-9 9z" />
                         </svg>
-                        <span>{success}</span>
+                        <span>{feedback.success}</span>
                     </div>
                 )}
 
                 <button
                     onClick={handleUpload}
-                    disabled={loading || !sno || selectedFiles.length === 0}
                     className="submit-button"
+                    disabled={loading || !sno || selectedFiles.length === 0 || !description.trim()}
                 >
                     {loading ? (
                         <>
                             <svg className="spinner" viewBox="0 0 50 50">
-                                <circle cx="25" cy="25" r="20" fill="none" strokeWidth="5"></circle>
+                                <circle cx="25" cy="25" r="20" fill="none" strokeWidth="5" />
                             </svg>
                             Uploading...
                         </>
                     ) : (
-                        'Upload Product Images'
+                        'Upload Product & Description'
                     )}
                 </button>
-            </div>
+            </section>
         </div>
     );
 };

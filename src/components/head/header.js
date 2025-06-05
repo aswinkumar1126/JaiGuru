@@ -125,9 +125,8 @@ const Header = ({ toggleSidebar, isSidebarOpen }) => {
         {/* Center Section - Search */}
         <div className="header-center">
           <SearchBar onSearch={handleSearch} />
-          
         </div>
-        
+
 
         {/* Right Section - Date/Time, Icons & User */}
         <div className="header-right part3">
