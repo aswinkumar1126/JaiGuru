@@ -7,6 +7,7 @@ import {
 import { ProductProvider } from './context/product/productContext';
 import { MyContextProvider } from './context/themeContext/themeContext';
 import { PageTitleProvider } from './context/pageTitle/PageTitleContext';
+import { AuthProvider } from './context/auth/authContext';
 function App() {
 
   const queryClient = new QueryClient();
@@ -15,11 +16,11 @@ function App() {
 
       <QueryClientProvider client={queryClient}>
         <MyContextProvider>
-        <ProductProvider>
+          <ProductProvider>
             <PageTitleProvider>   
-
-              < AppRoutes /> 
-
+              <AuthProvider>
+                  < AppRoutes /> 
+              </AuthProvider>
               </PageTitleProvider>
           </ProductProvider>
         </MyContextProvider>
