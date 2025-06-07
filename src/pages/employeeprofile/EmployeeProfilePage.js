@@ -1,26 +1,65 @@
 import React from 'react';
-import { useAuth } from '../../context/auth/authContext'; // ✅ Correct import
+import { useUserProfile } from '../../hooks/profile/useUserProfile';
 import './EmployeeProfile.css';
 
 const EmployeeProfile = () => {
-    const { user } = useAuth(); // ✅ logged-in user directly from context
+    const { data: user, isLoading, error } = useUserProfile();
 
-    console.log(user);
-    if (!user) {
-        return <div className="profile-container">Loading...</div>;
-    }
+    if (isLoading) return (
+        <div className="profile-container">
+            <div className="profile-card loading">
+                <div className="profile-skeleton"></div>
+            </div>
+        </div>
+    );
+
+    if (error || !user) return (
+        <div className="profile-container">
+            <div className="profile-card error">
+                <h2>Failed to load profile</h2>
+                <p>{error?.message || 'Please try again later'}</p>
+            </div>
+        </div>
+    );
 
     return (
-        <div className="profile-container">
+        <div className="profile-container">            
             <div className="profile-card">
                 
+                <div className="profile-avatar">
+                    <div className="avatar-circle">
+                        {user.username?.charAt(0).toUpperCase() || 'U'}
+                    </div>
+                </div>
                 <div className="profile-details">
-                    <h2>{user.username || 'N/A'}</h2>
-                    <p><strong>Email:</strong> {user.email}</p>
-                    <p><strong>Phone:</strong> {user.contactNumber}</p>
-                    <p><strong>Role:</strong> {user.roles[0]|| 'Employee'}</p>
-                    <p><strong>Status:</strong> {user.status}</p>
-                    <p><strong>Joined On:</strong> {new Date(user.createdAt).toLocaleDateString()}</p>
+                    <h2>
+                        Profile Page
+                    </h2><br />
+                    <h3>{user.username || 'N/A'}</h3>
+                    <div className="detail-row">
+                        <span className="detail-label">Email:</span>
+                        <span className="detail-value">{user.email}</span>
+                    </div>
+                    <div className="detail-row">
+                        <span className="detail-label">Phone:</span>
+                        <span className="detail-value">{user.contactNumber || 'Not provided'}</span>
+                    </div>
+                    <div className="detail-row">
+                        <span className="detail-label">Role:</span>
+                        <span className="detail-value">{user.roles?.[0] || 'Employee'}</span>
+                    </div>
+                    <div className="detail-row">
+                        <span className="detail-label">Status:</span>
+                        <span className={`status-badge ${user.status?.toLowerCase()}`}>
+                            {user.status}
+                        </span>
+                    </div>
+                    <div className="detail-row">
+                        <span className="detail-label">Joined On:</span>
+                        <span className="detail-value">
+                            {new Date(user.createdAt).toLocaleDateString()}
+                        </span>
+                    </div>
                 </div>
             </div>
         </div>

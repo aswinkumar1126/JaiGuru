@@ -22,6 +22,7 @@ import './header.css';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/auth/authContext';
+import { useUserProfile } from '../../hooks/profile/useUserProfile';
 
 const Header = ({ toggleSidebar, isSidebarOpen }) => {
   const { themeMode, setThemeMode, themeColor, setThemeColor } = useContext(MyContext);
@@ -44,6 +45,8 @@ const Header = ({ toggleSidebar, isSidebarOpen }) => {
   const colorMenuRef = useRef(null);
 
   const { logout } = useAuth();
+  const { data: user, isLoading, error } = useUserProfile();
+
 
   const changeThemeColor = (color) => {
     setThemeColor(color);
@@ -182,14 +185,14 @@ const Header = ({ toggleSidebar, isSidebarOpen }) => {
         <div className="header-right">
           {/* Theme Color Picker */}
           <div className="dropdown-wrapper" ref={colorMenuRef}>
-            <button
+            {/* <button
               className="icon-button"
               onClick={() => setIsColorMenuOpen(!isColorMenuOpen)}
               aria-label="Change theme color"
               style={{ backgroundColor: themeColor }}
             >
               <MdColorLens />
-            </button>
+            </button> */}
 
             <AnimatePresence>
               {isColorMenuOpen && (
@@ -225,7 +228,7 @@ const Header = ({ toggleSidebar, isSidebarOpen }) => {
             {themeMode === 'light' ? <MdDarkMode /> : <MdOutlineLightMode />}
           </button>
 
-          {/* Language Selector */}
+          {/* Language Selector
           <div className="dropdown-wrapper" ref={languageMenuRef}>
             <button
               className="icon-button"
@@ -253,9 +256,9 @@ const Header = ({ toggleSidebar, isSidebarOpen }) => {
                 </motion.div>
               )}
             </AnimatePresence>
-          </div>
+          </div> */}
 
-          {/* Email */}
+          {/* Email
           <div className="dropdown-wrapper" ref={emailMenuRef}>
             <button
               className="icon-button"
@@ -287,7 +290,7 @@ const Header = ({ toggleSidebar, isSidebarOpen }) => {
                 </motion.div>
               )}
             </AnimatePresence>
-          </div>
+          </div> */}
 
           {/* Notifications */}
           <div className="dropdown-wrapper" ref={notificationMenuRef}>
@@ -346,8 +349,8 @@ const Header = ({ toggleSidebar, isSidebarOpen }) => {
               </div>
               {!isMobile && (
                 <div className="profile-info">
-                  <span className="profile-name">Admin</span>
-                  <span className="profile-role">Super Admin</span>
+                  <span className="profile-name">{user?.username}</span>
+                 
                 </div>
               )}
             </button>
