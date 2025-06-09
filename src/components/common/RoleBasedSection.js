@@ -1,5 +1,4 @@
 // src/components/common/RoleBasedSection.js
-import React from 'react';
 import { useAuth } from '../../context/auth/authContext';
 
 const RoleBasedSection = ({ allowedRoles, children }) => {

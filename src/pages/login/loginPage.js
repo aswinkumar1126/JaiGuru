@@ -15,11 +15,13 @@ import image2 from '../../assets/images/login/Login2.jpg';
 import image3 from '../../assets/images/login/Login3.png';
 import logo from '../../assets/images/bg-img-01.png';
 
+import 'bootstrap/dist/css/bootstrap.min.css';
+
 const LoginPage = () => {
     const [form, setForm] = useState({ contactOrEmailOrUsername: '', password: '' });
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
-    const [rememberMe, setRememberMe] = useState(false);
+    
     const navigate = useNavigate();
     const { login } = useAuth();
     const passwordInputRef = useRef(null);
@@ -46,8 +48,8 @@ const LoginPage = () => {
             };
             const roles = userData.roles || [];
 
-            if (roles.includes('ROLE_EMPLOYEE') || roles.includes('ROLE_ADMIN')) {
-                login(token, userData, rememberMe);
+            if (roles.includes('ROLE_ADMIN') || roles.includes('ROLE_EMPLOYEE')) {
+                login(token, userData);
                 navigate('/');
             } else {
                 setError('Access Denied: You are not authorized to access the dashboard.');
@@ -67,46 +69,44 @@ const LoginPage = () => {
     }, [error]);
 
     return (
-        <section className="sign-in-page">
-            <div className="sign-in-container">
-                <div className="sign-in-row">
+        <section className="sign-in-page ">
+            <div className="container sign-in-page-bg mt-4 mb-md-4 mb-0 p-0">
+                <div className="row no-gutters">
                     {/* Left Side - Carousel */}
-                    <div className="sign-in-details text-center">
+                    <div className="col-md-6 text-center sign-in-details">
                         <div className="sign-in-detail text-white">
-                            <a className="sign-in-logo">
-                                <img src={logo} className="img-fluid sign-in-logo-img" alt="logo" />
+                            <p className="sign-in-logo mb-8">
+                                <img src={logo} className="img-fluid" alt="logo" />
                                 <span className="logName">Admin Portal</span>
-                            </a>
+                            </p>
 
                             <Swiper
                                 modules={[Pagination, Navigation, Autoplay]}
                                 spaceBetween={10}
                                 slidesPerView={1}
-                                autoplay={{ delay: 3000, disableOnInteraction: false }}
+                                autoplay={{ delay: 3000 }}
                                 pagination={{ clickable: true, type: 'bullets' }}
-                                navigation={true}
-                                loop={true}
                                 className="swiper-navigation"
                             >
-                                <SwiperSlide className="swiper-slide-content">
-                                    <img src={image1} alt="Slide 1" className="img-fluid swiper-slide-img" />
-                                    <h4 className="firstSlide">Streamline Your Workflow</h4>
+                                <SwiperSlide>
+                                    <img src={image1} alt="Slide 1" className="img-fluid" />
+                                    <h4 className="firstSlide">Admin Dashboard</h4>
                                     <p className="firstSlidePara">
-                                        Access all your tools and resources in one secure platform.
+                                        Comprehensive tools for managing your organization
                                     </p>
                                 </SwiperSlide>
-                                <SwiperSlide className="swiper-slide-content">
-                                    <img src={image2} alt="Slide 2" className="img-fluid swiper-slide-img" />
-                                    <h4 className="firstSlide">Boost Productivity</h4>
+                                <SwiperSlide>
+                                    <img src={image2} alt="Slide 2" className="img-fluid" />
+                                    <h4 className="firstSlide">System Control</h4>
                                     <p className="firstSlidePara">
-                                        Integrated tools designed to help you work more efficiently.
+                                        Full administrative access to all system features
                                     </p>
                                 </SwiperSlide>
-                                <SwiperSlide className="swiper-slide-content">
-                                    <img src={image3} alt="Slide 3" className="img-fluid swiper-slide-img" />
-                                    <h4 className="firstSlide">Seamless Collaboration</h4>
+                                <SwiperSlide>
+                                    <img src={image3} alt="Slide 3" className="img-fluid" />
+                                    <h4 className="firstSlide">User Management</h4>
                                     <p className="firstSlidePara">
-                                        Connect with your team and work together effortlessly.
+                                        Manage permissions and access levels with ease
                                     </p>
                                 </SwiperSlide>
                             </Swiper>
@@ -114,32 +114,28 @@ const LoginPage = () => {
                     </div>
 
                     {/* Right Side - Login Form */}
-                    <div className="sign-in-form-container">
+                    <div className="col-md-6 position-relative">
                         <div className="sign-in-from">
-                            <div className="mobile-header text-center">
-                                <img src={logo} alt="Company Logo" className="login-mobile-logo" />
-                                <h2 className="login-mobile-title">Admin Portal</h2>
-                            </div>
-
-                            <h1 className="sign-in-title">Log in</h1>
-                            <p className="sign-in-subtitle">
-                                Enter your employee name or email and password to access the portal.
-                            </p>
+                            <h1 className="mb-0">Admin Login</h1>
+                            <p>Secure access to administrative panel</p>
 
                             {error && (
                                 <div className="error-message">
-                                    {error}
+                                    <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" fill="none">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                    <span>{error}</span>
                                 </div>
                             )}
 
-                            <form className="sign-in-form" onSubmit={handleLogin}>
+                            <form className="mt-4" onSubmit={handleLogin}>
                                 <div className="form-group">
-                                    <label className="form-label">Employee Name / Email</label>
+                                    <label className="mb-0">Admin Name / Email</label>
                                     <input
                                         type="text"
-                                        className="form-input"
+                                        className="form-control mb-1"
                                         name="contactOrEmailOrUsername"
-                                        placeholder="Enter your ID or email"
+                                        placeholder="Enter admin name or email"
                                         value={form.contactOrEmailOrUsername}
                                         onChange={(e) => setForm({ ...form, contactOrEmailOrUsername: e.target.value })}
                                         onKeyDown={handleKeyDown}
@@ -147,43 +143,45 @@ const LoginPage = () => {
                                         autoFocus
                                     />
                                 </div>
-                                <div className="form-group password-group">
-                                    <label className="form-label">Password</label>
-                                   
-                                    <input
-                                        ref={passwordInputRef}
-                                        type="password"
-                                        className="form-input"
-                                        placeholder="Password"
-                                        name="password"
-                                        value={form.password}
-                                        onChange={(e) => setForm({ ...form, password: e.target.value })}
-                                        required
-                                    />
+                                <div className="d-flex justify-content-between my-2">
+                                    <label>Password</label>
                                 </div>
-                                <div className="form-footer">
-                                 
+                                <input
+                                    ref={passwordInputRef}
+                                    type="password"
+                                    className="form-control mb-0"
+                                    placeholder="Enter admin password"
+                                    name="password"
+                                    value={form.password}
+                                    onChange={(e) => setForm({ ...form, password: e.target.value })}
+                                    required
+                                />
+                                <div className="d-flex w-100 justify-content-center align-items-center mt-3 ">
+                                    
                                     <button
                                         type="submit"
-                                        className="sign-in-button"
+                                        className="btn btn-primary float-end"
+                                        
                                         disabled={isLoading}
                                     >
                                         {isLoading ? (
-                                            <>
-                                                <span className="spinner" role="status" aria-hidden="true"></span>
-                                                Logging In...
-                                            </>
+                                            <span className="button-loader"></span>
                                         ) : (
-                                            'Log in'
+                                            <>
+                                                <span className="button-text">Log In</span>
+                                                <span className="button-icon">
+                                                    <svg viewBox="0 0 25 22" fill="currentColor" width="25" height="22">
+                                                        <path fillRule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
+                                                    </svg>
+                                                </span>
+                                            </>
                                         )}
                                     </button>
                                 </div>
-                                <div className="sign-in-footer">
-                                    <span className="sign-up-text">
-                                        Don't have an account?{' '}
-                                        <p  className="sign-up-link">
-                                            Contact Admin
-                                        </p>
+
+                                <div className="sign-info">
+                                    <span className="dark-color d-inline-block line-height-2">
+                                        Need access ?   <span className='contact-admin'> Contact Super Admin</span>
                                     </span>
                                 </div>
                             </form>

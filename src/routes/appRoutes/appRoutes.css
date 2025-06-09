@@ -50,16 +50,16 @@
 
 /* Sidebar styling */
 .sidebar {
-  background-color: #e6f7fa; /* Light cyan from screenshot */
+  background-color: #eff8fa; /* Light cyan from screenshot */
   transition: width 0.3s ease; /* Smooth transition for smaller screens */
 }
 
 /* Main content */
 .main-content {
   flex: 1;
-  margin-top:30px ;
-  padding: 20px;
-  background-color: #f5fcfe; /* Light background from screenshot */
+  margin-top:40px ;
+  padding: 30px;
+  background-color: #f8f5f5; /* Light background from screenshot */
 }
 
 /* Sidebar always visible on larger screens */

@@ -52,7 +52,7 @@ const AppRoutes = () => {
                             <Routes>
                                 <Route path="/" element={
                                     <ProtectedRoute allowedRoles={allowedRoles}>
-                                        <MainContent isSidebarOpen={isSidebarOpen} />
+                                            <MainContent className={`main-content ${themeMode} ${isSidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`} />
                                     </ProtectedRoute>
                                 } />
                                 <Route path="/product/add" element={

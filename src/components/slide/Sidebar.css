@@ -75,6 +75,7 @@
     overflow: hidden;
     text-overflow: ellipsis;
     margin: 0.5rem 0;
+    
 }
 
 .sidebar.dark .current-page-indicator {
@@ -136,6 +137,7 @@
 
 .menu-item:hover {
     color: white;
+    background-color: #2563eb;
 }
 
 .menu-item.active {

@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Form, Input, Button, Select, message, Card } from 'antd';
-import axiosInstance from '../../../api/axiosInstance';
+import { Form, Input, Button, Select, Card, Row, Col } from 'antd';
+import { useCreateEmployee } from '../../../hooks/employee/useCreateEmployee';
 import './EmployeeStyles.css';
 
 const { Option } = Select;
@@ -9,123 +9,123 @@ const { Option } = Select;
 const AddEmployee = () => {
     const [form] = Form.useForm();
     const navigate = useNavigate();
-    const [loading, setLoading] = useState(false);
+    const { mutate: createEmployee, isLoading } = useCreateEmployee();
 
-    const onFinish = async (values) => {
-        setLoading(true);
-        try {
-            const token = localStorage.getItem('token');
-
-            const payload = {
-                username: values.username,
-                password: values.password,
-                email: values.email,
-                roles: typeof values.roles === 'string' ? values.roles : values.roles[0],
-                contactNumber: values.contactNumber,
-            };
-
-            console.log('Payload:', payload);
-
-            const response = await axiosInstance.post(
-                '/admin/create-employee',
-                payload,
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                }
-            );
-
-            if (response.status === 201) {
-                message.success('Employee created successfully!');
-                form.resetFields();
-                navigate('/employee/manage');
+    const onFinish = (values) => {
+        createEmployee(values, {
+            onSuccess: () => {
+                form.resetFields(); // Clear form after successful creation
             }
-        } catch (error) {
-            console.error('API Error:', error.response);
-            message.error(error.response?.data?.message || 'Failed to create employee');
-        } finally {
-            setLoading(false);
-        }
+        });
     };
 
     return (
         <div className="employee-container">
-            <Card title="Add New Employee" className="employee-card">
-                <Form
-                    form={form}
-                    name="addEmployee"
-                    onFinish={onFinish}
-                    layout="vertical"
-                    autoComplete="off"
-                >
-                    <Form.Item
-                        label="Username"
-                        name="username"
-                        rules={[
-                            { required: true, message: 'Please input the username!' },
-                            { min: 3, message: 'Username must be at least 3 characters!' }
-                        ]}
+            <Row justify="center">
+                <Col xs={24} sm={22} md={20} lg={18} xl={16}>
+                    <Card
+                        title={<span className="card-title">Add New Employee</span>}
+                        className="employee-card"
+                        bordered={false}
                     >
-                        <Input placeholder="Enter username" />
-                    </Form.Item>
-
-                    <Form.Item
-                        label="Email"
-                        name="email"
-                        rules={[
-                            { required: true, message: 'Please input the email!' },
-                            { type: 'email', message: 'Please enter a valid email!' }
-                        ]}
-                    >
-                        <Input placeholder="Enter email" />
-                    </Form.Item>
-
-                    <Form.Item
-                        label="Password"
-                        name="password"
-                        rules={[
-                            { required: true, message: 'Please input the password!' },
-                            { min: 6, message: 'Password must be at least 6 characters!' }
-                        ]}
-                    >
-                        <Input.Password placeholder="Enter password" />
-                    </Form.Item>
-
-                    <Form.Item
-                        label="Contact Number"
-                        name="contactNumber"
-                        rules={[
-                            { required: true, message: 'Please input the contact number!' }
-                        ]}
-                    >
-                        <Input placeholder="Enter contact number" />
-                    </Form.Item>
-
-                    <Form.Item
-                        label="Role"
-                        name="roles"
-                        rules={[{ required: true, message: 'Please select a role!' }]}
-                    >
-                        <Select placeholder="Select role">
-                            <Option value="ROLE_ADMIN">Admin</Option>
-                            <Option value="ROLE_EMPLOYEE">Employee</Option>
-                        </Select>
-                    </Form.Item>
-
-                    <Form.Item>
-                        <Button type="primary" htmlType="submit" loading={loading}>
-                            Add Employee
-                        </Button>
-                        <Button
-                            style={{ marginLeft: 10 }}
-                            onClick={() => navigate('/employee/manage')}
+                        <Form
+                            form={form}
+                            name="addEmployee"
+                            onFinish={onFinish}
+                            layout="vertical"
+                            autoComplete="off"
+                            className="employee-form"
                         >
-                            Cancel
-                        </Button>
-                    </Form.Item>
-                </Form>
-            </Card>
+                            <Row gutter={16}>
+                                <Col xs={24} md={12}>
+                                    <Form.Item
+                                        label="Username"
+                                        name="username"
+                                        rules={[
+                                            { required: true, message: 'Please input the username!' },
+                                            { min: 3, message: 'Username must be at least 3 characters!' }
+                                        ]}
+                                    >
+                                        <Input placeholder="Enter username" size="large" className="form-input" />
+                                    </Form.Item>
+                                </Col>
+                                <Col xs={24} md={12}>
+                                    <Form.Item
+                                        label="Email"
+                                        name="email"
+                                        rules={[
+                                            { required: true, message: 'Please input the email!' },
+                                            { type: 'email', message: 'Please enter a valid email!' }
+                                        ]}
+                                    >
+                                        <Input placeholder="Enter email" size="large" className="form-input" />
+                                    </Form.Item>
+                                </Col>
+                            </Row>
+
+                            <Row gutter={16}>
+                                <Col xs={24} md={12}>
+                                    <Form.Item
+                                        label="Password"
+                                        name="password"
+                                        rules={[
+                                            { required: true, message: 'Please input the password!' },
+                                            { min: 6, message: 'Password must be at least 6 characters!' }
+                                        ]}
+                                    >
+                                        <Input.Password placeholder="Enter password" size="large" className="form-input" />
+                                    </Form.Item>
+                                </Col>
+                                <Col xs={24} md={12}>
+                                    <Form.Item
+                                        label="Contact Number"
+                                        name="contactNumber"
+                                        rules={[
+                                            { required: true, message: 'Please input the contact number!' }
+                                        ]}
+                                    >
+                                        <Input placeholder="Enter contact number" size="large" className="form-input" />
+                                    </Form.Item>
+                                </Col>
+                            </Row>
+
+                            <Row gutter={16}>
+                                <Col xs={24} md={12}>
+                                    <Form.Item
+                                        label="Role"
+                                        name="roles"
+                                        rules={[{ required: true, message: 'Please select a role!' }]}
+                                    >
+                                        <Select placeholder="Select role" size="large" className="form-select">
+                                            <Option value="ROLE_ADMIN">Admin</Option>
+                                            <Option value="ROLE_EMPLOYEE">Employee</Option>
+                                        </Select>
+                                    </Form.Item>
+                                </Col>
+                            </Row>
+
+                            <Form.Item className="form-actions">
+                                <Button
+                                    type="primary"
+                                    htmlType="submit"
+                                    loading={isLoading}
+                                    size="large"
+                                    className="submit-button"
+                                >
+                                    Add Employee
+                                </Button>
+                                <Button
+                                    size="large"
+                                    onClick={() => navigate('/employee/manage')}
+                                    className="cancel-button"
+                                >
+                                    Cancel
+                                </Button>
+                            </Form.Item>
+                        </Form>
+                    </Card>
+                </Col>
+            </Row>
         </div>
     );
 };

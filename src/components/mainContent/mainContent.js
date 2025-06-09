@@ -1,12 +1,12 @@
 import DashboardCards from '../cards/DashboardCards';
-import ChartsSection from '../charts/ChartsSection';
+import ChartsSectionWrapper from '../charts/ChartsSectionWrapper';
 
 const MainContent = () => {
 
     return (
         <main >      
             <DashboardCards />
-            <ChartsSection />
+            <ChartsSectionWrapper />
         </main>
     );
 };

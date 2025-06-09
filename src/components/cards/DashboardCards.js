@@ -41,7 +41,7 @@ const DashboardCards = () => {
         { title: 'Delivered', value: dashboardData.deliveredOrders, gradient: 'linear-gradient(90deg, rgb(14, 212, 193),rgb(19, 202, 184))' },
         { title: 'Shipping', value: dashboardData.shippedOrders, gradient:'linear-gradient(90deg,rgb(28, 38, 177) , rgb(95, 104, 230)'},
         { title: 'Cancelled', value: dashboardData.cancelledOrders, gradient: 'linear-gradient(90deg, rgb(238, 26, 11),rgb(221, 31, 31))' },
-        { title: 'Review', value: dashboardData.reviews, gradient: 'linear-gradient(90deg, rgb(200, 22, 231),rgb(169, 17, 196))' },
+        
     ];
 
     return (

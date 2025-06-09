@@ -1,37 +1,142 @@
+/* EmployeeStyles.css */
 .employee-container {
-    padding: 20px;
+    padding: 24px;
+    background-color: #f5f7fa;
+}
+
+.card-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.employee-count {
+    font-size: 0.875rem;
+    color: #64748b;
 }
 
 .employee-card {
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    border: none;
 }
 
 .employee-card .ant-card-head {
-    border-bottom: 1px solid #f0f0f0;
+    border-bottom: 1px solid #e8e8e8;
+    padding: 0 24px;
+}
+
+.employee-card .ant-card-head-title {
+    padding: 16px 0;
 }
 
 .employee-card .ant-card-body {
     padding: 24px;
 }
 
-/* Form styles */
-.employee-form .ant-form-item {
+.table-header {
     margin-bottom: 16px;
 }
 
-/* Table styles */
+.search-input {
+    max-width: 400px;
+}
+
 .employee-table {
-    margin-top: 20px;
+    margin-top: 16px;
+}
+
+.employee-table .ant-table-thead>tr>th {
+    background-color: #f8fafc;
+    font-weight: 600;
+    color: #475569;
+}
+
+.employee-table .ant-table-tbody>tr:hover>td {
+    background-color: #f1f5f9 !important;
+}
+
+.action-btn {
+    border: none;
+    box-shadow: none;
+}
+
+.text-right {
+    text-align: right;
 }
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
     .employee-container {
-        padding: 10px;
+        padding: 16px;
     }
 
     .employee-card .ant-card-body {
         padding: 16px;
+    }
+
+    .table-header {
+        flex-direction: column;
+    }
+
+    .search-input {
+        width: 100%;
+        margin-bottom: 12px;
+    }
+
+    .text-right {
+        text-align: left;
+        width: 100%;
+    }
+
+    .employee-table .ant-table-thead>tr>th,
+    .employee-table .ant-table-tbody>tr>td {
+        padding: 12px 8px;
+    }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+    .employee-container {
+        background-color: #1e293b;
+    }
+
+    .card-title,
+    .employee-count {
+        color: #e2e8f0;
+    }
+
+    .employee-card {
+        background-color: #334155;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .employee-card .ant-card-head {
+        border-bottom-color: #475569;
+    }
+
+    .employee-table .ant-table-thead>tr>th {
+        background-color: #1e293b;
+        color: #e2e8f0;
+    }
+
+    .employee-table .ant-table-tbody>tr>td {
+        background-color: #334155;
+        color: #e2e8f0;
+        border-bottom-color: #475569;
+    }
+
+    .employee-table .ant-table-tbody>tr:hover>td {
+        background-color: #475569 !important;
+    }
+
+    .search-input .ant-input {
+        background-color: #1e293b;
+        color: #e2e8f0;
+        border-color: #475569;
+    }
+
+    .search-input .ant-input::placeholder {
+        color: #94a3b8;
     }
 }

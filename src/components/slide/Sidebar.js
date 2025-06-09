@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { NavLink, useLocation, useNavigate } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
 import {
-    FaBox, FaImage, FaTag, FaVideo, FaAngleDown, FaAngleRight,
-    FaTachometerAlt, FaDollarSign, FaSignOutAlt, FaUserCircle
+    FaBox, FaImage, FaTag, FaVideo, 
+    FaTachometerAlt, FaDollarSign, FaUserCircle
 } from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MyContext } from '../../context/themeContext/themeContext';
@@ -10,6 +10,8 @@ import './Sidebar.css';
 import { getPageTitle } from '../../utils/pageTitle/getPageTitle';
 import RoleBasedSection from '../common/RoleBasedSection';
 import MenuItem from '../common/MenuItem';
+import { useUserProfile } from '../../hooks/profile/useUserProfile';
+
 
 const menuItems = [
     {
@@ -70,12 +72,13 @@ const employeeMenu = {
 
 const Sidebar = ({ isOpen, toggleSidebar }) => {
     const location = useLocation();
-    const navigate = useNavigate();
+
     const { themeMode } = useContext(MyContext);
     const [expanded, setExpanded] = useState({});
     const [isMobile, setIsMobile] = useState(false);
     const [currentPageTitle, setCurrentPageTitle] = useState("Admin Dashboard");
 
+    const { data: user } = useUserProfile();
     useEffect(() => {
         const handleResize = () => {
             setIsMobile(window.innerWidth <= 768);
@@ -109,13 +112,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
         }));
     };
 
-    const handleLogout = () => {
-        localStorage.removeItem('authToken');
-        if (themeMode.setAuthToken) {
-            themeMode.setAuthToken(null);
-        }
-        navigate('/login');
-    };
+
 
     const handleLinkClick = () => {
         if (isMobile) {
@@ -202,24 +199,18 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
                     </nav>
 
                     <div className="sidebar-footer">
+                        <RoleBasedSection allowedRoles={["ROLE_ADMIN"]}>
                         <div className="user-profile">
                             <div className="user-avatar">
                                 <FaUserCircle size={36} />
                             </div>
                             <div className="user-info">
-                                <div className="user-name">John Doe</div>
+                                <div className="user-name">{user?.username}</div>
                                 <div className="user-role">Administrator</div>
                             </div>
                         </div>
-                        <motion.button
-                            className="logout-button"
-                            onClick={handleLogout}
-                            whileHover={{ scale: 1.02 }}
-                            whileTap={{ scale: 0.98 }}
-                        >
-                            <FaSignOutAlt />
-                            <span>Logout</span>
-                        </motion.button>
+                        </RoleBasedSection>
+                        
                     </div>
                 </div>
             </motion.aside>
