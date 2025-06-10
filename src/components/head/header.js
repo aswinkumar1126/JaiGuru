@@ -6,15 +6,14 @@ import {
   FaUserCircle,
   FaCog,
   FaSignOutAlt,
-  FaEnvelope,
-  FaGlobe
+  
 } from 'react-icons/fa';
 import {
   MdDarkMode,
   MdOutlineLightMode,
   MdOutlineMenu,
   MdMenuOpen,
-  MdColorLens
+  
 } from 'react-icons/md';
 import { MyContext } from '../../context/themeContext/themeContext';
 import logo from '../../assets/logo/logo.jpg';
@@ -22,28 +21,28 @@ import './header.css';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/auth/authContext';
+import { useUserProfile } from '../../hooks/profile/useUserProfile';
 
 const Header = ({ toggleSidebar, isSidebarOpen }) => {
-  const { themeMode, setThemeMode, themeColor, setThemeColor } = useContext(MyContext);
+  const { themeMode, setThemeMode, setThemeColor } = useContext(MyContext);
   const [scrolled, setScrolled] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 992);
   const [searchQuery, setSearchQuery] = useState('');
   const [currentDateTime, setCurrentDateTime] = useState('');
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
   const [isNotificationMenuOpen, setIsNotificationMenuOpen] = useState(false);
-  const [isLanguageMenuOpen, setIsLanguageMenuOpen] = useState(false);
-  const [isEmailMenuOpen, setIsEmailMenuOpen] = useState(false);
+ 
   const [isColorMenuOpen, setIsColorMenuOpen] = useState(false);
 
   const navigate = useNavigate();
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const profileMenuRef = useRef(null);
   const notificationMenuRef = useRef(null);
-  const languageMenuRef = useRef(null);
-  const emailMenuRef = useRef(null);
   const colorMenuRef = useRef(null);
 
   const { logout } = useAuth();
+  const { data: user } = useUserProfile();
+
 
   const changeThemeColor = (color) => {
     setThemeColor(color);
@@ -95,12 +94,6 @@ const Header = ({ toggleSidebar, isSidebarOpen }) => {
       if (notificationMenuRef.current && !notificationMenuRef.current.contains(event.target)) {
         setIsNotificationMenuOpen(false);
       }
-      if (languageMenuRef.current && !languageMenuRef.current.contains(event.target)) {
-        setIsLanguageMenuOpen(false);
-      }
-      if (emailMenuRef.current && !emailMenuRef.current.contains(event.target)) {
-        setIsEmailMenuOpen(false);
-      }
       if (colorMenuRef.current && !colorMenuRef.current.contains(event.target)) {
         setIsColorMenuOpen(false);
       }
@@ -119,11 +112,7 @@ const Header = ({ toggleSidebar, isSidebarOpen }) => {
     setThemeMode(themeMode === 'light' ? 'dark' : 'light');
   };
 
-  const changeLanguage = (lng) => {
-    i18n.changeLanguage(lng);
-    setIsLanguageMenuOpen(false);
-  };
-
+  
   const handleLogout = () => {
     logout();
     navigate('/login');
@@ -182,14 +171,14 @@ const Header = ({ toggleSidebar, isSidebarOpen }) => {
         <div className="header-right">
           {/* Theme Color Picker */}
           <div className="dropdown-wrapper" ref={colorMenuRef}>
-            <button
+            {/* <button
               className="icon-button"
               onClick={() => setIsColorMenuOpen(!isColorMenuOpen)}
               aria-label="Change theme color"
               style={{ backgroundColor: themeColor }}
             >
               <MdColorLens />
-            </button>
+            </button> */}
 
             <AnimatePresence>
               {isColorMenuOpen && (
@@ -225,7 +214,7 @@ const Header = ({ toggleSidebar, isSidebarOpen }) => {
             {themeMode === 'light' ? <MdDarkMode /> : <MdOutlineLightMode />}
           </button>
 
-          {/* Language Selector */}
+          {/* Language Selector
           <div className="dropdown-wrapper" ref={languageMenuRef}>
             <button
               className="icon-button"
@@ -253,9 +242,9 @@ const Header = ({ toggleSidebar, isSidebarOpen }) => {
                 </motion.div>
               )}
             </AnimatePresence>
-          </div>
+          </div> */}
 
-          {/* Email */}
+          {/* Email
           <div className="dropdown-wrapper" ref={emailMenuRef}>
             <button
               className="icon-button"
@@ -287,7 +276,7 @@ const Header = ({ toggleSidebar, isSidebarOpen }) => {
                 </motion.div>
               )}
             </AnimatePresence>
-          </div>
+          </div> */}
 
           {/* Notifications */}
           <div className="dropdown-wrapper" ref={notificationMenuRef}>
@@ -335,10 +324,14 @@ const Header = ({ toggleSidebar, isSidebarOpen }) => {
           </div>
 
           {/* User Profile */}
+          {/* User Profile */}
           <div className="dropdown-wrapper profile-dropdown" ref={profileMenuRef}>
             <button
               className="profile-button"
-              onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
+              onClick={() => {
+                console.log("Profile button clicked");
+                setIsProfileMenuOpen(!isProfileMenuOpen);
+              }}
               aria-label="User profile"
             >
               <div className="profile-avatar">
@@ -346,8 +339,7 @@ const Header = ({ toggleSidebar, isSidebarOpen }) => {
               </div>
               {!isMobile && (
                 <div className="profile-info">
-                  <span className="profile-name">Admin</span>
-                  <span className="profile-role">Super Admin</span>
+                  <span className="profile-name">{user?.username}</span>
                 </div>
               )}
             </button>
@@ -360,9 +352,19 @@ const Header = ({ toggleSidebar, isSidebarOpen }) => {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: 20 }}
                   transition={{ duration: 0.2 }}
+                  style={{
+                    zIndex: 1001,
+                    display: isProfileMenuOpen ? 'block' : 'none'
+                  }}
                 >
                   <div className="dropdown-header">User Profile</div>
-                  <button className="dropdown-item" onClick={() => navigate('/profile')}>
+                  <button
+                    className="dropdown-item"
+                    onClick={() => {
+                      navigate('/profile');
+                      setIsProfileMenuOpen(false);
+                    }}
+                  >
                     <FaUserCircle className="menu-icon" />
                     <span>My Profile</span>
                   </button>
@@ -376,7 +378,7 @@ const Header = ({ toggleSidebar, isSidebarOpen }) => {
               )}
             </AnimatePresence>
           </div>
-        </div>
+          </div>
       </div>
     </header>
   );

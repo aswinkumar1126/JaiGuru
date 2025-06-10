@@ -1,14 +1,18 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { NavLink, useLocation, useNavigate } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
 import {
-    FaBox, FaImage, FaTag, FaVideo, FaAngleDown, FaAngleRight,
-    FaTachometerAlt, FaDollarSign, FaSignOutAlt, 
-    //FaChevronLeft, FaChevronRight
+    FaBox, FaImage, FaTag, FaVideo, 
+    FaTachometerAlt, FaDollarSign, FaUserCircle
 } from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MyContext } from '../../context/themeContext/themeContext';
 import './Sidebar.css';
 import { getPageTitle } from '../../utils/pageTitle/getPageTitle';
+import RoleBasedSection from '../common/RoleBasedSection';
+import MenuItem from '../common/MenuItem';
+import { useUserProfile } from '../../hooks/profile/useUserProfile';
+
+
 const menuItems = [
     {
         title: "Dashboard",
@@ -57,15 +61,24 @@ const menuItems = [
     }
 ];
 
-const Sidebar = ({ isOpen, toggleSidebar}) => {
+const employeeMenu = {
+    title: "Employee",
+    icon: <FaBox className="section-icon" />,
+    submenu: [
+        { title: "Add Employee", path: "/employee/add" },
+        { title: "Manage Employees", path: "/employee/manage" }
+    ]
+};
+
+const Sidebar = ({ isOpen, toggleSidebar }) => {
     const location = useLocation();
-    const navigate = useNavigate();
+
     const { themeMode } = useContext(MyContext);
     const [expanded, setExpanded] = useState({});
     const [isMobile, setIsMobile] = useState(false);
-    const [currentPageTitle, setCurrentPageTitle] = useState("Admin Dashboard");;
+    const [currentPageTitle, setCurrentPageTitle] = useState("Admin Dashboard");
 
-    // Initialize expanded state and mobile detection
+    const { data: user } = useUserProfile();
     useEffect(() => {
         const handleResize = () => {
             setIsMobile(window.innerWidth <= 768);
@@ -87,6 +100,11 @@ const Sidebar = ({ isOpen, toggleSidebar}) => {
         return () => window.removeEventListener('resize', handleResize);
     }, [location.pathname]);
 
+    useEffect(() => {
+        const title = getPageTitle(location.pathname, menuItems);
+        setCurrentPageTitle(title);
+    }, [location.pathname]);
+
     const toggleSection = (section) => {
         setExpanded(prev => ({
             ...prev,
@@ -94,13 +112,7 @@ const Sidebar = ({ isOpen, toggleSidebar}) => {
         }));
     };
 
-    const handleLogout = () => {
-        localStorage.removeItem('authToken');
-        if (themeMode.setAuthToken) {
-            themeMode.setAuthToken(null);
-        }
-        navigate('/login');
-    };
+
 
     const handleLinkClick = () => {
         if (isMobile) {
@@ -109,36 +121,41 @@ const Sidebar = ({ isOpen, toggleSidebar}) => {
     };
 
     const sidebarVariants = {
-        open: { x: 0, transition: { type: 'spring', damping: 25 } },
-        closed: { x: '-100%', transition: { type: 'spring', damping: 25 } }
+        open: {
+            x: 0,
+            transition: {
+                type: 'spring',
+                damping: 25,
+                stiffness: 300
+            }
+        },
+        closed: {
+            x: '-100%',
+            transition: {
+                type: 'spring',
+                damping: 25,
+                stiffness: 300
+            }
+        }
     };
 
     const itemVariants = {
-        open: { opacity: 1, x: 0 },
-        closed: { opacity: 0, x: -20 }
-    };
-
-    const submenuVariants = {
         open: {
             opacity: 1,
-            height: 'auto',
-            transition: { staggerChildren: 0.05, delayChildren: 0.1 }
+            x: 0,
+            transition: { duration: 0.2 }
         },
         closed: {
             opacity: 0,
-            height: 0,
-            transition: { when: "afterChildren" }
+            x: -20,
+            transition: { duration: 0.1 }
         }
     };
-    useEffect(() => {
-        const title = getPageTitle(location.pathname, menuItems);
-        setCurrentPageTitle(title);
-    }, [location.pathname]);
 
     return (
         <>
             <motion.aside
-                className={`sidebar ${isOpen ? 'open' : 'closed'}  ${themeMode === 'dark' ? 'dark' : 'light'}`}
+                className={`sidebar ${isOpen ? 'open' : 'closed'} ${themeMode === 'dark' ? 'dark' : 'light'}`}
                 initial="closed"
                 animate={isOpen ? "open" : "closed"}
                 variants={sidebarVariants}
@@ -153,108 +170,47 @@ const Sidebar = ({ isOpen, toggleSidebar}) => {
                                     </div>
                                 )}
                             </NavLink>
-                            {/* {!isMobile && (
-                                <button
-                                    className="toggle-collapse"
-                                    onClick={toggleSidebar}
-                                    aria-label={isOpen ? "Collapse sidebar" : "Expand sidebar"}
-                                >
-                                    * {isOpen ? <FaChevronLeft /> : <FaChevronRight />} 
-                                </button>
-                            )} */}
                         </div>
-                       
                     </div>
 
                     <nav className="sidebar-nav">
-                        {menuItems.map((item) => (
-                            <div className="menu-section" key={item.title}>
-                                {item.path ? (
-                                    <motion.div variants={itemVariants}>
-                                        <NavLink
-                                            to={item.path}
-                                            className={({ isActive }) =>
-                                                `menu-item ${isActive ? 'active' : ''}`
-                                            }
-                                            onClick={handleLinkClick}
-                                        >
-                                            {item.icon}
-                                            <span className="menu-text">{item.title}</span>
-                                            <div className="hover-effect"></div>
-                                        </NavLink>
-                                    </motion.div>
-                                ) : (
-                                    <>
-                                        <motion.div
-                                            className={`menu-item ${expanded[item.title.toLowerCase()] ? 'expanded' : ''}`}
-                                            onClick={() => toggleSection(item.title.toLowerCase())}
-                                            variants={itemVariants}
-                                        >
-                                            {item.icon}
-                                            <span className="menu-text">{item.title}</span>
-                                            {expanded[item.title.toLowerCase()] ? (
-                                                <FaAngleDown className="menu-arrow" />
-                                            ) : (
-                                                <FaAngleRight className="menu-arrow" />
-                                            )}
-                                            <div className="hover-effect"></div>
-                                        </motion.div>
+                        <div className="menu-scroll-container">
+                            {menuItems.map((item) => (
+                                <MenuItem
+                                    key={item.title}
+                                    item={item}
+                                    isExpanded={expanded[item.title.toLowerCase()]}
+                                    onToggle={toggleSection}
+                                    onClick={handleLinkClick}
+                                    variants={itemVariants}
+                                />
+                            ))}
 
-                                        <AnimatePresence>
-                                            {expanded[item.title.toLowerCase()] && (
-                                                <motion.div
-                                                    className="submenu"
-                                                    initial="closed"
-                                                    animate="open"
-                                                    exit="closed"
-                                                    variants={submenuVariants}
-                                                >
-                                                    {item.submenu.map((subItem) => (
-                                                        <motion.div
-                                                            key={subItem.path}
-                                                            variants={{
-                                                                open: { opacity: 1, x: 0 },
-                                                                closed: { opacity: 0, x: -10 }
-                                                            }}
-                                                        >
-                                                            <NavLink
-                                                                to={subItem.path}
-                                                                className={({ isActive }) =>
-                                                                    `submenu-item ${isActive ? 'active' : ''}`
-                                                                }
-                                                                onClick={handleLinkClick}
-                                                            >
-                                                                <span className="submenu-text">{subItem.title}</span>
-                                                                <div className="submenu-hover-effect"></div>
-                                                            </NavLink>
-                                                        </motion.div>
-                                                    ))}
-                                                </motion.div>
-                                            )}
-                                        </AnimatePresence>
-                                    </>
-                                )}
-                            </div>
-                        ))}
+                            <RoleBasedSection allowedRoles={["ROLE_ADMIN"]}>
+                                <MenuItem
+                                    item={employeeMenu}
+                                    isExpanded={expanded['employee']}
+                                    onToggle={toggleSection}
+                                    onClick={handleLinkClick}
+                                    variants={itemVariants}
+                                />
+                            </RoleBasedSection>
+                        </div>
                     </nav>
 
                     <div className="sidebar-footer">
+                        <RoleBasedSection allowedRoles={["ROLE_ADMIN"]}>
                         <div className="user-profile">
-                            <div className="user-avatar">JD</div>
+                            <div className="user-avatar">
+                                <FaUserCircle size={36} />
+                            </div>
                             <div className="user-info">
-                                <div className="user-name">John Doe</div>
+                                <div className="user-name">{user?.username}</div>
                                 <div className="user-role">Administrator</div>
                             </div>
                         </div>
-                        <motion.button
-                            className="logout-button"
-                            onClick={handleLogout}
-                            whileHover={{ scale: 1.02 }}
-                            whileTap={{ scale: 0.98 }}
-                        >
-                            <FaSignOutAlt />
-                            <span>Logout</span>
-                        </motion.button>
+                        </RoleBasedSection>
+                        
                     </div>
                 </div>
             </motion.aside>

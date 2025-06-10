@@ -8,7 +8,7 @@ export const loginUser = async (credentials) => {
 
     localStorage.setItem('token', token);
 
-    return { token, user: { id, email, username, roles } }; // Return structured user object
+    return { token, user: { id, email, username, roles } };
 };
 
 // ✅ Fetch user profile using token
@@ -17,7 +17,27 @@ export const fetchUserProfile = async () => {
     return response.data;
 };
 
-// ✅ Logout helper (optional)
+// ✅ Logout helper
 export const logoutUser = () => {
     localStorage.removeItem('token');
+};
+
+// ✅ Create new employee
+export const createEmployee = async (values) => {
+    
+
+    const payload = {
+        username: values.username,
+        password: values.password,
+        email: values.email,
+        roles: typeof values.roles === 'string' ? values.roles : values.roles[0],
+        contactNumber: values.contactNumber,
+    };
+
+    const response = await axiosInstance.post(
+        `/admin/create-employee`,
+        payload
+    );
+
+    return response.data;
 };

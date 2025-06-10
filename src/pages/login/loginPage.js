@@ -1,20 +1,36 @@
-// src/pages/login/LoginPage.js
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { loginUser } from '../../service/authService';
 import { useAuth } from '../../context/auth/authContext';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Autoplay, Navigation, Pagination } from 'swiper/modules';
+import 'swiper/css';
+import 'swiper/css/pagination';
+import 'swiper/css/navigation';
 import './LoginPage.css';
+
+// Import your images
+import image1 from '../../assets/images/login/Login1.jpg';
+import image2 from '../../assets/images/login/Login2.jpg';
+import image3 from '../../assets/images/login/Login3.png';
+import logo from '../../assets/images/bg-img-01.png';
+
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 const LoginPage = () => {
     const [form, setForm] = useState({ contactOrEmailOrUsername: '', password: '' });
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
-    const [isFocused, setIsFocused] = useState({
-        username: false,
-        password: false
-    });
+    
     const navigate = useNavigate();
     const { login } = useAuth();
+    const passwordInputRef = useRef(null);
+
+    const handleKeyDown = (e) => {
+        if (e.key === 'Enter' && e.target.name === 'contactOrEmailOrUsername') {
+            passwordInputRef.current?.focus();
+        }
+    };
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -23,7 +39,6 @@ const LoginPage = () => {
 
         try {
             const result = await loginUser(form);
-
             const token = result.token;
             const userData = {
                 id: result.user.id,
@@ -33,21 +48,18 @@ const LoginPage = () => {
             };
             const roles = userData.roles || [];
 
-            if (roles.includes("ROLE_EMPLOYEE") || roles.includes("ROLE_ADMIN")) {
-                login(token, userData);   // Save full user info in context
-                navigate('/');            // Navigate to dashboard
+            if (roles.includes('ROLE_ADMIN') || roles.includes('ROLE_EMPLOYEE')) {
+                login(token, userData);
+                navigate('/');
             } else {
-                setError("Access Denied: You are not authorized to access the dashboard.");
+                setError('Access Denied: You are not authorized to access the dashboard.');
             }
-            
-
         } catch (err) {
             setError(err.response?.data?.message || 'Invalid credentials. Please try again.');
         } finally {
             setIsLoading(false);
         }
     };
-    
 
     useEffect(() => {
         if (error) {
@@ -57,77 +69,127 @@ const LoginPage = () => {
     }, [error]);
 
     return (
-        <div className="login-container">
-            <div className="login-card">
-                <div className="login-header">
-                    <div className="company-logo">
-                        <svg viewBox="0 0 24 24" width="48" height="48" fill="#6366f1">
-                            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
-                        </svg>
-                    </div>
-                    <h2>Employee Portal</h2>
-                    <p>Secure access to company resources</p>
-                </div>
+        <section className="sign-in-page ">
+            <div className="container sign-in-page-bg mt-4 mb-md-4 mb-0 p-0">
+                <div className="row no-gutters">
+                    {/* Left Side - Carousel */}
+                    <div className="col-md-6 text-center sign-in-details">
+                        <div className="sign-in-detail text-white">
+                            <p className="sign-in-logo mb-8">
+                                <img src={logo} className="img-fluid" alt="logo" />
+                                <span className="logName">Admin Portal</span>
+                            </p>
 
-                <form onSubmit={handleLogin} className="login-form">
-                    <div className={`form-group ${isFocused.username ? 'focused' : ''}`}>
-                        <label htmlFor="username">Employee ID / Email</label>
-                        <input
-                            id="username"
-                            type="text"
-                            placeholder="Enter your ID or email"
-                            value={form.contactOrEmailOrUsername}
-                            onChange={(e) => setForm({ ...form, contactOrEmailOrUsername: e.target.value })}
-                            onFocus={() => setIsFocused({ ...isFocused, username: true })}
-                            onBlur={() => setIsFocused({ ...isFocused, username: false })}
-                            required
-                            className={error ? 'input-error' : ''}
-                        />
-                        <div className="input-highlight"></div>
-                    </div>
-
-                    <div className={`form-group ${isFocused.password ? 'focused' : ''}`}>
-                        <label htmlFor="password">Password</label>
-                        <input
-                            id="password"
-                            type="password"
-                            placeholder="Enter your password"
-                            value={form.password}
-                            onChange={(e) => setForm({ ...form, password: e.target.value })}
-                            onFocus={() => setIsFocused({ ...isFocused, password: true })}
-                            onBlur={() => setIsFocused({ ...isFocused, password: false })}
-                            required
-                            className={error ? 'input-error' : ''}
-                        />
-                        <div className="input-highlight"></div>
-                    </div>
-
-                    <button type="submit" className="login-button" disabled={isLoading}>
-                        {isLoading ? (
-                            <span className="button-loader"></span>
-                        ) : (
-                            <>
-                                <span className="button-text">Sign In</span>
-                                <span className="button-icon">
-                                    <svg viewBox="0 0 20 20" fill="currentColor" width="20" height="20">
-                                        <path fillRule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
-                                    </svg>
-                                </span>
-                            </>
-                        )}
-                    </button>
-
-                    {error && (
-                        <div className="error-message">
-                            <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" fill="none">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                            <span>{error}</span>
+                            <Swiper
+                                modules={[Pagination, Navigation, Autoplay]}
+                                spaceBetween={10}
+                                slidesPerView={1}
+                                autoplay={{ delay: 3000 }}
+                                pagination={{ clickable: true, type: 'bullets' }}
+                                className="swiper-navigation"
+                            >
+                                <SwiperSlide>
+                                    <img src={image1} alt="Slide 1" className="img-fluid" />
+                                    <h4 className="firstSlide">Admin Dashboard</h4>
+                                    <p className="firstSlidePara">
+                                        Comprehensive tools for managing your organization
+                                    </p>
+                                </SwiperSlide>
+                                <SwiperSlide>
+                                    <img src={image2} alt="Slide 2" className="img-fluid" />
+                                    <h4 className="firstSlide">System Control</h4>
+                                    <p className="firstSlidePara">
+                                        Full administrative access to all system features
+                                    </p>
+                                </SwiperSlide>
+                                <SwiperSlide>
+                                    <img src={image3} alt="Slide 3" className="img-fluid" />
+                                    <h4 className="firstSlide">User Management</h4>
+                                    <p className="firstSlidePara">
+                                        Manage permissions and access levels with ease
+                                    </p>
+                                </SwiperSlide>
+                            </Swiper>
                         </div>
-                    )}
-                </form>
+                    </div>
+
+                    {/* Right Side - Login Form */}
+                    <div className="col-md-6 position-relative">
+                        <div className="sign-in-from">
+                            <h1 className="mb-0">Admin Login</h1>
+                            <p>Secure access to administrative panel</p>
+
+                            {error && (
+                                <div className="error-message">
+                                    <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" fill="none">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                    <span>{error}</span>
+                                </div>
+                            )}
+
+                            <form className="mt-4" onSubmit={handleLogin}>
+                                <div className="form-group">
+                                    <label className="mb-0">Admin Name / Email</label>
+                                    <input
+                                        type="text"
+                                        className="form-control mb-1"
+                                        name="contactOrEmailOrUsername"
+                                        placeholder="Enter admin name or email"
+                                        value={form.contactOrEmailOrUsername}
+                                        onChange={(e) => setForm({ ...form, contactOrEmailOrUsername: e.target.value })}
+                                        onKeyDown={handleKeyDown}
+                                        required
+                                        autoFocus
+                                    />
+                                </div>
+                                <div className="d-flex justify-content-between my-2">
+                                    <label>Password</label>
+                                </div>
+                                <input
+                                    ref={passwordInputRef}
+                                    type="password"
+                                    className="form-control mb-0"
+                                    placeholder="Enter admin password"
+                                    name="password"
+                                    value={form.password}
+                                    onChange={(e) => setForm({ ...form, password: e.target.value })}
+                                    required
+                                />
+                                <div className="d-flex w-100 justify-content-center align-items-center mt-3 ">
+                                    
+                                    <button
+                                        type="submit"
+                                        className="btn btn-primary float-end"
+                                        
+                                        disabled={isLoading}
+                                    >
+                                        {isLoading ? (
+                                            <span className="button-loader"></span>
+                                        ) : (
+                                            <>
+                                                <span className="button-text">Log In</span>
+                                                <span className="button-icon">
+                                                    <svg viewBox="0 0 25 22" fill="currentColor" width="25" height="22">
+                                                        <path fillRule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
+                                                    </svg>
+                                                </span>
+                                            </>
+                                        )}
+                                    </button>
+                                </div>
+
+                                <div className="sign-info">
+                                    <span className="dark-color d-inline-block line-height-2">
+                                        Need access ?   <span className='contact-admin'> Contact Super Admin</span>
+                                    </span>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
+        </section>
     );
 };
 

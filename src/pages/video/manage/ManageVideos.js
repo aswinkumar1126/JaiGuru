@@ -7,7 +7,6 @@ import {
     useDeleteVideoMutation,
 } from "../../../hooks/video/useVideoQuery";
 import { FaEdit, FaTrash, FaSave, FaTimes, FaPlus, FaSync, FaSearch } from 'react-icons/fa';
-import { FiDownload } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
 import * as XLSX from 'xlsx';
 import { jsPDF } from 'jspdf';
@@ -233,7 +232,7 @@ const ManageVideos = () => {
                     <div className="col-sm-12">
                         <ul className="breadcrumb">
                             <li className="breadcrumb-item">
-                                <a onClick={() => navigate(`/dashboard`)}>Dashboard</a>
+                                <p onClick={() => navigate(`/dashboard`)}>Dashboard</p>
                             </li>
                             <li className="breadcrumb-item">
                                 <i className="fas fa-angle-right"></i>
@@ -268,26 +267,26 @@ const ManageVideos = () => {
                                                             value={searchQuery}
                                                             onChange={handleSearch}
                                                         />
-                                                        <a className="btn">
+                                                        <p className="btn">
                                                             <FaSearch />
-                                                        </a>
+                                                        </p>
                                                     </form>
                                                 </div>
 
                                                 <div className="add-group">
-                                                    <a
+                                                    <p
                                                         onClick={() => navigate('/video/add')}
                                                         className="btn btn-primary add-pluss ms-2"
                                                     >
                                                         <FaPlus />
-                                                    </a>
-                                                    <a
+                                                    </p>
+                                                    <p
                                                         href="#"
                                                         className="btn btn-primary doctor-refresh ms-2"
                                                         onClick={handleRefreshClick}
                                                     >
                                                         <FaSync />
-                                                    </a>
+                                                    </p>
                                                 </div>
                                             </div>
                                         </div>

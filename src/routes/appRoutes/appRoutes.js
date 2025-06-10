@@ -19,6 +19,8 @@ import AddVideos from '../../pages/video/add/addVideo';
 import ManageVideos from '../../pages/video/manage/ManageVideos';
 import AddRates from '../../pages/rate/add/addRates';
 import ManageRates from '../../pages/rate/manage/manageRates';
+import AddEmployee from '../../pages/employee/add/AddEmployee';
+import ManageEmployees from '../../pages/employee/manage/ManageEmployees';
 import Unauthorized from '../../pages/unauthorized/Unauthorized';
 
 import './appRoutes.css';
@@ -50,7 +52,7 @@ const AppRoutes = () => {
                             <Routes>
                                 <Route path="/" element={
                                     <ProtectedRoute allowedRoles={allowedRoles}>
-                                        <MainContent isSidebarOpen={isSidebarOpen} />
+                                            <MainContent className={`main-content ${themeMode} ${isSidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`} />
                                     </ProtectedRoute>
                                 } />
                                 <Route path="/product/add" element={
@@ -93,9 +95,23 @@ const AppRoutes = () => {
                                         <ManageRates />
                                     </ProtectedRoute>
                                 } />
-                                <Route path="/profile" element={
+                                    <Route path="/profile" element={
+                                        <ProtectedRoute allowedRoles={allowedRoles}>
+                                            <EmployeeProfile />
+                                        </ProtectedRoute>
+                                    } />
+                                    <Route path="/employee/add" element={
+                                        <ProtectedRoute allowedRoles={allowedRoles}>
+                                            <AddEmployee />
+                                        </ProtectedRoute>
+                                    } />
+
+
+
+
+                                <Route path="/employee/manage" element={
                                     <ProtectedRoute allowedRoles={allowedRoles}>
-                                        <EmployeeProfile />
+                                        <ManageEmployees />
                                     </ProtectedRoute>
                                 } />
                                 <Route path="/unauthorized" element={<Unauthorized />} />
