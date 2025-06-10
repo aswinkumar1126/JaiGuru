@@ -24,6 +24,7 @@ import ManageEmployees from '../../pages/employee/manage/ManageEmployees';
 import Unauthorized from '../../pages/unauthorized/Unauthorized';
 
 import './appRoutes.css';
+import UserDetails from '../../pages/dashboard/userDetails';
 
 const AppRoutes = () => {
     const { isSidebarOpen, setIsSidebarOpen, themeMode } = useContext(MyContext);
@@ -48,7 +49,7 @@ const AppRoutes = () => {
                     <Header toggleSidebar={() => setIsSidebarOpen(prev => !prev)} isSidebarOpen={isSidebarOpen} />
                     <div className="layout-body">
                         <Sidebar isOpen={isSidebarOpen} toggleSidebar={() => setIsSidebarOpen(prev => !prev)} />
-                        <main className="main-content">
+                            <main className="main-content">
                             <Routes>
                                 <Route path="/" element={
                                     <ProtectedRoute allowedRoles={allowedRoles}>
@@ -114,6 +115,8 @@ const AppRoutes = () => {
                                         <ManageEmployees />
                                     </ProtectedRoute>
                                 } />
+
+                                <Route path='/userDetails' element={<UserDetails/>} />
                                 <Route path="/unauthorized" element={<Unauthorized />} />
                                 <Route path="*" element={<Navigate to="/" replace />} />
                             </Routes>

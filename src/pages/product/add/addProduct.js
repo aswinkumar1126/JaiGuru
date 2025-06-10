@@ -63,7 +63,8 @@ const AddProducts = () => {
 
         try {
             await uploadImages(sno, selectedFiles, description);
-            setFeedback({ error: '', success: 'Images and description uploaded successfully!' });
+            setFeedback({ error: '', success: 'Images and description uploaded successfully!'});
+            localStorage.setItem('sno',sno);
             setSno('');
             setDescription('');
             setSelectedFiles([]);

@@ -6,6 +6,8 @@ import {
   FaUserCircle,
   FaCog,
   FaSignOutAlt,
+  FaEnvelope,
+  FaGlobe
   
 } from 'react-icons/fa';
 import {
@@ -33,6 +35,10 @@ const Header = ({ toggleSidebar, isSidebarOpen }) => {
   const [isNotificationMenuOpen, setIsNotificationMenuOpen] = useState(false);
  
   const [isColorMenuOpen, setIsColorMenuOpen] = useState(false);
+  const languageMenuRef = useRef(null);
+  const [isLanguageMenuOpen, setIsLanguageMenuOpen] = useState(false);
+  const emailMenuRef = useRef(null);
+  const [isEmailMenuOpen, setIsEmailMenuOpen] = useState(false);
 
   const navigate = useNavigate();
   const { t } = useTranslation();
@@ -43,10 +49,16 @@ const Header = ({ toggleSidebar, isSidebarOpen }) => {
   const { logout } = useAuth();
   const { data: user } = useUserProfile();
 
+  const {i18n } = useTranslation();
+
 
   const changeThemeColor = (color) => {
     setThemeColor(color);
     setIsColorMenuOpen(false);
+  };
+  const changeLanguage = (lng) => {
+    i18n.changeLanguage(lng);
+    setIsLanguageMenuOpen(false);
   };
 
   // Handle window resize
@@ -214,7 +226,7 @@ const Header = ({ toggleSidebar, isSidebarOpen }) => {
             {themeMode === 'light' ? <MdDarkMode /> : <MdOutlineLightMode />}
           </button>
 
-          {/* Language Selector
+          
           <div className="dropdown-wrapper" ref={languageMenuRef}>
             <button
               className="icon-button"
@@ -242,9 +254,8 @@ const Header = ({ toggleSidebar, isSidebarOpen }) => {
                 </motion.div>
               )}
             </AnimatePresence>
-          </div> */}
+          </div>
 
-          {/* Email
           <div className="dropdown-wrapper" ref={emailMenuRef}>
             <button
               className="icon-button"
@@ -276,7 +287,7 @@ const Header = ({ toggleSidebar, isSidebarOpen }) => {
                 </motion.div>
               )}
             </AnimatePresence>
-          </div> */}
+          </div>
 
           {/* Notifications */}
           <div className="dropdown-wrapper" ref={notificationMenuRef}>
@@ -323,7 +334,7 @@ const Header = ({ toggleSidebar, isSidebarOpen }) => {
             </AnimatePresence>
           </div>
 
-          {/* User Profile */}
+          
           {/* User Profile */}
           <div className="dropdown-wrapper profile-dropdown" ref={profileMenuRef}>
             <button

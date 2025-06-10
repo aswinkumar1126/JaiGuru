@@ -1,0 +1,96 @@
+.good-morning-blk {
+    background: #ffffff;
+    border-radius: 12px;
+    margin-top: 80px;
+    margin-bottom: 15px;
+    position: relative;
+    z-index: 9;
+}
+
+.good-morning-blk:before {
+    content: '';
+    position: absolute;
+    background-image: url('../../assets/images/bg-img-01.png');
+    background-repeat: no-repeat;
+    background-position: top right;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+}
+
+.morning-user {
+    padding: 50px 0px 50px 35px;
+}
+
+.morning-user h2 {
+    font-size: 28px;
+    font-weight: 600;
+}
+
+.morning-user h2 span {
+    color: #2e37a4;
+}
+
+.morning-user p {
+    font-size: 15px;
+    font-weight: 500;
+    color: rgba(51, 52, 72, 0.5);
+    margin-bottom: 0;
+}
+
+.position-blk {
+    position: relative;
+}
+
+.morning-img img {
+    position: absolute;
+    bottom: 0;
+}
+
+@media only screen and (max-width: 767.98px) {
+    .good-morning-blk:before {
+        display: none;
+    }
+
+    .morning-user {
+        padding: 0;
+    }
+
+    .good-morning-blk {
+        padding: 20px;
+    }
+
+    .morning-user h2 {
+        font-size: 20px;
+    }
+
+    .morning-user p {
+        font-size: 14px;
+    }
+
+    .morning-img img {
+        position: relative;
+        width: 100%;
+    }
+}
+
+@media only screen and (max-width: 991.98px) {
+    .morning-user {
+        padding: 25px 0px 25px 25px;
+    }
+
+    .morning-user h2 {
+        font-size: 26px;
+    }
+}
+
+@media only screen and (max-width: 1199.98px) {
+    .morning-user {
+        padding: 30px 0px 30px 30px;
+    }
+
+    .morning-user h2 {
+        font-size: 28px;
+        font-weight: 600;
+    }
+}

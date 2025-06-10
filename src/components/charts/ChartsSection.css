@@ -1,14 +1,14 @@
 /* ChartsSection.css */
 .charts-section-container {
     width: 100%;
-    padding: 0.5rem;
+    padding: 1.5rem;
     box-sizing: border-box;
 }
 
 .charts-section {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 0.75rem;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 1.5rem;
     width: 100%;
     max-width: 100%;
     margin: 0 auto;
@@ -16,49 +16,62 @@
 
 .chart-box {
     background-color: #ffffff;
-    padding: 0.75rem;
-    border-radius: 8px;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-    transition: all 0.2s ease;
+    padding: 1.25rem;
+    border-radius: 14px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
+    transition: all 0.3s ease;
     display: flex;
     flex-direction: column;
     border: 1px solid #e5e7eb;
     height: 100%;
-    min-height: 220px;
+    min-height: 300px;
+    position: relative;
+    overflow: hidden;
 }
 
 .chart-box:hover {
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08), 0 4px 10px -2px rgba(0, 0, 0, 0.04);
     transform: translateY(-2px);
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.chart-box::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #6366F1, #EC4899);
 }
 
 .chart-header {
     display: flex;
     align-items: center;
-    margin-bottom: 0.5rem;
-    gap: 0.5rem;
+    margin-bottom: 1rem;
+    gap: 0.75rem;
 }
 
 .chart-icon {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 28px;
-    height: 28px;
+    width: 36px;
+    height: 36px;
     background-color: #f8fafc;
-    border-radius: 6px;
-    color: #3b82f6;
+    border-radius: 10px;
+    color: #6366F1;
     flex-shrink: 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .chart-icon-svg {
-    width: 14px;
-    height: 14px;
+    width: 18px;
+    height: 18px;
 }
 
 .chart-title {
     margin: 0;
-    font-size: 0.9rem;
+    font-size: 1rem;
     font-weight: 600;
     color: #111827;
     white-space: nowrap;
@@ -68,8 +81,143 @@
 
 .chart-container {
     flex: 1;
-    min-height: 160px;
+    min-height: 240px;
     width: 100%;
+}
+
+/* KPI Grid Styles */
+.kpi-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+    height: 100%;
+}
+
+.kpi-card {
+    background: #f9fafb;
+    border-radius: 10px;
+    padding: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    border: 1px solid #e5e7eb;
+    transition: all 0.2s ease;
+}
+
+.kpi-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: #fff;
+}
+
+.kpi-content {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.kpi-name {
+    font-size: 10px;
+    color: #6b7280;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.kpi-value {
+    font-size: 16px;
+    font-weight: 700;
+    color: #111827;
+    margin: 2px 0;
+}
+
+.kpi-trend {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.trend-up,
+.trend-down {
+    font-size: 10px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+}
+
+.trend-up::before {
+    content: '↑';
+    margin-right: 2px;
+}
+
+.trend-down::before {
+    content: '↓';
+    margin-right: 2px;
+}
+
+.kpi-period {
+    font-size: 9px;
+    color: #9ca3af;
+}
+
+/* Custom Tooltip */
+.custom-tooltip {
+    background: rgba(255, 255, 255, 0.98);
+    border: 1px solid #E5E7EB;
+    border-radius: 10px;
+    padding: 12px 14px;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    font-size: 12px;
+    line-height: 1.4;
+    min-width: 160px;
+}
+
+.tooltip-label {
+    font-weight: 700;
+    color: #111827;
+    margin-bottom: 8px;
+    border-bottom: 1px solid #f3f4f6;
+    padding-bottom: 6px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.tooltip-items {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.tooltip-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.tooltip-marker {
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+    flex-shrink: 0;
+}
+
+.tooltip-name {
+    color: #6b7280;
+    flex: 1;
+    font-size: 11px;
+}
+
+.tooltip-value {
+    font-weight: 600;
+    color: #111827;
+    font-size: 11px;
 }
 
 /* Recharts custom styles */
@@ -84,7 +232,8 @@
 
 .recharts-legend-item {
     display: inline-flex !important;
-    margin-right: 8px !important;
+    margin-right: 12px !important;
+    align-items: center !important;
 }
 
 .recharts-legend-item-text {
@@ -93,121 +242,148 @@
     margin-left: 4px !important;
 }
 
+.recharts-default-legend {
+    padding-top: 8px !important;
+}
+
 .recharts-tooltip-wrapper {
-    border-radius: 6px !important;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
-    border: 1px solid #e5e7eb !important;
+    border-radius: 10px !important;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
+    border: 1px solid #E5E7EB !important;
     background-color: rgba(255, 255, 255, 0.98) !important;
 }
 
 .recharts-tooltip-label {
     color: #374151 !important;
-    font-weight: 500 !important;
+    font-weight: 600 !important;
     font-size: 10px !important;
-    margin-bottom: 2px !important;
+    margin-bottom: 4px !important;
 }
 
 .recharts-default-tooltip {
-    padding: 6px 8px !important;
+    padding: 8px 12px !important;
 }
 
 .recharts-tooltip-item {
     display: flex !important;
     align-items: center !important;
-    margin-top: 2px !important;
+    margin-top: 4px !important;
     font-size: 10px !important;
 }
 
+.recharts-tooltip-item-list {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 2px !important;
+}
+
 /* Responsive adjustments */
+@media (max-width: 1440px) {
+    .charts-section {
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    }
+}
+
+@media (max-width: 1280px) {
+    .charts-section {
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    }
+}
+
 @media (max-width: 1024px) {
     .charts-section {
         grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-        gap: 0.6rem;
     }
 
     .chart-box {
-        padding: 0.6rem;
-        min-height: 200px;
+        min-height: 280px;
     }
 }
 
 @media (max-width: 768px) {
     .charts-section {
-        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
     }
 
-    .chart-box {
-        min-height: 180px;
-    }
-
-    .chart-icon {
-        width: 24px;
-        height: 24px;
-    }
-
-    .chart-icon-svg {
-        width: 12px;
-        height: 12px;
-    }
-
-    .chart-title {
-        font-size: 0.8rem;
+    .kpi-grid {
+        grid-template-columns: 1fr;
     }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 640px) {
     .charts-section {
-        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-        gap: 0.5rem;
+        grid-template-columns: 1fr;
     }
 
     .chart-box {
-        min-height: 160px;
-        padding: 0.5rem;
+        min-height: 260px;
     }
 }
 
 /* Dark mode support */
-@media (prefers-color-scheme: dark) {
-    .chart-box {
-        background-color: #1f2937;
-        border-color: #374151;
-    }
+.dark .chart-box {
+    background-color: #1f2937;
+    border-color: #374151;
+}
 
-    .chart-box:hover {
-        border-color: #4b5563;
-    }
+.dark .chart-box:hover {
+    border-color: #4b5563;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2);
+}
 
-    .chart-icon {
-        background-color: #111827;
-        color: #60a5fa;
-    }
+.dark .chart-icon {
+    background-color: #111827;
+    color: #818cf8;
+}
 
-    .chart-title {
-        color: #f9fafb;
-    }
+.dark .chart-title {
+    color: #f9fafb;
+}
 
-    .recharts-cartesian-grid line {
-        stroke: #374151;
-    }
+.dark .kpi-card {
+    background: #1f2937;
+    border-color: #374151;
+}
 
-    .recharts-cartesian-axis-tick-value {
-        fill: #9ca3af !important;
-    }
+.dark .kpi-value {
+    color: #f9fafb;
+}
 
-    .recharts-legend-item-text {
-        color: #9ca3af !important;
-    }
+.dark .recharts-cartesian-grid line {
+    stroke: #374151;
+}
 
-    .recharts-tooltip-wrapper {
-        background-color: rgba(31, 41, 55, 0.98) !important;
-        border-color: #4b5563 !important;
-    }
+.dark .recharts-cartesian-axis-tick-value {
+    fill: #9ca3af !important;
+}
 
-    .recharts-tooltip-label {
-        color: #f3f4f6 !important;
-    }
+.dark .recharts-legend-item-text {
+    color: #9ca3af !important;
+}
 
-    .recharts-tooltip-item-value {
-        color: #f3f4f6 !important;
-    } }
+.dark .recharts-tooltip-wrapper {
+    background-color: rgba(31, 41, 55, 0.98) !important;
+    border-color: #4b5563 !important;
+}
+
+.dark .recharts-tooltip-label {
+    color: #f3f4f6 !important;
+}
+
+.dark .recharts-tooltip-item-value {
+    color: #f3f4f6 !important;
+}
+
+.dark .custom-tooltip {
+    background: rgba(31, 41, 55, 0.98);
+    border-color: #4b5563;
+}
+
+.dark .tooltip-label {
+    color: #f9fafb;
+    border-color: #4b5563;
+}
+
+.dark .tooltip-name {
+    color: #d1d5db;
+}

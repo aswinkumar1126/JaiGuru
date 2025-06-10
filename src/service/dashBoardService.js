@@ -18,7 +18,8 @@ export const getDashboardData = async () => {
             axiosInstance.get(`/order/cancelled-orders`),
             axiosInstance.get(`/order/shipped-orders`),
             axiosInstance.get(`/auth/user/count`),
-            axiosInstance.get('/getMetalCategoryCounts')
+            axiosInstance.get('/getMetalCategoryCounts'),
+            
         ]);
 
         return {

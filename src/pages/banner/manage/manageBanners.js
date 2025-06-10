@@ -231,7 +231,23 @@ const ManageBanner = () => {
                         <div className="row align-items-center">
                             <div className="col">
                                 <h3 className="table-title">Manage Banners</h3>
-                                <div className="search-bar">
+                                <div className="action-buttons">
+                                    <button
+                                        onClick={() => navigate('/banners/add')}
+                                        className="btn btn-primary add-btn"
+                                        title="Add Banner"
+                                    >
+                                        <img src={plusSvg} alt="Add" />
+                                    </button>
+                                    <button
+                                        onClick={handleRefreshClick}
+                                        className="btn btn-primary refresh-btn"
+                                        title="Refresh"
+                                    >
+                                        <img src={refreshSvg} alt="Refresh" />
+                                    </button>
+                                </div>
+                                {/* <div className="search-bar">
                                     <form className="search-form">
                                         <input
                                             type="text"
@@ -258,7 +274,7 @@ const ManageBanner = () => {
                                             <img src={refreshSvg} alt="Refresh" />
                                         </button>
                                     </div>
-                                </div>
+                                </div> */}
                             </div>
                             <div className="col-auto export-buttons">
                                 <button onClick={exportToPDF} className="btn export-btn" title="Export to PDF">
