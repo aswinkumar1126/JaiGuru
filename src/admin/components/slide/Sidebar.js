@@ -7,7 +7,7 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import { MyContext } from '../../context/themeContext/themeContext';
 import './Sidebar.css';
-import { getPageTitle } from '../../utils/pageTitle/getPageTitle';
+import { getPageTitle } from '../../../utils/pageTitle/getPageTitle';
 import RoleBasedSection from '../common/RoleBasedSection';
 import MenuItem from '../common/MenuItem';
 import { useUserProfile } from '../../hooks/profile/useUserProfile';

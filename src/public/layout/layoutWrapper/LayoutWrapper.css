@@ -1,0 +1,38 @@
+/* src/layouts/LayoutWrapper.css */
+
+.app-wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: #fff;
+    /* Optional: set a global background */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    width: 100% !important;
+}
+
+.content-area {
+    flex: 1;
+    padding: 1rem;
+    /* Adjust based on your design */
+    width: 100% !important;
+    margin: 0 auto;
+    box-sizing: border-box;
+}
+
+/* Optional global scrollbar styling */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
