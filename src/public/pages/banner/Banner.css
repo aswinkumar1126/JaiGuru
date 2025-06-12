@@ -42,7 +42,6 @@
     max-width: 100%;
     overflow: hidden;
     border-radius: 1rem;
-    margin-top: 40px;
     box-shadow: var(--shadow-md);
     background-color: var(--bg-color);
     transition: var(--transition-base);

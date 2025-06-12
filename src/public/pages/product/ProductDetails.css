@@ -40,7 +40,7 @@
     width: 100%;
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 1.5rem;
 }
 
 .image-container {
@@ -67,26 +67,42 @@
     cursor: zoom-in;
 }
 
+/* Thumbnail Gallery */
+.thumbnail-gallery-container {
+    position: relative;
+    max-width: 500px;
+    margin: 0 auto;
+    width: 100%;
+}
+
 .image-thumbnails {
     display: flex;
-    gap: 0.5rem;
-    margin-top: 1rem;
-    justify-content: center;
-    flex-wrap: wrap;
+    gap: 0.75rem;
+    padding: 0.5rem 0;
     overflow-x: auto;
-    padding-bottom: 0.5rem;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+    /* Firefox */
+    -ms-overflow-style: none;
+    /* IE and Edge */
+}
+
+.image-thumbnails::-webkit-scrollbar {
+    display: none;
+    /* Chrome, Safari, Opera */
 }
 
 .thumbnail {
-    width: 60px;
-    height: 60px;
-    min-width: 60px;
+    width: 80px;
+    height: 80px;
+    min-width: 80px;
     border: 1px solid var(--medium-gray);
     border-radius: 4px;
-    padding: 3px;
+    padding: 4px;
     background: white;
     cursor: pointer;
     transition: var(--transition);
+    flex-shrink: 0;
 }
 
 .thumbnail:hover {
@@ -105,11 +121,44 @@
     object-fit: cover;
 }
 
+.thumbnail-nav-button {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 32px;
+    height: 32px;
+    background: white;
+    border: 1px solid var(--medium-gray);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 10;
+    box-shadow: var(--shadow-sm);
+    transition: var(--transition);
+}
+
+.thumbnail-nav-button:hover {
+    background: var(--light-gray);
+    box-shadow: var(--shadow-md);
+}
+
+.thumbnail-nav-button.left {
+    left: -16px;
+}
+
+.thumbnail-nav-button.right {
+    right: -16px;
+}
+
+/* Product Actions */
 .product-actions {
     display: flex;
     flex-wrap: wrap;
     gap: 0.75rem;
-    margin-top: 1rem;
+    margin-top: 0.5rem;
+    justify-content: center;
 }
 
 /* Info Section */
@@ -337,10 +386,6 @@
         padding: 1.5rem;
     }
 
-    .image-thumbnails {
-        gap: 0.75rem;
-    }
-
     .thumbnail {
         width: 70px;
         height: 70px;
@@ -414,10 +459,6 @@
 
     .product-image-section {
         gap: 1.5rem;
-    }
-
-    .image-thumbnails {
-        justify-content: flex-start;
     }
 
     .product-actions {

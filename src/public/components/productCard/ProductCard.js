@@ -5,14 +5,25 @@ import './ProductCard.css';
 function ProductCard({ product, onQuickView, onAddToCart, onAddToWishlist }) {
     const [isWishlisted, setIsWishlisted] = React.useState(false);
 
+    const getFirstProductImage = (imagePath) => {
+        try {
+            const images = JSON.parse(imagePath || "[]");
+            return images.length > 0
+                ? `https://app.bmgjewellers.com${images[0]}`
+                : "/fallback.jpg";
+        } catch {
+            return "/fallback.jpg";
+        }
+    };
+    
+
     const handleAddToWishlist = (e) => {
         e.preventDefault();
         setIsWishlisted(!isWishlisted);
         if (onAddToWishlist) onAddToWishlist(product);
     };
-    const imageUrl = product.ImagePath
-        ? `https://app.bmgjewellers.com:1922/${product.ImagePath}`
-        : '/fallback.jpg';
+    const imageUrl = getFirstProductImage(product.ImagePath);
+
 
     return (
         <article className="product-card">
@@ -22,7 +33,7 @@ function ProductCard({ product, onQuickView, onAddToCart, onAddToWishlist }) {
             </div>
 
             <div className="product-card__image-container">
-                {product.image_url ? (
+                {imageUrl ? (
                     <img
                         src={imageUrl}
                         alt={product.ITEMNAME}
@@ -30,7 +41,7 @@ function ProductCard({ product, onQuickView, onAddToCart, onAddToWishlist }) {
                         loading="lazy"
                         width="300"
                         height="300"
-                  />
+                    />
                 ) : (
                     <div className="product-card__image-placeholder">
                         <span>No Image Available</span>

@@ -5,6 +5,7 @@ import SkeletonLoader from "../../components/loader/SkeletonLoader";
 import Button from "../../components/button/Button";
 import { useSingleProductQuery } from "../../hook/product/useSingleProductQuery";
 import './ProductDetails.css';
+import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 
 const ProductDetails = () => {
     const { sno } = useParams();
@@ -16,6 +17,7 @@ const ProductDetails = () => {
     const [expandedSpecs, setExpandedSpecs] = useState(false);
     const imgRef = useRef(null);
     const zoomRef = useRef(null);
+    const thumbnailContainerRef = useRef(null);
 
     const baseUrl = "https://app.bmgjewellers.com";
     const [imageUrls, setImageUrls] = useState([]);
@@ -36,14 +38,11 @@ const ProductDetails = () => {
         if (!imgRef.current || !zoomRef.current) return;
 
         const container = imgRef.current;
-        const zoomContainer = zoomRef.current;
         const { left, top, width, height } = container.getBoundingClientRect();
 
-        // Calculate mouse position relative to the image
         const x = ((e.clientX - left) / width) * 100;
         const y = ((e.clientY - top) / height) * 100;
 
-        // Position the zoom preview to the right of the main image
         const zoomLeft = left + width + 20;
         const zoomTop = top;
 
@@ -56,6 +55,28 @@ const ProductDetails = () => {
         });
     };
 
+    const handleThumbnailScroll = (direction) => {
+        if (thumbnailContainerRef.current) {
+            const scrollAmount = direction === 'left' ? -200 : 200;
+            thumbnailContainerRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+        }
+    };
+
+    const handleThumbnailClick = (index) => {
+        setActiveImageIndex(index);
+        // Scroll the clicked thumbnail into view
+        if (thumbnailContainerRef.current) {
+            const thumbnails = thumbnailContainerRef.current.children;
+            if (thumbnails[index]) {
+                thumbnails[index].scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'nearest',
+                    inline: 'center'
+                });
+            }
+        }
+    };
+
     const toggleSpecs = () => {
         setExpandedSpecs(!expandedSpecs);
     };
@@ -63,7 +84,6 @@ const ProductDetails = () => {
     if (isError) return <Error error={error} />;
     if (isLoading || !productDetail) return <SkeletonLoader count={1} type="details" />;
 
-    // Group specifications into logical categories
     const specificationGroups = {
         "Basic Details": [
             { label: "Item Name", value: productDetail.ITEMNAME },
@@ -113,13 +133,26 @@ const ProductDetails = () => {
                                 e.target.alt = 'Product image not available';
                             }}
                         />
-                        {imageUrls.length > 1 && (
-                            <div className="image-thumbnails">
-                                {imageUrls.slice(0, 4).map((url, index) => (
+                    </div>
+
+                    {imageUrls.length > 1 && (
+                        <div className="thumbnail-gallery-container">
+                            {imageUrls.length > 4 && (
+                                <button
+                                    className="thumbnail-nav-button left"
+                                    onClick={() => handleThumbnailScroll('left')}
+                                    aria-label="Scroll thumbnails left"
+                                >
+                                    <FiChevronLeft size={20} />
+                                </button>
+                            )}
+
+                            <div className="image-thumbnails" ref={thumbnailContainerRef}>
+                                {imageUrls.map((url, index) => (
                                     <button
                                         key={index}
                                         className={`thumbnail ${index === activeImageIndex ? 'active' : ''}`}
-                                        onClick={() => setActiveImageIndex(index)}
+                                        onClick={() => handleThumbnailClick(index)}
                                         aria-label={`View image ${index + 1}`}
                                     >
                                         <img
@@ -134,8 +167,18 @@ const ProductDetails = () => {
                                     </button>
                                 ))}
                             </div>
-                        )}
-                    </div>
+
+                            {imageUrls.length > 4 && (
+                                <button
+                                    className="thumbnail-nav-button right"
+                                    onClick={() => handleThumbnailScroll('right')}
+                                    aria-label="Scroll thumbnails right"
+                                >
+                                    <FiChevronRight size={20} />
+                                </button>
+                            )}
+                        </div>
+                    )}
 
                     <div className="product-actions">
                         <Button
@@ -151,7 +194,6 @@ const ProductDetails = () => {
                         />
                     </div>
                 </div>
-
                 <div className="product-info-section">
                     <div className="product-header">
                         <h1 className="product-title">{productDetail.ITEMNAME || productDetail.productName}</h1>
