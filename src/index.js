@@ -4,7 +4,7 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { GoogleOAuthProvider } from '@react-oauth/google';
-
+import 'bootstrap/dist/css/bootstrap.min.css'
 
 const clientId = "1059348243794-1kjqfmr81g2uv2t9o0hgdoak7p20i9bm.apps.googleusercontent.com";
 const root = ReactDOM.createRoot(document.getElementById('root'));

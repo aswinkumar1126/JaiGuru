@@ -4,10 +4,10 @@ import {
   QueryClient,
   QueryClientProvider,
 } from '@tanstack/react-query';
-import { ProductProvider } from './context/product/productContext';
-import { MyContextProvider } from './context/themeContext/themeContext';
-import { PageTitleProvider } from './context/pageTitle/PageTitleContext';
-import { AuthProvider } from './context/auth/authContext';
+import { ProductProvider } from './admin/context/product/productContext';
+import { MyContextProvider } from './admin/context/themeContext/themeContext';
+import { PageTitleProvider } from './admin/context/pageTitle/PageTitleContext';
+import { AuthProvider } from './admin/context/auth/authContext';
 function App() {
 
   const queryClient = new QueryClient();
