@@ -6,7 +6,7 @@ export const loginUser = async (credentials) => {
     const response = await axiosInstance.post(`/auth/user/login`, credentials);
     const { token, id, email, username, roles } = response.data;
 
-    localStorage.setItem('token', token);
+    localStorage.setItem('auth_token', token);
 
     return { token, user: { id, email, username, roles } };
 };
@@ -19,7 +19,7 @@ export const fetchUserProfile = async () => {
 
 // ✅ Logout helper
 export const logoutUser = () => {
-    localStorage.removeItem('token');
+    localStorage.removeItem('auth_token');
 };
 
 // ✅ Create new employee

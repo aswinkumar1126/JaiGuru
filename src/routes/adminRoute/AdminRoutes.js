@@ -6,7 +6,6 @@ import { useAuth } from '../../admin/context/auth/authContext';
 
 import ProtectedRoute from '../protecedRoute/ProtectedRoute';
 import LoginPage from '../../admin/pages/login/loginPage';
-import Header from '../../admin/components/head/header';
 import Sidebar from '../../admin/components/slide/Sidebar';
 import MainContent from '../../admin/components/mainContent/mainContent';
 import EmployeeProfile from '../../admin/pages/employeeprofile/EmployeeProfilePage';
@@ -23,6 +22,7 @@ import AddEmployee from '../../admin/pages/employee/add/AddEmployee';
 import ManageEmployees from '../../admin/pages/employee/manage/ManageEmployees';
 import Unauthorized from '../../admin/pages/unauthorized/Unauthorized';
 import UserDetails from '../../admin/pages/dashboard/userDetails';
+import AdminHeader from '../../admin/components/head/header';
 
 
 
@@ -48,7 +48,7 @@ const AdminRoutes = () => {
 
     return (
         <div className="app-layout">
-            <Header toggleSidebar={() => setIsSidebarOpen(prev => !prev)} isSidebarOpen={isSidebarOpen} />
+            <AdminHeader toggleSidebar={() => setIsSidebarOpen(prev => !prev)} isSidebarOpen={isSidebarOpen} />
             <div className="layout-body">
                 <Sidebar isOpen={isSidebarOpen} toggleSidebar={() => setIsSidebarOpen(prev => !prev)} />
                 <main className="main-content">
@@ -58,7 +58,7 @@ const AdminRoutes = () => {
                                 <MainContent />
                             </ProtectedRoute>
                         } />
-                        <Route path="product/add" element={<ProtectedRoute allowedRoles={allowedRoles}><AddProduct /></ProtectedRoute>} />
+                        <Route path="/product/add" element={<ProtectedRoute allowedRoles={allowedRoles}><AddProduct /></ProtectedRoute>} />
                         <Route path="product/manage" element={<ProtectedRoute allowedRoles={allowedRoles}><ManageProduct /></ProtectedRoute>} />
                         <Route path="banner/add" element={<ProtectedRoute allowedRoles={allowedRoles}><AddBanner /></ProtectedRoute>} />
                         <Route path="banner/manage" element={<ProtectedRoute allowedRoles={allowedRoles}><ManageBanner /></ProtectedRoute>} />

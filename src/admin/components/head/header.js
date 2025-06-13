@@ -8,24 +8,24 @@ import {
   FaSignOutAlt,
   FaEnvelope,
   FaGlobe
-  
+
 } from 'react-icons/fa';
 import {
   MdDarkMode,
   MdOutlineLightMode,
   MdOutlineMenu,
   MdMenuOpen,
-  
+
 } from 'react-icons/md';
 import { MyContext } from '../../context/themeContext/themeContext';
 import logo from '../../assets/logo/logo.jpg';
-import './header.css';
+import './AdminHeader.css';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/auth/authContext';
 import { useUserProfile } from '../../hooks/profile/useUserProfile';
 
-const Header = ({ toggleSidebar, isSidebarOpen }) => {
+const AdminHeader = ({ toggleSidebar, isSidebarOpen }) => {
   const { themeMode, setThemeMode, setThemeColor } = useContext(MyContext);
   const [scrolled, setScrolled] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 992);
@@ -33,7 +33,7 @@ const Header = ({ toggleSidebar, isSidebarOpen }) => {
   const [currentDateTime, setCurrentDateTime] = useState('');
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
   const [isNotificationMenuOpen, setIsNotificationMenuOpen] = useState(false);
- 
+
   const [isColorMenuOpen, setIsColorMenuOpen] = useState(false);
   const languageMenuRef = useRef(null);
   const [isLanguageMenuOpen, setIsLanguageMenuOpen] = useState(false);
@@ -49,7 +49,7 @@ const Header = ({ toggleSidebar, isSidebarOpen }) => {
   const { logout } = useAuth();
   const { data: user } = useUserProfile();
 
-  const {i18n } = useTranslation();
+  const { i18n } = useTranslation();
 
 
   const changeThemeColor = (color) => {
@@ -124,7 +124,7 @@ const Header = ({ toggleSidebar, isSidebarOpen }) => {
     setThemeMode(themeMode === 'light' ? 'dark' : 'light');
   };
 
-  
+
   const handleLogout = () => {
     logout();
     navigate('/login');
@@ -226,7 +226,7 @@ const Header = ({ toggleSidebar, isSidebarOpen }) => {
             {themeMode === 'light' ? <MdDarkMode /> : <MdOutlineLightMode />}
           </button>
 
-          
+
           <div className="dropdown-wrapper" ref={languageMenuRef}>
             <button
               className="icon-button"
@@ -334,7 +334,7 @@ const Header = ({ toggleSidebar, isSidebarOpen }) => {
             </AnimatePresence>
           </div>
 
-          
+
           {/* User Profile */}
           <div className="dropdown-wrapper profile-dropdown" ref={profileMenuRef}>
             <button
@@ -389,10 +389,10 @@ const Header = ({ toggleSidebar, isSidebarOpen }) => {
               )}
             </AnimatePresence>
           </div>
-          </div>
+        </div>
       </div>
     </header>
   );
 };
 
-export default Header;
+export default AdminHeader;

@@ -11,9 +11,9 @@ const PublicUrl = axios.create({
 PublicUrl.interceptors.request.use(
     (config) => {
 
-        const token = localStorage.getItem('token'); // Moved inside so it's fresh
-        if (token) {
-            config.headers.Authorization = `Bearer ${token}`;
+        const usertoken = localStorage.getItem('user_token'); // Moved inside so it's fresh
+        if (usertoken) {
+            config.headers.Authorization = `Bearer ${usertoken}`;
         }
         return config;
     },

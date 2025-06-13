@@ -23,40 +23,40 @@ const menuItems = [
         title: "Product",
         icon: <FaBox className="section-icon" />,
         submenu: [
-            { title: "Add Product", path: "/product/add" },
-            { title: "Manage Products", path: "/product/manage" }
+            { title: "Add Product", path: "/admin/product/add" },
+            { title: "Manage Products", path: "/admin/product/manage" }
         ]
     },
     {
         title: "Banner",
         icon: <FaImage className="section-icon" />,
         submenu: [
-            { title: "Add Banner", path: "/banner/add" },
-            { title: "Manage Banners", path: "/banner/manage" }
+            { title: "Add Banner", path: "/admin/banner/add" },
+            { title: "Manage Banners", path: "/admin/banner/manage" }
         ]
     },
     {
         title: "Category",
         icon: <FaTag className="section-icon" />,
         submenu: [
-            { title: "Add Category", path: "/category/add" },
-            { title: "Manage Categories", path: "/category/manage" }
+            { title: "Add Category", path: "/admin/category/add" },
+            { title: "Manage Categories", path: "/admin/category/manage" }
         ]
     },
     {
         title: "Video",
         icon: <FaVideo className="section-icon" />,
         submenu: [
-            { title: "Add Video", path: "/video/add" },
-            { title: "Manage Videos", path: "/video/manage" }
+            { title: "Add Video", path: "/admin/video/add" },
+            { title: "Manage Videos", path: "/admin/video/manage" }
         ]
     },
     {
         title: "Rates",
         icon: <FaDollarSign className="section-icon" />,
         submenu: [
-            { title: "Add Rates", path: "/rates/add" },
-            { title: "Manage Rates", path: "/rates/manage" }
+            { title: "Add Rates", path: "/admin/rates/add" },
+            { title: "Manage Rates", path: "/admin/rates/manage" }
         ]
     }
 ];
@@ -65,8 +65,8 @@ const employeeMenu = {
     title: "Employee",
     icon: <FaBox className="section-icon" />,
     submenu: [
-        { title: "Add Employee", path: "/employee/add" },
-        { title: "Manage Employees", path: "/employee/manage" }
+        { title: "Add Employee", path: "/admin/employee/add" },
+        { title: "Manage Employees", path: "/admin/employee/manage" }
     ]
 };
 

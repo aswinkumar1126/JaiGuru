@@ -8,6 +8,9 @@ import { ProductProvider } from './admin/context/product/productContext';
 import { MyContextProvider } from './admin/context/themeContext/themeContext';
 import { PageTitleProvider } from './admin/context/pageTitle/PageTitleContext';
 import { AuthProvider } from './admin/context/auth/authContext';
+import { UserAuthProvider } from './public/context/authContext/AuthContext';
+
+
 function App() {
 
   const queryClient = new QueryClient();
@@ -19,7 +22,15 @@ function App() {
           <ProductProvider>
             <PageTitleProvider>   
               <AuthProvider>
+
+                <UserAuthProvider>
+                 
+
                   < AppRoutes /> 
+
+                 
+                </UserAuthProvider>
+
               </AuthProvider>
               </PageTitleProvider>
           </ProductProvider>

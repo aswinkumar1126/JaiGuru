@@ -59,7 +59,7 @@
 
 .product-card__image-container {
     position: relative;
-    height: 240px;
+    height: 280px;
     overflow: hidden;
     background-color: var(--light-color);
 }
