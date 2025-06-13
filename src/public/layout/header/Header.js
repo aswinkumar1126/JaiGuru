@@ -1,7 +1,7 @@
 import { NavLink, Link, useLocation } from 'react-router-dom';
 import Logo from '../../assets/logo/weblogo.png';
 import Search from '../../components/search/Search';
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import './Header.css';
 import {
     FaShoppingCart,
@@ -9,8 +9,7 @@ import {
     FaUserCircle,
     FaChevronDown,
     FaBars,
-    FaTimes,
-    FaSignOutAlt
+    FaTimes
 } from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
@@ -29,13 +28,12 @@ const Header = () => {
     const profileMenuRef = useRef(null);
     const navigate = useNavigate();
 
-    // const { cartItems } = useCart();
-    // console.log("Cart data", cartItems?.data);
-    // console.log(cartItems?.data.length);
+    const { cartItems } = useCart();
+    const cartCount = cartItems?.data?.length || 0;
 
-    const handleProfileClick = () => {
+    const handleProfileClick = useCallback(() => {
         navigate('/user/profile');
-    };
+    }, [navigate]);
 
     // Handle click outside for closing menus
     useEffect(() => {
@@ -51,6 +49,19 @@ const Header = () => {
 
         document.addEventListener('mousedown', handleClickOutside);
         return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
+
+    // Debounce function moved inside component to avoid recreation
+    const debounce = useCallback((func, wait) => {
+        let timeout;
+        return function executedFunction(...args) {
+            const later = () => {
+                clearTimeout(timeout);
+                func(...args);
+            };
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+        };
     }, []);
 
     // Handle scroll and resize events
@@ -83,7 +94,7 @@ const Header = () => {
             window.removeEventListener('scroll', handleScroll);
             window.removeEventListener('resize', handleResize);
         };
-    }, []);
+    }, [debounce]);
 
     // Reset states on route change
     useEffect(() => {
@@ -93,14 +104,14 @@ const Header = () => {
         setActiveDropdown(null);
     }, [location.pathname]);
 
-    const toggleDropdown = (menu) => {
+    const toggleDropdown = useCallback((menu) => {
         setActiveDropdown(activeDropdown === menu ? null : menu);
-    };
+    }, [activeDropdown]);
 
-    const closeMobileMenu = () => {
+    const closeMobileMenu = useCallback(() => {
         setIsMobileMenuOpen(false);
         setActiveDropdown(null);
-    };
+    }, []);
 
     const navItems = [
         { name: 'HOME', path: '/' },
@@ -117,10 +128,10 @@ const Header = () => {
         { name: 'CONTACT US', path: '/contact' }
     ];
 
-    const isActive = (path, submenu = []) => {
+    const isActive = useCallback((path, submenu = []) => {
         const currentPath = location.pathname;
         return submenu.length ? currentPath.startsWith(path) : currentPath === path;
-    };
+    }, [location.pathname]);
 
     return (
         <header className={`header-container ${isScrolled ? 'scrolled' : ''}`}>
@@ -129,7 +140,7 @@ const Header = () => {
                     <div className="header-left">
                         <motion.div
                             className="logo-container"
-                            whileHover={{ scale: 1.05 }}
+                            whileHover={{ scale: isMobile ? 1 : 1.05 }}
                             transition={{ type: 'spring', stiffness: 300 }}
                         >
                             <Link to="/" onClick={closeMobileMenu} aria-label="Home">
@@ -138,7 +149,7 @@ const Header = () => {
                                     alt="BMJ Jewellers Logo"
                                     loading="lazy"
                                     className="logo-img"
-                                    whileHover={{ rotate: 5 }}
+                                    whileHover={{ rotate: isMobile ? 0 : 5 }}
                                     transition={{ type: 'spring', damping: 15 }}
                                 />
                             </Link>
@@ -158,16 +169,18 @@ const Header = () => {
                         </button>
                     </div>
 
-                    <div className="header-middle">
-                        <div className="search-bar-wrapper">
-                            <Search />
+                    {!isMobile && (
+                        <div className="header-middle">
+                            <div className="search-bar-wrapper">
+                                <Search />
+                            </div>
                         </div>
-                    </div>
+                    )}
 
                     <div className="header-right">
                         <motion.div
                             className="wishlist-container"
-                            whileHover={{ scale: 1.05 }}
+                            whileHover={{ scale: isMobile ? 1 : 1.05 }}
                             whileTap={{ scale: 0.95 }}
                         >
                             <Link
@@ -177,16 +190,16 @@ const Header = () => {
                                 onClick={closeMobileMenu}
                             >
                                 <motion.div
-                                    animate={{ scale: [1, 1.1, 1] }}
-                                    transition={{ repeat: Infinity, duration: 2 }}
+                                    animate={isMobile ? {} : { scale: [1, 1.1, 1] }}
+                                    transition={isMobile ? {} : { repeat: Infinity, duration: 2 }}
                                 >
                                     <FaHeart className="wishlist-icon" />
                                 </motion.div>
                                 <span className="wishlist-text">Wishlist</span>
                                 <motion.span
                                     className="wishlist-badge"
-                                    animate={{ scale: [1, 1.2, 1] }}
-                                    transition={{ repeat: Infinity, duration: 2 }}
+                                    animate={isMobile ? {} : { scale: [1, 1.2, 1] }}
+                                    transition={isMobile ? {} : { repeat: Infinity, duration: 2 }}
                                 >
                                     0
                                 </motion.span>
@@ -195,7 +208,7 @@ const Header = () => {
 
                         <motion.div
                             className="cart-container"
-                            whileHover={{ scale: 1.05 }}
+                            whileHover={{ scale: isMobile ? 1 : 1.05 }}
                             whileTap={{ scale: 0.95 }}
                         >
                             <Link
@@ -205,25 +218,25 @@ const Header = () => {
                                 onClick={closeMobileMenu}
                             >
                                 <motion.div
-                                    animate={{ rotate: [0, 10, -10, 0] }}
-                                    transition={{ repeat: Infinity, repeatDelay: 5, duration: 2 }}
+                                    animate={isMobile ? {} : { rotate: [0, 10, -10, 0] }}
+                                    transition={isMobile ? {} : { repeat: Infinity, repeatDelay: 5, duration: 2 }}
                                 >
                                     <FaShoppingCart className="cart-icon" />
                                 </motion.div>
                                 <span className="cart-text">Cart</span>
                                 <motion.span
                                     className="cart-badge"
-                                    animate={{ scale: [1, 1.2, 1] }}
-                                    transition={{ repeat: Infinity, duration: 2 }}
+                                    animate={isMobile ? {} : { scale: [1, 1.2, 1] }}
+                                    transition={isMobile ? {} : { repeat: Infinity, duration: 2 }}
                                 >
-                                    {/* {cartItems?.data.length} */}
+                                    {cartCount}
                                 </motion.span>
                             </Link>
                         </motion.div>
 
                         <motion.div
                             className="profile-icon-wrapper"
-                            whileHover={{ scale: 1.05 }}
+                            whileHover={{ scale: isMobile ? 1 : 1.05 }}
                             whileTap={{ scale: 0.95 }}
                             ref={profileMenuRef}
                         >
@@ -247,9 +260,11 @@ const Header = () => {
                 ref={navRef}
                 aria-label="Main navigation"
             >
-                <div className="mobile-search-container">
-                    <Search />
-                </div>
+                {isMobile && (
+                    <div className="mobile-search-container">
+                        <Search />
+                    </div>
+                )}
                 <ul className="nav-list">
                     {navItems.map((item) => (
                         <li
@@ -293,7 +308,7 @@ const Header = () => {
                                             {item.submenu.map((subItem) => (
                                                 <motion.li
                                                     key={subItem}
-                                                    whileHover={{ x: 5 }}
+                                                    whileHover={isMobile ? {} : { x: 5 }}
                                                     onClick={closeMobileMenu}
                                                     role="none"
                                                 >
@@ -319,18 +334,5 @@ const Header = () => {
         </header>
     );
 };
-
-// Helper function for debouncing
-function debounce(func, wait) {
-    let timeout;
-    return function executedFunction(...args) {
-        const later = () => {
-            clearTimeout(timeout);
-            func(...args);
-        };
-        clearTimeout(timeout);
-        timeout = setTimeout(later, wait);
-    };
-}
 
 export default Header;

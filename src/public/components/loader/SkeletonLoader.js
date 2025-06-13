@@ -1,20 +1,20 @@
 // SkeletonLoader.js
 import React from 'react';
 import Skeleton from 'react-loading-skeleton';
-import 'react-loading-skeleton/dist/skeleton.css'; // Ensure to import the default styles
+import 'react-loading-skeleton/dist/skeleton.css';
+import './SkeletonLoader.css'; // Custom CSS for layout
 
-// Custom styled Skeleton Loader component
-const SkeletonLoader = ({ count = 5, width = '100%', height = 20, className = '', shape = 'rectangular' }) => {
+const SkeletonLoader = ({ count = 6, width = '100%', height = 300, className = '', shape = 'card' }) => {
     return (
-        <div className={`skeleton-loader ${className}`}>
+        <div className={`skeleton-loader-grid ${className}`}>
             {Array.from({ length: count }).map((_, index) => (
-                <Skeleton
-                    key={index}
-                    width={width}
-                    height={height}
-                    className={`skeleton-item ${shape}`}
-                    duration={1.5} // Animation duration in seconds
-                />
+                <div key={index} className={`skeleton-card ${shape}`}>
+                    <Skeleton width="100%" height={height} />
+                    <div style={{ padding: '10px 0' }}>
+                        <Skeleton width="80%" height={20} />
+                        <Skeleton width="60%" height={20} />
+                    </div>
+                </div>
             ))}
         </div>
     );

@@ -1,0 +1,14 @@
+.home-section {
+    padding: 10px;
+    gap: 0px;
+ 
+    
+}
+
+/* Optional enhancements */
+@media (max-width: 768px) {
+    .home-section {
+        padding: 16px;
+        gap: 24px;
+    }
+}

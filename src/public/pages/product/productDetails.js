@@ -6,10 +6,17 @@ import Button from "../../components/button/Button";
 import { useSingleProductQuery } from "../../hook/product/useSingleProductQuery";
 import './ProductDetails.css';
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
+import { useCart } from "../../hook/cart/useCartQuery";
+
+
 
 const ProductDetails = () => {
     const { sno } = useParams();
     const { data: productDetail, isLoading, isError, error } = useSingleProductQuery(sno);
+
+    const { addToCartHandler } = useCart();
+
+    console.log(productDetail);
 
     const [zoomStyle, setZoomStyle] = useState({});
     const [showZoom, setShowZoom] = useState(false);
@@ -25,12 +32,17 @@ const ProductDetails = () => {
     useEffect(() => {
         try {
             const parsedImages = JSON.parse(productDetail?.ImagePath || "[]");
-            setImageUrls(parsedImages);
+            if (Array.isArray(parsedImages) && parsedImages.length > 0) {
+                setImageUrls(parsedImages);
+            } else {
+                setImageUrls(["/fallback.jpg"]); // 👈 fallback if empty
+            }
         } catch (err) {
             console.error("Invalid image path format:", err);
-            setImageUrls([]);
+            setImageUrls(["/fallback.jpg"]); // 👈 fallback if parsing fails
         }
     }, [productDetail]);
+    
 
     const mainImage = imageUrls.length > 0 ? baseUrl + imageUrls[activeImageIndex] : "";
 
@@ -76,6 +88,22 @@ const ProductDetails = () => {
             }
         }
     };
+    const handleAddToCart = () => {
+        addToCartHandler({
+            itemTagSno: productDetail.SNO,
+            itemId: productDetail.ITEMID,
+            subItemId: productDetail.SubItemId,
+            tagNo: productDetail.TAGNO,
+            grsWt: parseFloat(productDetail.GRSWT || 0),
+            netWt: parseFloat(productDetail.NETWT || 0),
+            stnWt: 0,
+            stnAmount: parseFloat(productDetail.StoneAmount || 0),
+            amount: parseFloat(productDetail.GrandTotal || 0),
+            purity: parseFloat(productDetail.PURITY || 0),
+            quantity: 1,
+        });
+    };
+    
 
     const toggleSpecs = () => {
         setExpandedSpecs(!expandedSpecs);
@@ -129,7 +157,7 @@ const ProductDetails = () => {
                             className="main-product-image"
                             loading="lazy"
                             onError={(e) => {
-                                e.target.src = '/placeholder-image.jpg';
+                                e.target.src = '/fallback.jpg';
                                 e.target.alt = 'Product image not available';
                             }}
                         />
@@ -185,6 +213,7 @@ const ProductDetails = () => {
                             className="add-to-cart-btn"
                             label="Add to Cart"
                             icon={<i className="fas fa-shopping-cart"></i>}
+                            onClick={handleAddToCart}
                         />
                         <Button
                             className="buy-now-btn"

@@ -3,6 +3,7 @@ import { FiHeart, FiShoppingCart, FiEye } from 'react-icons/fi';
 import './ProductCard.css';
 
 function ProductCard({ product, onQuickView, onAddToCart, onAddToWishlist }) {
+    
     const [isWishlisted, setIsWishlisted] = React.useState(false);
 
     const getFirstProductImage = (imagePath) => {

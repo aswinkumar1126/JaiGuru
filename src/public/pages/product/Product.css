@@ -1,6 +1,6 @@
 /* Product.css */
 :root {
-    --primary-color: #d4af37;
+    --primary-color: #d37c0b;
     --secondary-color: #2c3e50;
     --text-color: #34495e;
     --light-gray: #f8f9fa;
@@ -10,7 +10,7 @@
 }
 
 .product-container {
-    background-color: #FFFDF6;
+    background-color: #f3e5d5;
     margin: auto;
     padding: 20px;
 }

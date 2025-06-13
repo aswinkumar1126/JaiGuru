@@ -29,7 +29,7 @@ const PublicRoutes = () => {
                 <Route path='/gallery' element={<Gallery />} />
                 <Route path='/videos' element={<AllVideos />} />
                 <Route path='/contact' element={<Contact />} />
-                <Route path='/cart' element={<CartPage />} />
+                <Route path='/cart' element={<UserPrivateRoute><CartPage /></UserPrivateRoute>} />
                 <Route path='/user/profile' element={<UserProfile />} />
             </Routes>
         </LayoutWrapper>

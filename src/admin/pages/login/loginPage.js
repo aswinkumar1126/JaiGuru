@@ -21,10 +21,20 @@ const LoginPage = () => {
     const [form, setForm] = useState({ contactOrEmailOrUsername: '', password: '' });
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
-    
+    const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
     const navigate = useNavigate();
     const { login } = useAuth();
     const passwordInputRef = useRef(null);
+
+    useEffect(() => {
+        const handleResize = () => {
+            setIsMobile(window.innerWidth < 768);
+        };
+
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
 
     const handleKeyDown = (e) => {
         if (e.key === 'Enter' && e.target.name === 'contactOrEmailOrUsername') {
@@ -69,55 +79,61 @@ const LoginPage = () => {
     }, [error]);
 
     return (
-        <section className="sign-in-page ">
-            <div className="container sign-in-page-bg mt-4 mb-md-4 mb-0 p-0">
+        <section className="sign-in-page">
+            <div className={`container sign-in-page-bg ${isMobile ? 'mobile-view' : ''} mt-4 mb-md-4 mb-0 p-0`}>
                 <div className="row no-gutters">
-                    {/* Left Side - Carousel */}
-                    <div className="col-md-6 text-center sign-in-details">
-                        <div className="sign-in-detail text-white">
-                            <p className="sign-in-logo mb-8">
-                                <img src={logo} className="img-fluid" alt="logo" />
-                                <span className="logName">Admin Portal</span>
-                            </p>
+                    {/* Left Side - Carousel (hidden on mobile) */}
+                    {!isMobile && (
+                        <div className="col-md-6 text-center sign-in-details">
+                            <div className="sign-in-detail text-white">
+                                <p className="sign-in-logo mb-8">
+                                    <img src={logo} className="img-fluid" alt="logo" />
+                                    <span className="logName">Admin Portal</span>
+                                </p>
 
-                            <Swiper
-                                modules={[Pagination, Navigation, Autoplay]}
-                                spaceBetween={10}
-                                slidesPerView={1}
-                                autoplay={{ delay: 3000 }}
-                                pagination={{ clickable: true, type: 'bullets' }}
-                                className="swiper-navigation"
-                            >
-                                <SwiperSlide>
-                                    <img src={image1} alt="Slide 1" className="img-fluid" />
-                                    <h4 className="firstSlide">Admin Dashboard</h4>
-                                    <p className="firstSlidePara">
-                                        Comprehensive tools for managing your organization
-                                    </p>
-                                </SwiperSlide>
-                                <SwiperSlide>
-                                    <img src={image2} alt="Slide 2" className="img-fluid" />
-                                    <h4 className="firstSlide">System Control</h4>
-                                    <p className="firstSlidePara">
-                                        Full administrative access to all system features
-                                    </p>
-                                </SwiperSlide>
-                                <SwiperSlide>
-                                    <img src={image3} alt="Slide 3" className="img-fluid" />
-                                    <h4 className="firstSlide">User Management</h4>
-                                    <p className="firstSlidePara">
-                                        Manage permissions and access levels with ease
-                                    </p>
-                                </SwiperSlide>
-                            </Swiper>
+                                <Swiper
+                                    modules={[Pagination, Navigation, Autoplay]}
+                                    spaceBetween={10}
+                                    slidesPerView={1}
+                                    autoplay={{ delay: 3000 }}
+                                    pagination={{ clickable: true, type: 'bullets' }}
+                                    className="swiper-navigation"
+                                >
+                                    <SwiperSlide>
+                                        <img src={image1} alt="Slide 1" className="img-fluid" />
+                                        <h4 className="firstSlide">Admin Dashboard</h4>
+                                        <p className="firstSlidePara">
+                                            Comprehensive tools for managing your organization
+                                        </p>
+                                    </SwiperSlide>
+                                    <SwiperSlide>
+                                        <img src={image2} alt="Slide 2" className="img-fluid" />
+                                        <h4 className="firstSlide">System Control</h4>
+                                        <p className="firstSlidePara">
+                                            Full administrative access to all system features
+                                        </p>
+                                    </SwiperSlide>
+                                    <SwiperSlide>
+                                        <img src={image3} alt="Slide 3" className="img-fluid" />
+                                        <h4 className="firstSlide">User Management</h4>
+                                        <p className="firstSlidePara">
+                                            Manage permissions and access levels with ease
+                                        </p>
+                                    </SwiperSlide>
+                                </Swiper>
+                            </div>
                         </div>
-                    </div>
+                    )}
 
                     {/* Right Side - Login Form */}
-                    <div className="col-md-6 position-relative">
-                        <div className="sign-in-from">
-                            <h1 className="mb-0">Admin Login</h1>
-                            <p>Secure access to administrative panel</p>
+                    <div className={`${isMobile ? 'col-12' : 'col-md-6'} position-relative`}>
+                        <div className={`sign-in-from ${isMobile ? 'mobile-sign-in' : ''}`}>
+                            {!isMobile && (
+                                <>
+                                    <h1 className="mb-0">Admin Login</h1>
+                                    <p>Secure access to administrative panel</p>
+                                </>
+                            )}
 
                             {error && (
                                 <div className="error-message">
@@ -130,12 +146,12 @@ const LoginPage = () => {
 
                             <form className="mt-4" onSubmit={handleLogin}>
                                 <div className="form-group">
-                                    <label className="mb-0">Admin Name / Email</label>
+                                    <label className="mb-0">{isMobile ? 'Admin ID' : 'Admin Name / Email'}</label>
                                     <input
-                                        type="text"
+                                        type={isMobile ? 'tel' : 'text'}
                                         className="form-control mb-1"
                                         name="contactOrEmailOrUsername"
-                                        placeholder="Enter admin name or email"
+                                        placeholder={isMobile ? 'Enter admin ID' : 'Enter admin name or email'}
                                         value={form.contactOrEmailOrUsername}
                                         onChange={(e) => setForm({ ...form, contactOrEmailOrUsername: e.target.value })}
                                         onKeyDown={handleKeyDown}
@@ -156,12 +172,10 @@ const LoginPage = () => {
                                     onChange={(e) => setForm({ ...form, password: e.target.value })}
                                     required
                                 />
-                                <div className="d-flex w-100 justify-content-center align-items-center mt-3 ">
-                                    
+                                <div className="d-flex w-100 justify-content-center align-items-center mt-3">
                                     <button
                                         type="submit"
                                         className="btn btn-primary float-end"
-                                        
                                         disabled={isLoading}
                                     >
                                         {isLoading ? (
@@ -181,7 +195,7 @@ const LoginPage = () => {
 
                                 <div className="sign-info">
                                     <span className="dark-color d-inline-block line-height-2">
-                                        Need access ?   <span className='contact-admin'> Contact Super Admin</span>
+                                        Need access? <span className='contact-admin'> Contact Super Admin</span>
                                     </span>
                                 </div>
                             </form>

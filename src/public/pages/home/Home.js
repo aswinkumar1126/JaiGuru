@@ -7,7 +7,8 @@ import { useVideos } from "../../hook/video/useVideoQuery";
 import Video from "../video/video";
 import { useProductsQuery } from "../../hook/product/useProductsQuery";
 import Product from "../../pages/product/Product"; // adjust the path if needed
-
+import RecentlyViewedPage from "../recentlyViewed/RecentlyViewed";
+import './Home.css';
 function Home() {
     const {
         data: bannersData,
@@ -52,6 +53,13 @@ function Home() {
         <div className="home-section">
             
                 <Banner images={bannerData} loading={bannersLoading} />
+            <Product
+                products={products}
+                loading={productsLoading}
+                error={productsError}
+            />
+            <RecentlyViewedPage />
+
                 {firstVideoUrl && (
                     <Video
                         videoUrl={firstVideoUrl}
@@ -60,12 +68,7 @@ function Home() {
                     />
                 )}
            
-            <Product
-                products={products}
-                loading={productsLoading}
-                error={productsError}
-            />
-
+            
         </div>
     );
 }

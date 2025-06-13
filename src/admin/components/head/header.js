@@ -372,7 +372,7 @@ const AdminHeader = ({ toggleSidebar, isSidebarOpen }) => {
                   <button
                     className="dropdown-item"
                     onClick={() => {
-                      navigate('/profile');
+                      navigate('/admin/profile');
                       setIsProfileMenuOpen(false);
                     }}
                   >
