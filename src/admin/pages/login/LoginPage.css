@@ -2,7 +2,7 @@
                                Sign In
 -----------------------------------------------------------------------*/
 .sign-in-page {
-    height: 100% ; 
+    height: 100%;
 }
 
 .sign-in-detail {
@@ -15,7 +15,6 @@
     display: inline-block;
     width: 80%;
     height: 0px;
-    
 }
 
 .sign-in-logo img {
@@ -34,17 +33,17 @@
     left: 5%;
     right: 5%;
     background: #F6F5F5;
-    
 }
-.float-end{
+
+.float-end {
     background-color: #00d0ff !important;
 }
+
 .sign-info {
     border-top: 1px solid #cdd1f3;
     margin-top: 30px;
     padding-top: 20px;
 }
-
 
 .iq-social-media {
     margin: 0;
@@ -94,7 +93,7 @@
     right: 270px;
     z-index: -1;
     border-radius: 40px;
-    background: rgba(8, 155, 171, 1) ;
+    background: rgba(8, 155, 171, 1);
     background: -moz-linear-gradient(left,
             rgba(8, 155, 171, 1) 0%,
             rgba(13, 181, 200, 1) 100%);
@@ -125,7 +124,6 @@
 
 .sign-in-details {
     height: 45em;
-
 }
 
 .firstSlide {
@@ -148,37 +146,34 @@
     position: relative;
     display: flex;
     margin: 0px 29px 14px 146px;
-    text-decoration: none ;
+    text-decoration: none;
     margin-top: -15%;
 }
 
-.contact-admin{
+.contact-admin {
     color: #1b5827;
     font-weight: 600;
 }
+
 /*---------------------------------------------------------------------
   Scrollbar
-  -----------------------------------------------------------------------*/
-
+-----------------------------------------------------------------------*/
 ::-webkit-scrollbar {
     width: 8px;
     height: 8px;
     border-radius: 20px;
 }
 
-/* Track */
 ::-webkit-scrollbar-track {
     background: #f1f1f1;
     border-radius: 20px;
 }
 
-/* Handle */
 ::-webkit-scrollbar-thumb {
     background: #888;
     border-radius: 20px;
 }
 
-/* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
     background: #555;
     border-radius: 20px;
@@ -186,19 +181,16 @@
 
 /*---------------------------------------------------------------------
   Swiper
-  -----------------------------------------------------------------------*/
-
-/* Move pagination below */
+-----------------------------------------------------------------------*/
 .swiper-pagination {
     position: relative !important;
     margin-top: 20px;
-    /* Adjust spacing */
     bottom: auto !important;
 }
 
 /*---------------------------------------------------------------------
   Checkbox
-  -----------------------------------------------------------------------*/
+-----------------------------------------------------------------------*/
 .custom-control-input:focus~.custom-control-label::before {
     box-shadow: none;
 }
@@ -239,7 +231,6 @@
     border-color: #00d0ff !important;
 }
 
-/* checkbox with icon */
 .custom-checkbox .custom-control-input:disabled:checked~.custom-control-label::before {
     background-color: #ceebee;
 }
@@ -274,14 +265,11 @@
     position: absolute;
     left: 0;
     z-index: 1;
-    /* Fix the z-index issue */
     width: 0.5rem;
     height: 1.35rem;
     opacity: 0;
-    /* Make checkbox visible */
     cursor: pointer;
 }
-
 
 .custom-control-label {
     position: relative;
@@ -332,4 +320,145 @@
 }
 
 .custom-checkbox .custom-control-input:checked~.custom-control-label::after {
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8'%3e%3cpath fill='%23fff' d='M6.564.75l-3.59 3.612-1.538-1.55L0 4.26l2.974 2.99L8 2.193z'/%3e%3c/svg%3e"); }
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8'%3e%3cpath fill='%23fff' d='M6.564.75l-3.59 3.612-1.538-1.55L0 4.26l2.974 2.99L8 2.193z'/%3e%3c/svg%3e");
+}
+/*---------------------------------------------------------------------
+  Mobile Responsive Styles (only for screens smaller than 768px)
+-----------------------------------------------------------------------*/
+@media (max-width: 767.98px) {
+    .sign-in-page {
+        height: 100vh;
+        min-height: -webkit-fill-available;
+        /* For mobile browsers */
+        padding: 0;
+        display: flex;
+        align-items: center;
+        background: #F6F5F5;
+    }
+
+    .sign-in-page-bg {
+        background: transparent;
+        box-shadow: none;
+        border-radius: 0;
+        height: 100%;
+    }
+
+    .sign-in-page .sign-in-page-bg::after {
+        display: none;
+    }
+
+    /* Hide carousel on mobile */
+    .sign-in-details {
+        display: none;
+    }
+
+    /* Adjust form for mobile */
+    .sign-in-from {
+        position: relative;
+        width: 100%;
+        height: auto;
+        padding: 2rem 1.5rem;
+        margin: 0 auto;
+        top: auto;
+        bottom: auto;
+        left: auto;
+        right: auto;
+        border-radius: 0;
+        background: transparent;
+        max-width: 100%;
+    }
+
+    /* Mobile-only header */
+    .sign-in-from h1,
+    .sign-in-from p {
+        display: none;
+    }
+
+    /* Add mobile header */
+    .sign-in-from::before {
+        content: "Admin Login";
+        display: block;
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 2rem;
+        text-align: center;
+        color: #333;
+    }
+
+    /* Form inputs */
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .form-control {
+        height: 3rem;
+        font-size: 1rem;
+        padding: 0.75rem 1rem;
+        border-radius: 0.5rem;
+    }
+
+    /* Submit button */
+    .float-end {
+        width: 100%;
+        padding: 1rem;
+        font-size: 1rem;
+        margin-top: 1rem;
+        border-radius: 0.5rem;
+    }
+
+    /* Error message */
+    .error-message {
+        font-size: 0.9rem;
+        padding: 0.75rem;
+        margin-bottom: 1.5rem;
+    }
+
+    /* Hide non-essential elements */
+    .sign-info,
+    .iq-social-media {
+        display: none;
+    }
+
+    /* Add minimal footer */
+    .sign-in-from::after {
+        content: "Need help? Contact support";
+        display: block;
+        text-align: center;
+        margin-top: 2rem;
+        font-size: 0.8rem;
+        color: #666;
+    }
+
+    /* For very small devices */
+    @media (max-height: 600px) {
+        .sign-in-from {
+            padding: 1rem 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .float-end {
+            margin-top: 0.5rem;
+        }
+    }
+
+    /* Landscape orientation */
+    @media (max-width: 767.98px) and (orientation: landscape) {
+        .sign-in-page {
+            align-items: flex-start;
+            padding-top: 1rem;
+        }
+
+        .sign-in-from {
+            padding: 1rem 1.5rem;
+            max-width: 400px;
+        }
+    }
+}

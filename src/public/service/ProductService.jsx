@@ -14,6 +14,21 @@ export const getProductBySno = async (sno) => {
     const response = await PublicUrl.get('/getSnofilter', {
         params: { sno }
     });
-    // Assuming API returns an array, return the first item
-    return response.data[0];
+
+    const data = response.data;
+
+    if (Array.isArray(data) && data.length > 0) {
+        return data[0]; // ✅ return single product
+    }
+
+    throw new Error(`No product found for SNO: ${sno}`);
 };
+
+
+export const getProductsByMetalId = async (metalId) => {
+    const response = await PublicUrl.get("/getAllPurityWise", {
+        params: { metalId },
+    });
+    return response.data;
+};
+

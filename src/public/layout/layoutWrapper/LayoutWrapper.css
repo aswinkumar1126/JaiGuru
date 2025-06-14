@@ -12,12 +12,17 @@
 
 .content-area {
     flex: 1;
-    padding: 1rem;
+    padding: 0.5rem;
+    margin: 0 auto;
+    margin-top: 40px;
     /* Adjust based on your design */
     width: 100% !important;
-    margin: 0 auto;
-    
-    box-sizing: border-box;
+}
+
+@media (max-width: 992px) {
+    .content-area {
+        margin: 0 auto !important;
+    }
 }
 
 /* Optional global scrollbar styling */

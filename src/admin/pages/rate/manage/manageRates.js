@@ -12,6 +12,7 @@ const ManageRates = () => {
     const [success, setSuccess] = useState(null);
 
     const { data: rates, isLoading, error: queryError } = useRatesQuery();
+    console.log("today rate ", rates);
     const { mutate: updateRate, isLoading: isUpdating } = useUpdateRateMutation();
     const { mutate: deleteRate, isLoading: isDeleting } = useDeleteRateMutation();
 
@@ -169,7 +170,7 @@ const ManageRates = () => {
                                                 aria-label="Edit Gold Rate"
                                             />
                                         ) : (
-                                                `₹${parseFloat(rate.goldRate || 0).toFixed(2)}`
+                                                `₹${parseFloat(rate.GOLDRATE || 0).toFixed(2)}`
 
                                         )}
                                     </td>
@@ -184,7 +185,7 @@ const ManageRates = () => {
                                                 aria-label="Edit Silver Rate"
                                             />
                                         ) : (
-                                                `₹${parseFloat(rate.silverRate || 0).toFixed(2)}`
+                                                `₹${parseFloat(rate.SILVERRATE || 0).toFixed(2)}`
 
                                         )}
                                     </td>

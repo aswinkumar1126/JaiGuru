@@ -5,7 +5,7 @@ import SkeletonLoader from "../../components/loader/SkeletonLoader";
 import Error from "../../components/error/Error";
 import ProductCard from "../../components/productCard/ProductCard";
 import { useCart } from "../../hook/cart/useCartQuery"; // ✅ Import hook
-
+import Button from '../../components/button/Button';
 function Product({ products = [], loading, error }) {
     const navigate = useNavigate();
     const { addToCartHandler } = useCart(); // ✅ Get addToCart function
@@ -14,6 +14,7 @@ function Product({ products = [], loading, error }) {
         return <Error error={error} />;
     }
 
+    console.log(products);
     const handleAddToCart = (product) => {
         console.log("🛒 Sending to addToCartHandler:", product);
 
@@ -54,6 +55,15 @@ function Product({ products = [], loading, error }) {
                         />
                     ))
                 )}
+            </div>
+            <div className="see-more-wrapper">
+                <Button
+                    label="See More Products"
+                    onClick={() => navigate("/products")}
+                    variant="primary"
+                    size="medium"
+                    className="see-more-btn"
+                />
             </div>
         </div>
     );

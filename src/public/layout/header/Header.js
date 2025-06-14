@@ -1,7 +1,7 @@
 import { NavLink, Link, useLocation } from 'react-router-dom';
 import Logo from '../../assets/logo/weblogo.png';
 import Search from '../../components/search/Search';
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import './Header.css';
 import {
     FaShoppingCart,
@@ -9,12 +9,12 @@ import {
     FaUserCircle,
     FaChevronDown,
     FaBars,
-    FaTimes,
-    FaSignOutAlt
+    FaTimes
 } from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../../hook/cart/useCartQuery';
+import { useFavorites } from '../../hook/favorites/useFavoritesQuery';
 
 const Header = () => {
     const [isScrolled, setIsScrolled] = useState(false);
@@ -27,15 +27,19 @@ const Header = () => {
     const lastScrollY = useRef(0);
     const navRef = useRef(null);
     const profileMenuRef = useRef(null);
+    const dropdownRef = useRef(null);
     const navigate = useNavigate();
 
-    // const { cartItems } = useCart();
-    // console.log("Cart data", cartItems?.data);
-    // console.log(cartItems?.data.length);
+    const { cartItems } = useCart();
+    const cartCount = cartItems?.data?.length || 0;
 
-    const handleProfileClick = () => {
+    const { data, isLoading, isError } = useFavorites();
+
+    const wishlistCount = data?.data?.length || 0;
+
+    const handleProfileClick = useCallback(() => {
         navigate('/user/profile');
-    };
+    }, [navigate]);
 
     // Handle click outside for closing menus
     useEffect(() => {
@@ -43,7 +47,8 @@ const Header = () => {
             if (profileMenuRef.current && !profileMenuRef.current.contains(event.target)) {
                 setIsProfileMenuOpen(false);
             }
-            if (navRef.current && !navRef.current.contains(event.target)) {
+            if (navRef.current && !navRef.current.contains(event.target) &&
+                (!dropdownRef.current || !dropdownRef.current.contains(event.target))) {
                 setIsMobileMenuOpen(false);
                 setActiveDropdown(null);
             }
@@ -51,6 +56,19 @@ const Header = () => {
 
         document.addEventListener('mousedown', handleClickOutside);
         return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
+
+    // Debounce function
+    const debounce = useCallback((func, wait) => {
+        let timeout;
+        return function executedFunction(...args) {
+            const later = () => {
+                clearTimeout(timeout);
+                func(...args);
+            };
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+        };
     }, []);
 
     // Handle scroll and resize events
@@ -83,7 +101,7 @@ const Header = () => {
             window.removeEventListener('scroll', handleScroll);
             window.removeEventListener('resize', handleResize);
         };
-    }, []);
+    }, [debounce]);
 
     // Reset states on route change
     useEffect(() => {
@@ -93,22 +111,17 @@ const Header = () => {
         setActiveDropdown(null);
     }, [location.pathname]);
 
-    const toggleDropdown = (menu) => {
+    const toggleDropdown = useCallback((menu) => {
         setActiveDropdown(activeDropdown === menu ? null : menu);
-    };
+    }, [activeDropdown]);
 
-    const closeMobileMenu = () => {
+    const closeMobileMenu = useCallback(() => {
         setIsMobileMenuOpen(false);
         setActiveDropdown(null);
-    };
+    }, []);
 
     const navItems = [
         { name: 'HOME', path: '/' },
-        {
-            name: 'CATEGORY',
-            path: '/category',
-            submenu: ['Rings', 'Necklaces', 'Bracelets', 'Earrings']
-        },
         { name: 'PRODUCTS', path: '/products' },
         { name: 'ABOUT US', path: '/about' },
         { name: 'WHY US', path: '/why-us' },
@@ -117,10 +130,10 @@ const Header = () => {
         { name: 'CONTACT US', path: '/contact' }
     ];
 
-    const isActive = (path, submenu = []) => {
+    const isActive = useCallback((path, submenu = []) => {
         const currentPath = location.pathname;
         return submenu.length ? currentPath.startsWith(path) : currentPath === path;
-    };
+    }, [location.pathname]);
 
     return (
         <header className={`header-container ${isScrolled ? 'scrolled' : ''}`}>
@@ -129,7 +142,7 @@ const Header = () => {
                     <div className="header-left">
                         <motion.div
                             className="logo-container"
-                            whileHover={{ scale: 1.05 }}
+                            whileHover={{ scale: isMobile ? 1 : 1.05 }}
                             transition={{ type: 'spring', stiffness: 300 }}
                         >
                             <Link to="/" onClick={closeMobileMenu} aria-label="Home">
@@ -138,7 +151,7 @@ const Header = () => {
                                     alt="BMJ Jewellers Logo"
                                     loading="lazy"
                                     className="logo-img"
-                                    whileHover={{ rotate: 5 }}
+                                    whileHover={{ rotate: isMobile ? 0 : 5 }}
                                     transition={{ type: 'spring', damping: 15 }}
                                 />
                             </Link>
@@ -158,16 +171,18 @@ const Header = () => {
                         </button>
                     </div>
 
-                    <div className="header-middle">
-                        <div className="search-bar-wrapper">
-                            <Search />
+                    {!isMobile && (
+                        <div className="header-middle">
+                            <div className="search-bar-wrapper">
+                                <Search />
+                            </div>
                         </div>
-                    </div>
-
+                    )}
+                    
                     <div className="header-right">
                         <motion.div
                             className="wishlist-container"
-                            whileHover={{ scale: 1.05 }}
+                            whileHover={{ scale: isMobile ? 1 : 1.05 }}
                             whileTap={{ scale: 0.95 }}
                         >
                             <Link
@@ -177,25 +192,27 @@ const Header = () => {
                                 onClick={closeMobileMenu}
                             >
                                 <motion.div
-                                    animate={{ scale: [1, 1.1, 1] }}
-                                    transition={{ repeat: Infinity, duration: 2 }}
+                                    animate={isMobile ? {} : { scale: [1, 1.1, 1] }}
+                                    transition={isMobile ? {} : { repeat: Infinity, duration: 2 }}
                                 >
                                     <FaHeart className="wishlist-icon" />
                                 </motion.div>
                                 <span className="wishlist-text">Wishlist</span>
+                                {wishlistCount > 0 && (
                                 <motion.span
                                     className="wishlist-badge"
-                                    animate={{ scale: [1, 1.2, 1] }}
-                                    transition={{ repeat: Infinity, duration: 2 }}
+                                    animate={isMobile ? {} : { scale: [1, 1.2, 1] }}
+                                    transition={isMobile ? {} : { repeat: Infinity, duration: 2 }}
                                 >
-                                    0
+                                        {wishlistCount}
                                 </motion.span>
+                                )}
                             </Link>
                         </motion.div>
 
                         <motion.div
                             className="cart-container"
-                            whileHover={{ scale: 1.05 }}
+                            whileHover={{ scale: isMobile ? 1 : 1.05 }}
                             whileTap={{ scale: 0.95 }}
                         >
                             <Link
@@ -205,25 +222,25 @@ const Header = () => {
                                 onClick={closeMobileMenu}
                             >
                                 <motion.div
-                                    animate={{ rotate: [0, 10, -10, 0] }}
-                                    transition={{ repeat: Infinity, repeatDelay: 5, duration: 2 }}
+                                    animate={isMobile ? {} : { rotate: [0, 10, -10, 0] }}
+                                    transition={isMobile ? {} : { repeat: Infinity, repeatDelay: 5, duration: 2 }}
                                 >
                                     <FaShoppingCart className="cart-icon" />
                                 </motion.div>
                                 <span className="cart-text">Cart</span>
                                 <motion.span
                                     className="cart-badge"
-                                    animate={{ scale: [1, 1.2, 1] }}
-                                    transition={{ repeat: Infinity, duration: 2 }}
+                                    animate={isMobile ? {} : { scale: [1, 1.2, 1] }}
+                                    transition={isMobile ? {} : { repeat: Infinity, duration: 2 }}
                                 >
-                                    {/* {cartItems?.data.length} */}
+                                    {cartCount}
                                 </motion.span>
                             </Link>
                         </motion.div>
 
                         <motion.div
                             className="profile-icon-wrapper"
-                            whileHover={{ scale: 1.05 }}
+                            whileHover={{ scale: isMobile ? 1 : 1.05 }}
                             whileTap={{ scale: 0.95 }}
                             ref={profileMenuRef}
                         >
@@ -238,6 +255,7 @@ const Header = () => {
                             </button>
                         </motion.div>
                     </div>
+                    
                 </div>
             </div>
 
@@ -247,16 +265,18 @@ const Header = () => {
                 ref={navRef}
                 aria-label="Main navigation"
             >
-                <div className="mobile-search-container">
-                    <Search />
-                </div>
+                {isMobile && (
+                    <div className="mobile-search-container">
+                        <Search />
+                    </div>
+                )}
                 <ul className="nav-list">
                     {navItems.map((item) => (
                         <li
                             key={item.name}
                             className={`nav-item ${isActive(item.path, item.submenu) ? 'active-nav-item' : ''} ${activeDropdown === item.name ? 'active-dropdown' : ''}`}
                             onMouseEnter={() => !isMobile && item.submenu && toggleDropdown(item.name)}
-                            onMouseLeave={() => !isMobile && setActiveDropdown(null)}
+                            onMouseLeave={() => !isMobile && !item.submenu && setActiveDropdown(null)}
                         >
                             <NavLink
                                 to={item.path}
@@ -279,38 +299,45 @@ const Header = () => {
                             </NavLink>
 
                             {item.submenu && (
-                                <AnimatePresence>
-                                    {activeDropdown === item.name && (
-                                        <motion.ul
-                                            className="dropdown-menu"
-                                            initial={{ opacity: 0, height: 0 }}
-                                            animate={{ opacity: 1, height: 'auto' }}
-                                            exit={{ opacity: 0, height: 0 }}
-                                            transition={{ duration: 0.3 }}
-                                            aria-label={`${item.name} submenu`}
-                                            role="menu"
-                                        >
-                                            {item.submenu.map((subItem) => (
-                                                <motion.li
-                                                    key={subItem}
-                                                    whileHover={{ x: 5 }}
-                                                    onClick={closeMobileMenu}
-                                                    role="none"
-                                                >
-                                                    <NavLink
-                                                        to={`${item.path}/${subItem.toLowerCase()}`}
-                                                        className={({ isActive }) =>
-                                                            isActive ? 'active-subnav-link' : ''
-                                                        }
-                                                        role="menuitem"
+                                <div
+                                    className="dropdown-container"
+                                    onMouseEnter={() => !isMobile && setActiveDropdown(item.name)}
+                                    onMouseLeave={() => !isMobile && setActiveDropdown(null)}
+                                    ref={dropdownRef}
+                                >
+                                    <AnimatePresence>
+                                        {activeDropdown === item.name && (
+                                            <motion.ul
+                                                className="dropdown-menu"
+                                                initial={{ opacity: 0, height: 0 }}
+                                                animate={{ opacity: 1, height: 'auto' }}
+                                                exit={{ opacity: 0, height: 0 }}
+                                                transition={{ duration: 0.2 }}
+                                                aria-label={`${item.name} submenu`}
+                                                role="menu"
+                                            >
+                                                {item.submenu.map((subItem) => (
+                                                    <motion.li
+                                                        key={subItem}
+                                                        whileHover={{ backgroundColor: 'rgba(214, 76, 12, 0.1)' }}
+                                                        onClick={closeMobileMenu}
+                                                        role="none"
                                                     >
-                                                        {subItem}
-                                                    </NavLink>
-                                                </motion.li>
-                                            ))}
-                                        </motion.ul>
-                                    )}
-                                </AnimatePresence>
+                                                        <NavLink
+                                                            to={`${item.path}/${subItem.toLowerCase()}`}
+                                                            className={({ isActive }) =>
+                                                                `dropdown-link ${isActive ? 'active-subnav-link' : ''}`
+                                                            }
+                                                            role="menuitem"
+                                                        >
+                                                            {subItem}
+                                                        </NavLink>
+                                                    </motion.li>
+                                                ))}
+                                            </motion.ul>
+                                        )}
+                                    </AnimatePresence>
+                                </div>
                             )}
                         </li>
                     ))}
@@ -319,18 +346,5 @@ const Header = () => {
         </header>
     );
 };
-
-// Helper function for debouncing
-function debounce(func, wait) {
-    let timeout;
-    return function executedFunction(...args) {
-        const later = () => {
-            clearTimeout(timeout);
-            func(...args);
-        };
-        clearTimeout(timeout);
-        timeout = setTimeout(later, wait);
-    };
-}
 
 export default Header;

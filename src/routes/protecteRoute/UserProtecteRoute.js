@@ -6,6 +6,7 @@ import { useAuth } from '../../public/context/authContext/AuthContext';
 const UserPrivateRoute = ({ children }) => {
     const { user } = useAuth();
     const location = useLocation();
+    
 
     if (!user) {
         // Redirect unauthenticated users to login, preserving the current location

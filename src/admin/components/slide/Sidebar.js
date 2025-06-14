@@ -17,7 +17,7 @@ const menuItems = [
     {
         title: "Dashboard",
         icon: <FaTachometerAlt className="section-icon" />,
-        path: "/dashboard"
+        path: "/admin/dashboard"
     },
     {
         title: "Product",
@@ -163,7 +163,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
                 <div className="sidebar-content">
                     <div className="sidebar-header">
                         <div className="sidebar-brand">
-                            <NavLink to="/" className="sidebar-title">
+                            <NavLink to="/admin" className="sidebar-title">
                                 {currentPageTitle && (
                                     <div className="current-page-indicator">
                                         {currentPageTitle}

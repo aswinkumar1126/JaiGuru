@@ -12,8 +12,12 @@ export const UserAuthProvider= ({ children }) => {
         console.log(userData);
         localStorage.setItem("user", JSON.stringify(userData));
         localStorage.setItem('user_token', userData.token);
+        localStorage.setItem('userMobileNumber', userData.contactNumber);
         const user_token = localStorage.getItem('user_token');
-        console.log(user_token); // ✅ Now it will log the actual token string
+        const user_mobileNumber=localStorage.getItem('userMobileNumber');
+        console.log(user_token); 
+        console.log(user_mobileNumber);
+
 
     };
 

@@ -1,0 +1,354 @@
+/* New Admin Header - Minimal Responsive CSS */
+:root {
+    --header-height: 66px;
+    --primary-color: #596cd4;
+    --primary-hover: #4a5bc5;
+    --text-light: #ffffff;
+    --text-dark: #333333;
+    --bg-light: #f8f9fa;
+    --bg-dark: #1a2238;
+    --shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.new-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: var(--header-height);
+    display: flex;
+    align-items: center;
+    padding: 0 1rem;
+    z-index: 1000;
+    box-shadow: var(--shadow);
+}
+
+.new-header.light {
+    background-color: var(--bg-light);
+    color: var(--text-dark);
+}
+
+.new-header.dark {
+    background-color: var(--bg-dark);
+    color: var(--text-light);
+}
+
+.new-header.scrolled {
+    background-color: rgba(var(--bg-light), 0.95);
+    backdrop-filter: blur(5px);
+}
+
+.new-header.dark.scrolled {
+    background-color: rgba(var(--bg-dark), 0.95);
+}
+
+body {
+    padding-top: var(--header-height);
+}
+
+.new-header-container {
+    width: 100%;
+    max-width: 1600px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    height: 100%;
+}
+
+.new-header-left {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-shrink: 0;
+}
+
+.new-menu-toggle {
+    background: none;
+    border: none;
+    color: inherit;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0.4rem;
+    display: none;
+}
+
+.new-logo {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.new-logo-image {
+    height: 36px;
+    width: auto;
+    border-radius: 50%;
+}
+
+.new-company-name {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0;
+    white-space: nowrap;
+}
+
+.new-header-center {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    min-width: 0;
+    margin: 0 0.5rem;
+}
+
+.new-search-container {
+    position: relative;
+    flex: 1;
+    max-width: 300px;
+    min-width: 100px;
+}
+
+.new-search-input {
+    width: 100%;
+    padding: 0.6rem 0.8rem 0.6rem 2.2rem;
+    border-radius: 6px;
+    border: 1px solid #e0e0e0;
+    font-size: 0.9rem;
+}
+
+.new-search-icon {
+    position: absolute;
+    left: 0.8rem;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 0.9rem;
+}
+
+.new-date-time-container {
+    min-width: 160px;
+}
+
+.new-date-box {
+    width: 100%;
+    padding: 0.6rem 0.8rem;
+    border-radius: 6px;
+    border: 1px solid #e0e0e0;
+    font-size: 0.85rem;
+    text-align: center;
+}
+
+.new-header-right {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-shrink: 0;
+}
+
+.new-icon-button {
+    background: rgba(var(--primary-color), 0.1);
+    border: none;
+    color: inherit;
+    font-size: 1.1rem;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.new-icon-button:hover {
+    background-color: var(--primary-hover);
+    color: var(--text-light);
+}
+
+.new-badge {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    background-color: #ff9800;
+    color: white;
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.65rem;
+}
+
+.new-profile-button {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.3rem;
+    border-radius: 20px;
+}
+
+.new-profile-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+}
+
+.new-profile-name {
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.new-dropdown-wrapper {
+    position: relative;
+}
+
+.new-dropdown-menu {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 8px);
+    background-color: var(--bg-light);
+    border-radius: 8px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+    width: 240px;
+    z-index: 1001;
+}
+
+.new-header.dark .new-dropdown-menu {
+    background-color: var(--bg-dark);
+    color: var(--text-light);
+}
+
+.new-dropdown-header {
+    padding: 0.75rem 1rem;
+    font-size: 0.9rem;
+    font-weight: bold;
+}
+
+.new-dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    background: none;
+    border: none;
+    width: 100%;
+    font-size: 0.85rem;
+    cursor: pointer;
+}
+
+.new-dropdown-footer {
+    padding: 0.5rem 1rem;
+    text-align: center;
+}
+
+.new-dropdown-footer button {
+    background: none;
+    border: none;
+    color: var(--primary-color);
+    font-size: 0.85rem;
+    cursor: pointer;
+}
+
+.new-notification-preview {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.new-notification-icon {
+    font-size: 1.2rem;
+}
+
+.new-notification-content strong {
+    font-size: 0.85rem;
+}
+
+.new-notification-content small {
+    font-size: 0.75rem;
+}
+
+.new-settings-button {
+    background: none;
+    border: none;
+    font-size: 1rem;
+}
+
+.new-menu-icon {
+    font-size: 1rem;
+}
+
+.new-dropdown-divider {
+    height: 1px;
+    background-color: #e0e0e0;
+    margin: 0.25rem 0;
+}
+
+/* Responsive Styles */
+@media (max-width: 992px) {
+    .new-menu-toggle {
+        display: flex;
+    }
+
+    .new-date-time-container {
+        display: none;
+    }
+
+    .new-search-container {
+        max-width: 200px;
+    }
+}
+
+@media (max-width: 768px) {
+
+    .new-company-name,
+    .new-profile-name {
+        display: none;
+    }
+
+    .new-search-container {
+        max-width: 150px;
+    }
+
+    .new-icon-button,
+    .new-profile-avatar {
+        width: 32px;
+        height: 32px;
+        font-size: 1rem;
+    }
+
+    .new-dropdown-menu {
+        width: 200px;
+    }
+}
+
+@media (max-width: 576px) {
+    .new-header {
+        padding: 0 0.5rem;
+    }
+
+    .new-logo-image {
+        height: 32px;
+    }
+
+    .new-search-container {
+        max-width: 120px;
+    }
+
+    .new-icon-button,
+    .new-profile-avatar {
+        width: 30px;
+        height: 30px;
+        font-size: 0.9rem;
+    }
+
+    .new-dropdown-menu {
+        width: 180px;
+    }
+}

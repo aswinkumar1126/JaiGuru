@@ -11,7 +11,7 @@ export const rateService = {
 
     // GET - Fetch all rates
     getRates: () => {
-        return axiosInstance.get(`/rates/getRate`);
+        return axiosInstance.get(`/todayrate`);
     },
     getRatesById:(id)=>{
         return axiosInstance.get('/rates/getRate/{id}');
