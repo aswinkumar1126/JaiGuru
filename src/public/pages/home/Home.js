@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import Banner from "../banner/Banner";
 import { useBannersQuery } from "../../../admin/hooks/banners/useBannersQuery";
 import SkeletonLoader from "../../components/loader/SkeletonLoader";
@@ -9,7 +10,10 @@ import { useProductsQuery } from "../../hook/product/useProductsQuery";
 import Product from "../../pages/product/Product"; // adjust the path if needed
 import RecentlyViewedPage from "../recentlyViewed/RecentlyViewed";
 import './Home.css';
+import CategorySection from "../category/CategorySection";
+import AdminHeader from "../../../admin/components/head/header";
 function Home() {
+    const navigate = useNavigate();
     const {
         data: bannersData,
         isLoading: bannersLoading,
@@ -33,7 +37,7 @@ function Home() {
         (a, b) => new Date(b.created_at) - new Date(a.created_at)
     );
     const products = productData || [];
-
+    const topTenProducts = products.slice(0, 10);
     const firstVideoUrl =
         videosData.length > 0
             ? `https://app.bmgjewellers.com${videosData[0].video_path}`
@@ -48,16 +52,21 @@ function Home() {
                 onRetry={() => window.location.reload()}
             />
         );
+    
+    
 
     return (
         <div className="home-section">
             
                 <Banner images={bannerData} loading={bannersLoading} />
+                
+                <CategorySection />
             <Product
-                products={products}
+                products={topTenProducts}
                 loading={productsLoading}
                 error={productsError}
             />
+            
             <RecentlyViewedPage />
 
                 {firstVideoUrl && (

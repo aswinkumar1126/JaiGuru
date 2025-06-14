@@ -7,14 +7,22 @@ import { useSingleProductQuery } from "../../hook/product/useSingleProductQuery"
 import './ProductDetails.css';
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import { useCart } from "../../hook/cart/useCartQuery";
-
+import { useRecentlyViewed } from "../../hook/recentlyViewed/useRecentlyViewedQuery";
+import RecentlyViewedPage from "../recentlyViewed/RecentlyViewed";
 
 
 const ProductDetails = () => {
     const { sno } = useParams();
+    useEffect(() => {
+
+        if (sno) {
+            addItem(sno); // ✅ Now safely adds only once
+        }
+    }, [sno]);
     const { data: productDetail, isLoading, isError, error } = useSingleProductQuery(sno);
 
     const { addToCartHandler } = useCart();
+    const { addItem } = useRecentlyViewed();
 
     console.log(productDetail);
 
@@ -104,6 +112,7 @@ const ProductDetails = () => {
         });
     };
     
+    
 
     const toggleSpecs = () => {
         setExpandedSpecs(!expandedSpecs);
@@ -140,7 +149,7 @@ const ProductDetails = () => {
         ]
     };
 
-    return (
+    return (<>
         <div className="product-details-container">
             <div className="product-details-wrapper">
                 <div className="product-image-section">
@@ -328,6 +337,10 @@ const ProductDetails = () => {
                 </div>
             </div>
         </div>
+        <section>
+            <RecentlyViewedPage />
+        </section>
+    </>
     );
 };
 

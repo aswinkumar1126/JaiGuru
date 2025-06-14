@@ -5,7 +5,7 @@ import Error from "../../components/error/Error";
 import Loading from "../../components/loader/SkeletonLoader";
 import { useSingleProductQuery } from "../../hook/product/useSingleProductQuery";
 import "./CartPage.css";
-import secureImage from '../../assets/images/secure-payment.svg.svg'
+import secureImage from '../../assets/images/secure-payment.svg.svg';
 
 const CartItem = ({ item, onIncrease, onDecrease, onRemove }) => {
     const { data: product, isLoading } = useSingleProductQuery(item.itemTagSno);
@@ -31,7 +31,7 @@ const CartItem = ({ item, onIncrease, onDecrease, onRemove }) => {
                     className="cart-item-img"
                     loading="lazy"
                     onError={(e) => {
-                        e.target.src = "fallback.jpg";
+                        e.target.src = "/fallback.jpg";
                         e.target.alt = "Image not available";
                     }}
                 />
@@ -45,7 +45,6 @@ const CartItem = ({ item, onIncrease, onDecrease, onRemove }) => {
                         ? Number(product.GrandTotal).toFixed(2)
                         : item.amount?.toFixed(2)}
                 </p>
-
                 <div className="cart-item-actions">
                     <button
                         className="quantity-btn"
@@ -64,7 +63,6 @@ const CartItem = ({ item, onIncrease, onDecrease, onRemove }) => {
                         +
                     </button>
                 </div>
-
                 <div className="cart-item-options">
                     <button
                         className="remove-btn"
@@ -123,26 +121,49 @@ const CartPage = () => {
     const { cartItems, isLoading, updateCart, deleteCart, error } = useCart();
     const [isSticky, setIsSticky] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
     const priceDetailsRef = useRef(null);
     const cartContainerRef = useRef(null);
+    const cartList = cartItems?.data || [];
 
+    // Handle screen size detection
+    useEffect(() => {
+        const handleResize = () => {
+            const mobile = window.innerWidth <= 768;
+            setIsMobile(mobile);
+        };
+        window.addEventListener('resize', handleResize);
+        handleResize(); // Run on mount to set initial state
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
+    // Handle sticky price details
     useEffect(() => {
         const handleScroll = () => {
             if (!priceDetailsRef.current || !cartContainerRef.current) return;
-
             const priceDetailsTop = priceDetailsRef.current.getBoundingClientRect().top;
             const cartContainerBottom = cartContainerRef.current.getBoundingClientRect().bottom;
             const viewportHeight = window.innerHeight;
-
             setIsSticky(priceDetailsTop <= 80 && cartContainerBottom > viewportHeight);
         };
-
-        window.addEventListener('scroll', handleScroll);
+        window.addEventListener('scroll', handleScroll, { passive: true });
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
+    // Ensure cart-actions-mobile visibility on mount for mobile
+    useEffect(() => {
+        if (isMobile && cartList.length > 0) {
+            const mobileActions = document.querySelector('.cart-actions-mobile');
+            if (mobileActions) {
+                mobileActions.style.display = 'flex';
+            }
+        }
+    }, [isMobile, cartList.length]);
+
     if (isLoading) return <Loading />;
-    if (error) return <Error message={error.message || "Something went wrong"} />;
+    if (error && !cartList.length) {
+        return <Error message={error.message || "Something went wrong"} />;
+    }
 
     const handleIncrease = (item) => {
         updateCart({ ...item, quantity: item.quantity + 1 });
@@ -155,23 +176,22 @@ const CartPage = () => {
     };
 
     const getTotalPrice = () => {
-        return cartItems?.data?.reduce((total, item) => total + (item.amount * item.quantity), 0) || 0;
+        return cartList.reduce((total, item) => total + (item.amount * item.quantity), 0) || 0;
     };
 
     return (
         <div className="cart-page" role="main">
             <div className="cart-header">
-                <h1>My Cart ({cartItems?.data?.length || 0})</h1>
-                {cartItems?.data?.length > 0 && (
+                <h1>My Cart ({cartList.length})</h1>
+                {cartList.length > 0 && (
                     <div className="delivery-info">
                         <span className="delivery-badge">Delivery in 2-5 days</span>
                     </div>
                 )}
             </div>
-
             <div className="cart-container" ref={cartContainerRef}>
                 <div className="cart-left">
-                    {cartItems?.data?.length === 0 ? (
+                    {cartList.length === 0 ? (
                         <div className="empty-cart">
                             <img src="/images/empty-cart.svg" alt="Empty cart illustration" loading="lazy" />
                             <h3>Your cart is empty</h3>
@@ -186,7 +206,7 @@ const CartPage = () => {
                     ) : (
                         <>
                             <div className="cart-items-list" role="list">
-                                {cartItems.data.map((item) => (
+                                {cartList.map((item) => (
                                     <CartItem
                                         key={item.sno}
                                         item={item}
@@ -196,41 +216,40 @@ const CartPage = () => {
                                     />
                                 ))}
                             </div>
-                            <div className="cart-actions-mobile">
-                                <div className="price-summary-mobile">
-                                    <span>Total: ₹{getTotalPrice().toFixed(2)}</span>
-                                    <span className="delivery-text">FREE delivery</span>
+                            {isMobile && cartList.length > 0 && (
+                                <div className="cart-actions-mobile">
+                                    <div className="price-summary-mobile">
+                                        <span>₹{getTotalPrice().toFixed(2)}</span>
+                                        <span className="delivery-text">FREE delivery</span>
+                                    </div>
+                                    <Button
+                                        label="VIEW SUMMARY"
+                                        className="place-order-btn-mobile"
+                                        onClick={() => setIsModalOpen(true)}
+                                        aria-label="View cart summary"
+                                    />
                                 </div>
-                                <Button
-                                    label="VIEW SUMMARY"
-                                    className="place-order-btn-mobile"
-                                    onClick={() => setIsModalOpen(true)}
-                                    aria-label="View cart summary"
-                                />
-                            </div>
+                            )}
                         </>
                     )}
                 </div>
-
-                {cartItems?.data?.length > 0 && (
+                {cartList.length > 0 && !isMobile && (
                     <div className={`cart-right ${isSticky ? 'sticky' : ''}`} ref={priceDetailsRef}>
                         <div className="price-details-card">
                             <h3>PRICE DETAILS</h3>
                             <div className="price-row">
-                                <span>Price ({cartItems?.data?.length} items)</span>
+                                <span>Price ({cartList.length} items)</span>
                                 <span>₹{getTotalPrice().toFixed(2)}</span>
                             </div>
                             <div className="price-row">
                                 <span>Delivery Charges</span>
                                 <span className="free-delivery">FREE</span>
                             </div>
-                         
                             <div className="divider"></div>
                             <div className="price-row total">
                                 <strong>Total Amount</strong>
                                 <strong>₹{getTotalPrice().toFixed(2)}</strong>
                             </div>
-                          
                             <Button
                                 label="PLACE ORDER"
                                 className="place-order-btn"
@@ -245,12 +264,11 @@ const CartPage = () => {
                     </div>
                 )}
             </div>
-
             <CartSummaryModal
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
                 totalPrice={getTotalPrice()}
-                itemCount={cartItems?.data?.length || 0}
+                itemCount={cartList.length}
                 onCheckout={() => alert("Proceed to checkout")}
             />
         </div>

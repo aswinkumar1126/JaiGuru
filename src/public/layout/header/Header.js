@@ -14,6 +14,7 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../../hook/cart/useCartQuery';
+import { useFavorites } from '../../hook/favorites/useFavoritesQuery';
 
 const Header = () => {
     const [isScrolled, setIsScrolled] = useState(false);
@@ -26,10 +27,15 @@ const Header = () => {
     const lastScrollY = useRef(0);
     const navRef = useRef(null);
     const profileMenuRef = useRef(null);
+    const dropdownRef = useRef(null);
     const navigate = useNavigate();
 
     const { cartItems } = useCart();
     const cartCount = cartItems?.data?.length || 0;
+
+    const { data, isLoading, isError } = useFavorites();
+
+    const wishlistCount = data?.data?.length || 0;
 
     const handleProfileClick = useCallback(() => {
         navigate('/user/profile');
@@ -41,7 +47,8 @@ const Header = () => {
             if (profileMenuRef.current && !profileMenuRef.current.contains(event.target)) {
                 setIsProfileMenuOpen(false);
             }
-            if (navRef.current && !navRef.current.contains(event.target)) {
+            if (navRef.current && !navRef.current.contains(event.target) &&
+                (!dropdownRef.current || !dropdownRef.current.contains(event.target))) {
                 setIsMobileMenuOpen(false);
                 setActiveDropdown(null);
             }
@@ -51,7 +58,7 @@ const Header = () => {
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
 
-    // Debounce function moved inside component to avoid recreation
+    // Debounce function
     const debounce = useCallback((func, wait) => {
         let timeout;
         return function executedFunction(...args) {
@@ -115,11 +122,6 @@ const Header = () => {
 
     const navItems = [
         { name: 'HOME', path: '/' },
-        {
-            name: 'CATEGORY',
-            path: '/category',
-            submenu: ['Rings', 'Necklaces', 'Bracelets', 'Earrings']
-        },
         { name: 'PRODUCTS', path: '/products' },
         { name: 'ABOUT US', path: '/about' },
         { name: 'WHY US', path: '/why-us' },
@@ -176,7 +178,7 @@ const Header = () => {
                             </div>
                         </div>
                     )}
-
+                    
                     <div className="header-right">
                         <motion.div
                             className="wishlist-container"
@@ -196,13 +198,15 @@ const Header = () => {
                                     <FaHeart className="wishlist-icon" />
                                 </motion.div>
                                 <span className="wishlist-text">Wishlist</span>
+                                {wishlistCount > 0 && (
                                 <motion.span
                                     className="wishlist-badge"
                                     animate={isMobile ? {} : { scale: [1, 1.2, 1] }}
                                     transition={isMobile ? {} : { repeat: Infinity, duration: 2 }}
                                 >
-                                    0
+                                        {wishlistCount}
                                 </motion.span>
+                                )}
                             </Link>
                         </motion.div>
 
@@ -251,6 +255,7 @@ const Header = () => {
                             </button>
                         </motion.div>
                     </div>
+                    
                 </div>
             </div>
 
@@ -271,7 +276,7 @@ const Header = () => {
                             key={item.name}
                             className={`nav-item ${isActive(item.path, item.submenu) ? 'active-nav-item' : ''} ${activeDropdown === item.name ? 'active-dropdown' : ''}`}
                             onMouseEnter={() => !isMobile && item.submenu && toggleDropdown(item.name)}
-                            onMouseLeave={() => !isMobile && setActiveDropdown(null)}
+                            onMouseLeave={() => !isMobile && !item.submenu && setActiveDropdown(null)}
                         >
                             <NavLink
                                 to={item.path}
@@ -294,38 +299,45 @@ const Header = () => {
                             </NavLink>
 
                             {item.submenu && (
-                                <AnimatePresence>
-                                    {activeDropdown === item.name && (
-                                        <motion.ul
-                                            className="dropdown-menu"
-                                            initial={{ opacity: 0, height: 0 }}
-                                            animate={{ opacity: 1, height: 'auto' }}
-                                            exit={{ opacity: 0, height: 0 }}
-                                            transition={{ duration: 0.3 }}
-                                            aria-label={`${item.name} submenu`}
-                                            role="menu"
-                                        >
-                                            {item.submenu.map((subItem) => (
-                                                <motion.li
-                                                    key={subItem}
-                                                    whileHover={isMobile ? {} : { x: 5 }}
-                                                    onClick={closeMobileMenu}
-                                                    role="none"
-                                                >
-                                                    <NavLink
-                                                        to={`${item.path}/${subItem.toLowerCase()}`}
-                                                        className={({ isActive }) =>
-                                                            isActive ? 'active-subnav-link' : ''
-                                                        }
-                                                        role="menuitem"
+                                <div
+                                    className="dropdown-container"
+                                    onMouseEnter={() => !isMobile && setActiveDropdown(item.name)}
+                                    onMouseLeave={() => !isMobile && setActiveDropdown(null)}
+                                    ref={dropdownRef}
+                                >
+                                    <AnimatePresence>
+                                        {activeDropdown === item.name && (
+                                            <motion.ul
+                                                className="dropdown-menu"
+                                                initial={{ opacity: 0, height: 0 }}
+                                                animate={{ opacity: 1, height: 'auto' }}
+                                                exit={{ opacity: 0, height: 0 }}
+                                                transition={{ duration: 0.2 }}
+                                                aria-label={`${item.name} submenu`}
+                                                role="menu"
+                                            >
+                                                {item.submenu.map((subItem) => (
+                                                    <motion.li
+                                                        key={subItem}
+                                                        whileHover={{ backgroundColor: 'rgba(214, 76, 12, 0.1)' }}
+                                                        onClick={closeMobileMenu}
+                                                        role="none"
                                                     >
-                                                        {subItem}
-                                                    </NavLink>
-                                                </motion.li>
-                                            ))}
-                                        </motion.ul>
-                                    )}
-                                </AnimatePresence>
+                                                        <NavLink
+                                                            to={`${item.path}/${subItem.toLowerCase()}`}
+                                                            className={({ isActive }) =>
+                                                                `dropdown-link ${isActive ? 'active-subnav-link' : ''}`
+                                                            }
+                                                            role="menuitem"
+                                                        >
+                                                            {subItem}
+                                                        </NavLink>
+                                                    </motion.li>
+                                                ))}
+                                            </motion.ul>
+                                        )}
+                                    </AnimatePresence>
+                                </div>
                             )}
                         </li>
                     ))}

@@ -22,8 +22,8 @@ import AddEmployee from '../../admin/pages/employee/add/AddEmployee';
 import ManageEmployees from '../../admin/pages/employee/manage/ManageEmployees';
 import Unauthorized from '../../admin/pages/unauthorized/Unauthorized';
 import UserDetails from '../../admin/pages/dashboard/userDetails';
-import AdminHeader from '../../admin/components/head/header';
-
+import NewAdminHeader from '../../admin/components/head/header';
+import './AdminRoutes.css';
 
 
 const AdminRoutes = () => {
@@ -48,8 +48,7 @@ const AdminRoutes = () => {
 
     return (
         <div className="app-layout">
-            <AdminHeader toggleSidebar={() => setIsSidebarOpen(prev => !prev)} isSidebarOpen={isSidebarOpen} />
-            <div className="layout-body">
+            <NewAdminHeader toggleSidebar={() => setIsSidebarOpen(prev => !prev)} isSidebarOpen={isSidebarOpen} />              <div className="layout-body">
                 <Sidebar isOpen={isSidebarOpen} toggleSidebar={() => setIsSidebarOpen(prev => !prev)} />
                 <main className="main-content">
                     <Routes>

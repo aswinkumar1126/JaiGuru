@@ -244,3 +244,45 @@
         transform: translateY(0);
     }
 }
+@keyframes pop {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.4);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+.product-card__wishlist {
+    transition: color 0.3s ease;
+}
+
+.product-card__wishlist.animate {
+    animation: pop 0.3s ease-in-out;
+    color: red;
+}
+.product-card__wishlist {
+    color: #333;
+    transition: color 0.3s ease;
+    background: none;
+    border: none;
+    cursor: pointer;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 10;
+}
+
+.product-card__wishlist.active {
+    color: #e60023;
+    /* red for active/favorited state */
+}
+
+.product-card__wishlist.animate {
+    animation: pop 0.3s ease-in-out;
+}

@@ -51,14 +51,15 @@
 
 .custom-button.secondary {
     background-color: var(--secondary-color);
-    color: var(--text-color);
+    color: var(--white);
     border: 1px solid #cbd5e1;
 }
 
 .custom-button.secondary:hover:not(.disabled) {
-    background-color: var(--secondary-hover);
+    background-color: var(--primary-hover);
     box-shadow: var(--shadow-md);
     transform: translateY(-1px);
+    color: var(--white);
 }
 
 .custom-button.text {

@@ -7,79 +7,58 @@ import {
   FaCog,
   FaSignOutAlt,
   FaEnvelope,
-  FaGlobe
-
+  FaGlobe,
 } from 'react-icons/fa';
 import {
   MdDarkMode,
   MdOutlineLightMode,
   MdOutlineMenu,
   MdMenuOpen,
-
 } from 'react-icons/md';
 import { MyContext } from '../../context/themeContext/themeContext';
 import logo from '../../assets/logo/logo.jpg';
-import './AdminHeader.css';
+import './NewAdminHeader.css';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/auth/authContext';
 import { useUserProfile } from '../../hooks/profile/useUserProfile';
 
-const AdminHeader = ({ toggleSidebar, isSidebarOpen }) => {
-  const { themeMode, setThemeMode, setThemeColor } = useContext(MyContext);
+const NewAdminHeader = ({ toggleSidebar, isSidebarOpen }) => {
+  const { themeMode, setThemeMode } = useContext(MyContext);
   const [scrolled, setScrolled] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 992);
   const [searchQuery, setSearchQuery] = useState('');
   const [currentDateTime, setCurrentDateTime] = useState('');
-  const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
-  const [isNotificationMenuOpen, setIsNotificationMenuOpen] = useState(false);
-
-  const [isColorMenuOpen, setIsColorMenuOpen] = useState(false);
-  const languageMenuRef = useRef(null);
-  const [isLanguageMenuOpen, setIsLanguageMenuOpen] = useState(false);
-  const emailMenuRef = useRef(null);
-  const [isEmailMenuOpen, setIsEmailMenuOpen] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
+  const [isLanguageOpen, setIsLanguageOpen] = useState(false);
+  const [isEmailOpen, setIsEmailOpen] = useState(false);
 
   const navigate = useNavigate();
-  const { t } = useTranslation();
-  const profileMenuRef = useRef(null);
-  const notificationMenuRef = useRef(null);
-  const colorMenuRef = useRef(null);
-
+  const { t, i18n } = useTranslation();
   const { logout } = useAuth();
   const { data: user } = useUserProfile();
 
-  const { i18n } = useTranslation();
-
-
-  const changeThemeColor = (color) => {
-    setThemeColor(color);
-    setIsColorMenuOpen(false);
-  };
-  const changeLanguage = (lng) => {
-    i18n.changeLanguage(lng);
-    setIsLanguageMenuOpen(false);
-  };
+  const profileRef = useRef(null);
+  const notificationsRef = useRef(null);
+  const languageRef = useRef(null);
+  const emailRef = useRef(null);
 
   // Handle window resize
   useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < 992);
-    };
+    const handleResize = () => setIsMobile(window.innerWidth < 992);
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   // Handle scroll effect
   useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 20);
-    };
+    const handleScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Current date and time
+  // Update date and time
   useEffect(() => {
     const updateDateTime = () => {
       const date = new Date();
@@ -91,26 +70,27 @@ const AdminHeader = ({ toggleSidebar, isSidebarOpen }) => {
       });
       setCurrentDateTime(`D:${formattedDate}-T:${formattedTime}`);
     };
-
-    const interval = setInterval(updateDateTime, 1000);
     updateDateTime();
+    const interval = setInterval(updateDateTime, 1000);
     return () => clearInterval(interval);
   }, []);
 
-  // Close menus when clicking outside
+  // Close dropdowns on outside click
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (profileMenuRef.current && !profileMenuRef.current.contains(event.target)) {
-        setIsProfileMenuOpen(false);
+      if (profileRef.current && !profileRef.current.contains(event.target)) {
+        setIsProfileOpen(false);
       }
-      if (notificationMenuRef.current && !notificationMenuRef.current.contains(event.target)) {
-        setIsNotificationMenuOpen(false);
+      if (notificationsRef.current && !notificationsRef.current.contains(event.target)) {
+        setIsNotificationsOpen(false);
       }
-      if (colorMenuRef.current && !colorMenuRef.current.contains(event.target)) {
-        setIsColorMenuOpen(false);
+      if (languageRef.current && !languageRef.current.contains(event.target)) {
+        setIsLanguageOpen(false);
+      }
+      if (emailRef.current && !emailRef.current.contains(event.target)) {
+        setIsEmailOpen(false);
       }
     };
-
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
@@ -120,10 +100,14 @@ const AdminHeader = ({ toggleSidebar, isSidebarOpen }) => {
     console.log('Searching for:', query);
   };
 
-  const toggleThemeMode = () => {
+  const toggleTheme = () => {
     setThemeMode(themeMode === 'light' ? 'dark' : 'light');
   };
 
+  const changeLanguage = (lng) => {
+    i18n.changeLanguage(lng);
+    setIsLanguageOpen(false);
+  };
 
   const handleLogout = () => {
     logout();
@@ -132,156 +116,107 @@ const AdminHeader = ({ toggleSidebar, isSidebarOpen }) => {
 
   return (
     <header
-      className={`header ${scrolled ? 'scrolled' : ''} ${themeMode === 'dark' ? 'dark' : 'light'}`}
-      style={{
-        backgroundColor: themeMode === 'dark' ? 'var(--sidebar-dark-bg)' : 'var(--sidebar-light-bg)'
-      }}
+      className={`new-header ${scrolled ? 'scrolled' : ''} ${themeMode}`}
     >
-      <div className="header-container">
-        {/* Left Section - Logo & Menu Toggle */}
-        <div className="header-left">
+      <div className="new-header-container">
+        {/* Left: Logo & Name */}
+        <div className="new-header-left">
           <button
-            className="menu-toggle"
+            className="new-menu-toggle"
             onClick={toggleSidebar}
             aria-label={isSidebarOpen ? 'Close menu' : 'Open menu'}
           >
             {isSidebarOpen ? <MdMenuOpen /> : <MdOutlineMenu />}
           </button>
-
-          <div className="logo">
-            <img src={logo} alt="BMG Jewelers Logo" className="logo-image" />
-            <h1 className="company-name">BMG Jewelers</h1>
+          <div className="new-logo">
+            <img src={logo} alt="BMG Jewelers Logo" className="new-logo-image" />
+            <h1 className="new-company-name">BMG Jewelers</h1>
           </div>
         </div>
 
-        {/* Center Section - Search & Date */}
-        <div className="header-center">
-          <div className="search-container">
+        {/* Center: Search & Date-Time */}
+        <div className="new-header-center">
+          <div className="new-search-container">
             <input
               type="text"
               placeholder={t('searchPlaceholder')}
               value={searchQuery}
               onChange={(e) => handleSearch(e.target.value)}
-              className="search-input"
+              className="new-search-input"
             />
-            <FaSearch className="search-icon" />
+            <FaSearch className="new-search-icon" />
           </div>
-
           {!isMobile && (
-            <div className="date-time-container">
+            <div className="new-date-time-container">
               <input
                 type="text"
                 value={currentDateTime}
                 readOnly
-                className="date-box"
+                className="new-date-box"
               />
             </div>
           )}
         </div>
 
-        {/* Right Section - Icons & User */}
-        <div className="header-right">
-          {/* Theme Color Picker */}
-          <div className="dropdown-wrapper" ref={colorMenuRef}>
-            {/* <button
-              className="icon-button"
-              onClick={() => setIsColorMenuOpen(!isColorMenuOpen)}
-              aria-label="Change theme color"
-              style={{ backgroundColor: themeColor }}
-            >
-              <MdColorLens />
-            </button> */}
-
-            <AnimatePresence>
-              {isColorMenuOpen && (
-                <motion.div
-                  className="dropdown-menu color-menu"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 20 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <div className="dropdown-header">Theme Color</div>
-                  <div className="color-options">
-                    {['#f4f4f4', '#3f51b5', '#4caf50', '#ff9800', '#e91e63', '#9c27b0'].map((color) => (
-                      <button
-                        key={color}
-                        className="color-option"
-                        style={{ backgroundColor: color }}
-                        onClick={() => changeThemeColor(color)}
-                      />
-                    ))}
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-
-          {/* Theme Toggle */}
+        {/* Right: Icons & Profile */}
+        <div className="new-header-right">
           <button
-            className="icon-button"
-            onClick={toggleThemeMode}
+            className="new-icon-button"
+            onClick={toggleTheme}
             aria-label="Toggle theme"
           >
             {themeMode === 'light' ? <MdDarkMode /> : <MdOutlineLightMode />}
           </button>
 
-
-          <div className="dropdown-wrapper" ref={languageMenuRef}>
+          <div className="new-dropdown-wrapper" ref={languageRef}>
             <button
-              className="icon-button"
-              onClick={() => setIsLanguageMenuOpen(!isLanguageMenuOpen)}
+              className="new-icon-button"
+              onClick={() => setIsLanguageOpen(!isLanguageOpen)}
               aria-label="Change language"
             >
               <FaGlobe />
             </button>
-
             <AnimatePresence>
-              {isLanguageMenuOpen && (
+              {isLanguageOpen && (
                 <motion.div
-                  className="dropdown-menu"
+                  className="new-dropdown-menu"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: 20 }}
                   transition={{ duration: 0.2 }}
                 >
-                  <button onClick={() => changeLanguage('en')}>
-                    English
-                  </button>
-                  <button onClick={() => changeLanguage('ta')}>
-                    Tamil
-                  </button>
+                  <button onClick={() => changeLanguage('en')}>English</button>
+                  <button onClick={() => changeLanguage('ta')}>Tamil</button>
                 </motion.div>
               )}
             </AnimatePresence>
           </div>
 
-          <div className="dropdown-wrapper" ref={emailMenuRef}>
+          <div className="new-dropdown-wrapper" ref={emailRef}>
             <button
-              className="icon-button"
-              onClick={() => setIsEmailMenuOpen(!isEmailMenuOpen)}
+              className="new-icon-button"
+              onClick={() => setIsEmailOpen(!isEmailOpen)}
               aria-label="Email"
             >
               <FaEnvelope />
             </button>
-
             <AnimatePresence>
-              {isEmailMenuOpen && (
+              {isEmailOpen && (
                 <motion.div
-                  className="dropdown-menu"
+                  className="new-dropdown-menu"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: 20 }}
                   transition={{ duration: 0.2 }}
                 >
-                  <div className="dropdown-header">Messages</div>
-                  <div className="dropdown-item">
-                    <div className="message-preview">
+                  <div className="new-dropdown-header">Messages</div>
+                  <div className="new-dropdown-item">
+                    <div className="new-message-preview">
                       <strong>New order received</strong>
                       <small>2 minutes ago</small>
                     </div>
                   </div>
-                  <div className="dropdown-footer">
+                  <div className="new-dropdown-footer">
                     <button>View all messages</button>
                   </div>
                 </motion.div>
@@ -289,44 +224,42 @@ const AdminHeader = ({ toggleSidebar, isSidebarOpen }) => {
             </AnimatePresence>
           </div>
 
-          {/* Notifications */}
-          <div className="dropdown-wrapper" ref={notificationMenuRef}>
+          <div className="new-dropdown-wrapper" ref={notificationsRef}>
             <button
-              className="icon-button"
-              onClick={() => setIsNotificationMenuOpen(!isNotificationMenuOpen)}
+              className="new-icon-button"
+              onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
               aria-label="Notifications"
             >
               <FaBell />
-              <span className="badge">5</span>
+              <span className="new-badge">5</span>
             </button>
-
             <AnimatePresence>
-              {isNotificationMenuOpen && (
+              {isNotificationsOpen && (
                 <motion.div
-                  className="dropdown-menu notification-menu"
+                  className="new-dropdown-menu new-notification-menu"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: 20 }}
                   transition={{ duration: 0.2 }}
                 >
-                  <div className="dropdown-header">
+                  <div className="new-dropdown-header">
                     Notifications
-                    <button className="settings-button">
+                    <button className="new-settings-button">
                       <FaCog />
                     </button>
                   </div>
-                  <div className="dropdown-item">
-                    <div className="notification-preview">
-                      <div className="notification-icon">
+                  <div className="new-dropdown-item">
+                    <div className="new-notification-preview">
+                      <div className="new-notification-icon">
                         <FaUserCircle />
                       </div>
-                      <div className="notification-content">
+                      <div className="new-notification-content">
                         <strong>New user registered</strong>
                         <small>5 minutes ago</small>
                       </div>
                     </div>
                   </div>
-                  <div className="dropdown-footer">
+                  <div className="new-dropdown-footer">
                     <button>View all notifications</button>
                   </div>
                 </motion.div>
@@ -334,56 +267,43 @@ const AdminHeader = ({ toggleSidebar, isSidebarOpen }) => {
             </AnimatePresence>
           </div>
 
-
-          {/* User Profile */}
-          <div className="dropdown-wrapper profile-dropdown" ref={profileMenuRef}>
+          <div className="new-dropdown-wrapper new-profile-dropdown" ref={profileRef}>
             <button
-              className="profile-button"
-              onClick={() => {
-                console.log("Profile button clicked");
-                setIsProfileMenuOpen(!isProfileMenuOpen);
-              }}
+              className="new-profile-button"
+              onClick={() => setIsProfileOpen(!isProfileOpen)}
               aria-label="User profile"
             >
-              <div className="profile-avatar">
+              <div className="new-profile-avatar">
                 <FaUserCircle />
               </div>
               {!isMobile && (
-                <div className="profile-info">
-                  <span className="profile-name">{user?.username}</span>
-                </div>
+                <span className="new-profile-name">{user?.username || 'User'}</span>
               )}
             </button>
-
             <AnimatePresence>
-              {isProfileMenuOpen && (
+              {isProfileOpen && (
                 <motion.div
-                  className="dropdown-menu profile-menu"
+                  className="new-dropdown-menu new-profile-menu"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: 20 }}
                   transition={{ duration: 0.2 }}
-                  style={{
-                    zIndex: 1001,
-                    display: isProfileMenuOpen ? 'block' : 'none'
-                  }}
                 >
-                  <div className="dropdown-header">User Profile</div>
+                  <div className="new-dropdown-header">User Profile</div>
                   <button
-                    className="dropdown-item"
+                    className="new-dropdown-item"
                     onClick={() => {
                       navigate('/admin/profile');
-                      setIsProfileMenuOpen(false);
+                      setIsProfileOpen(false);
                     }}
                   >
-                    <FaUserCircle className="menu-icon" />
-                    <span>My Profile</span>
+                    <FaUserCircle className="new-menu-icon" />
+                    My Profile
                   </button>
-
-                  <div className="dropdown-divider"></div>
-                  <button className="dropdown-item" onClick={handleLogout}>
-                    <FaSignOutAlt className="menu-icon" />
-                    <span>Logout</span>
+                  <div className="new-dropdown-divider"></div>
+                  <button className="new-dropdown-item" onClick={handleLogout}>
+                    <FaSignOutAlt className="new-menu-icon" />
+                    Logout
                   </button>
                 </motion.div>
               )}
@@ -395,4 +315,4 @@ const AdminHeader = ({ toggleSidebar, isSidebarOpen }) => {
   );
 };
 
-export default AdminHeader;
+export default NewAdminHeader;

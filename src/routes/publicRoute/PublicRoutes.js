@@ -14,6 +14,7 @@ import Login from '../../public/pages/login/Login';
 import UserPrivateRoute from '../protecteRoute/UserProtecteRoute';
 import CartPage from '../../public/pages/cart/CartPage';
 import UserProfile from '../../public/pages/profile/UserProfile'
+import WishlistItem from '../../public/pages/WishlistPage/WishlistPage';
 const PublicRoutes = () => {
     return (
         <LayoutWrapper>
@@ -30,6 +31,7 @@ const PublicRoutes = () => {
                 <Route path='/videos' element={<AllVideos />} />
                 <Route path='/contact' element={<Contact />} />
                 <Route path='/cart' element={<UserPrivateRoute><CartPage /></UserPrivateRoute>} />
+                <Route path='/wishlist' element={<UserPrivateRoute><WishlistItem /></UserPrivateRoute>} />
                 <Route path='/user/profile' element={<UserProfile />} />
             </Routes>
         </LayoutWrapper>

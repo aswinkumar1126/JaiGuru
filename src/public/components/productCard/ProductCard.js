@@ -1,36 +1,67 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { FiHeart, FiShoppingCart, FiEye } from 'react-icons/fi';
+import { AiFillHeart } from 'react-icons/ai';
 import './ProductCard.css';
+import {
+    useAddFavorite,
+    useRemoveFavorite,
+    useFavorites,
+} from '../../hook/favorites/useFavoritesQuery';
 
-function ProductCard({ product, onQuickView, onAddToCart, onAddToWishlist }) {
-    
-    const [isWishlisted, setIsWishlisted] = React.useState(false);
 
+function ProductCard({ product, onQuickView, onAddToCart }) {
+    const itemSno = product?.SNO;
+    const { data } = useFavorites(); // fetch current favorites
+    const addFavorite = useAddFavorite();
+    const removeFavorite = useRemoveFavorite();
+
+    const [isWishlisted, setIsWishlisted] = useState(false);
+    const [animateHeart, setAnimateHeart] = useState(false);
+
+    // Extract first image from ImagePath JSON
     const getFirstProductImage = (imagePath) => {
         try {
-            const images = JSON.parse(imagePath || "[]");
+            const images = JSON.parse(imagePath || '[]');
             return images.length > 0
                 ? `https://app.bmgjewellers.com${images[0]}`
-                : "/fallback.jpg";
+                : '/fallback.jpg';
         } catch {
-            return "/fallback.jpg";
+            return '/fallback.jpg';
         }
     };
-    
 
-    const handleAddToWishlist = (e) => {
-        e.preventDefault();
-        setIsWishlisted(!isWishlisted);
-        if (onAddToWishlist) onAddToWishlist(product);
-    };
     const imageUrl = getFirstProductImage(product.ImagePath);
 
+    // Update wishlist state based on server data
+    useEffect(() => {
+        const favoriteList = data?.data || [];
+        setIsWishlisted(favoriteList.includes(itemSno));
+    }, [data, itemSno]);
+
+    // Toggle wishlist state with animation
+    const handleWishlistToggle = (e) => {
+        e.preventDefault();
+        setAnimateHeart(true);
+
+        if (isWishlisted) {
+            removeFavorite.mutate(itemSno);
+        } else {
+            addFavorite.mutate(itemSno);
+        }
+
+        setIsWishlisted(!isWishlisted); // optimistic update
+
+        // Reset animation class
+        setTimeout(() => setAnimateHeart(false), 300);
+    };
 
     return (
         <article className="product-card">
             <div className="product-card__badge">
                 {product.isNew && <span className="badge badge--new">New</span>}
-                {product.discount && <span className="badge badge--discount">-{product.discount}%</span>}
+                {product.discount && (
+                    <span className="badge badge--discount">-{product.discount}%</span>
+                )}
             </div>
 
             <div className="product-card__image-container">
@@ -59,11 +90,11 @@ function ProductCard({ product, onQuickView, onAddToCart, onAddToWishlist }) {
                 </button>
 
                 <button
-                    className={`product-card__wishlist ${isWishlisted ? 'active' : ''}`}
-                    onClick={handleAddToWishlist}
+                    className={`product-card__wishlist ${isWishlisted ? 'active' : ''} ${animateHeart ? 'animate' : ''}`}
+                    onClick={handleWishlistToggle}
                     aria-label={isWishlisted ? 'Remove from wishlist' : 'Add to wishlist'}
                 >
-                    <FiHeart size={18} />
+                    {isWishlisted ? <AiFillHeart size={18} /> : <FiHeart size={18} />}
                 </button>
             </div>
 
@@ -79,7 +110,7 @@ function ProductCard({ product, onQuickView, onAddToCart, onAddToWishlist }) {
                         ₹{product.GrandTotal?.toLocaleString() || 'N/A'}
                     </span>
                 </div>
-               
+
                 <button
                     className="product-card__add-to-cart"
                     onClick={onAddToCart}

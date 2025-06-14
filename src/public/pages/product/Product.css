@@ -336,6 +336,18 @@
 .retry-button:focus:not(:active)::after {
     animation: ripple 1s ease-out;
 }
+.see-more-wrapper {
+    text-align: center;
+    margin-top: 1rem;
+}
+
+.see-more-btn {
+   
+}
+
+.see-more-btn:hover {
+    background-color: #333;
+}
 
 /* Animations */
 @keyframes fadeIn {

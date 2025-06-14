@@ -23,3 +23,12 @@ export const getProductBySno = async (sno) => {
 
     throw new Error(`No product found for SNO: ${sno}`);
 };
+
+
+export const getProductsByMetalId = async (metalId) => {
+    const response = await PublicUrl.get("/getAllPurityWise", {
+        params: { metalId },
+    });
+    return response.data;
+};
+

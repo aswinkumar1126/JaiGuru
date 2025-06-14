@@ -232,6 +232,25 @@
     color: #bbb;
     transition: all 0.4s ease;
 }
+.see-all-wrapper {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.see-all-btn {
+    background-color: #a67c52;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.see-all-btn:hover {
+    background-color: #8b643f;
+}
 
 /* Heartbeat animation for wishlist */
 .heartbeat:hover {
