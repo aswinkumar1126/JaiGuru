@@ -5,6 +5,9 @@ const BASE_URL = 'https://app.bmgjewellers.com/api/v1';
 
 const PublicUrl = axios.create({
     baseURL: BASE_URL,
+    headers: {
+        'Content-Type': 'application/json'
+    }
 });
 
 // ✅ Dynamically attach token from localStorage on every request

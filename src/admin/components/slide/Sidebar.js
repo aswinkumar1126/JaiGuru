@@ -202,7 +202,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
                         <RoleBasedSection allowedRoles={["ROLE_ADMIN"]}>
                         <div className="user-profile">
                             <div className="user-avatar">
-                                <FaUserCircle size={36} />
+                                <FaUserCircle size={26} />
                             </div>
                             <div className="user-info">
                                 <div className="user-name">{user?.username}</div>

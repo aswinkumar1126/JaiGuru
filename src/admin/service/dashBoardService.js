@@ -13,7 +13,7 @@ export const getDashboardData = async () => {
             categoryCount,
         ] = await Promise.all([
             axiosInstance.get(`/order/pending-orders`),
-            axiosInstance.get(`/order/total-orders`),
+            axiosInstance.get(`/order/all-ordersCount`),
             axiosInstance.get(`/order/delivered-orders`),
             axiosInstance.get(`/order/cancelled-orders`),
             axiosInstance.get(`/order/shipped-orders`),

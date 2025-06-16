@@ -121,6 +121,22 @@ const ProductDetails = () => {
     if (isError) return <Error error={error} />;
     if (isLoading || !productDetail) return <SkeletonLoader count={1} type="details" />;
 
+    console.log(productDetail.METALID);
+    if (productDetail.METALID === 'G'){
+        productDetail.METALID = 'GOLD';
+    }
+    if (productDetail.METALID === 'S') {
+        productDetail.METALID = 'SILVER';
+    }
+    if (productDetail.METALID === 'D') {
+        productDetail.METALID = 'DIAMOND';
+    }
+    if (productDetail.METALID === 'P') {
+        productDetail.METALID = 'PLATINUM';
+    }
+
+    
+
     const specificationGroups = {
         "Basic Details": [
             { label: "Item Name", value: productDetail.ITEMNAME },
