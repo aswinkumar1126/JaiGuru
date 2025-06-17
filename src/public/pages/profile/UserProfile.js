@@ -11,11 +11,7 @@ const UserProfile = () => {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [isScrolled, setIsScrolled] = useState(false);
 
-    useEffect(() => {
-        if (user?.contactNumber) {
-            localStorage.setItem('userMobileNumber', user.contactNumber);
-        }
-    }, [user]);
+   
 
     useEffect(() => {
         const handleScroll = () => {

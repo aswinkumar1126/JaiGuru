@@ -69,9 +69,9 @@ export const useCart = () => {
             return;
         }
 
-        const existingItem = (cartItems?.data || []).find(
-            (item) => item.itemTagSno === newItem.itemTagSno
-        );
+        const existingItem = Array.isArray(cartItems?.data)
+            ? cartItems.data.find((item) => item.itemTagSno === newItem.itemTagSno)
+            : null;
 
         if (existingItem) {
             updateItem.mutate({

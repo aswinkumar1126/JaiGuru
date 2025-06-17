@@ -2,120 +2,16 @@ import React, { useState, useRef, useEffect } from "react";
 import { useCart } from "../../hook/cart/useCartQuery";
 import Button from "../../components/button/Button";
 import Error from "../../components/error/Error";
-import Loading from "../../components/loader/SkeletonLoader";
-import { useSingleProductQuery } from "../../hook/product/useSingleProductQuery";
+import SkeletonLoader from "../../components/loader/SkeletonLoader";
+import CartItem from "../../pages/cart/CartItem/CartItem";
+import CartSummaryModal from "../../pages/cart/CartSummaryModal/CartSummaryModal";
+import CartActions from "../../pages/cart/CartActions/CartActions";
+import CartEmptyState from "../../pages/cart/CartEmptyState/CartEmptyState";
+import PriceDetails from "../../pages/cart/PriceDetails/PriceDetails";
 import "./CartPage.css";
-import secureImage from '../../assets/images/secure-payment.svg.svg';
 
-const CartItem = ({ item, onIncrease, onDecrease, onRemove }) => {
-    const { data: product, isLoading } = useSingleProductQuery(item.itemTagSno);
-    const baseUrl = "https://app.bmgjewellers.com";
+import { useNavigate } from "react-router-dom";
 
-    if (isLoading) return <Loading />;
-
-    let imageUrls = [];
-    try {
-        imageUrls = JSON.parse(product?.ImagePath || "[]");
-    } catch (err) {
-        console.error("Error parsing ImagePath", err);
-    }
-
-    const firstImage = imageUrls.length > 0 ? baseUrl + imageUrls[0] : "/images/placeholder.png";
-
-    return (
-        <div className="cart-item" role="listitem">
-            <div className="cart-item-image-container">
-                <img
-                    src={firstImage}
-                    alt={product?.ITEMNAME || "Jewellery item"}
-                    className="cart-item-img"
-                    loading="lazy"
-                    onError={(e) => {
-                        e.target.src = "/fallback.jpg";
-                        e.target.alt = "Image not available";
-                    }}
-                />
-            </div>
-            <div className="cart-item-details">
-                <h4 className="cart-item-title">{product?.ITEMNAME || "Jewellery Item"}</h4>
-                <p className="cart-item-tag"><strong>Tag No:</strong> {item.tagNo}</p>
-                <p className="cart-item-weight">Weight: {product?.NETWT || item.netWt}g</p>
-                <p className="cart-item-price">
-                    ₹{product?.GrandTotal
-                        ? Number(product.GrandTotal).toFixed(2)
-                        : item.amount?.toFixed(2)}
-                </p>
-                <div className="cart-item-actions">
-                    <button
-                        className="quantity-btn"
-                        onClick={() => onDecrease(item)}
-                        aria-label={`Decrease quantity of ${product?.ITEMNAME || "item"}`}
-                        disabled={item.quantity <= 1}
-                    >
-                        −
-                    </button>
-                    <span className="quantity-value" aria-live="polite">{item.quantity}</span>
-                    <button
-                        className="quantity-btn"
-                        onClick={() => onIncrease(item)}
-                        aria-label={`Increase quantity of ${product?.ITEMNAME || "item"}`}
-                    >
-                        +
-                    </button>
-                </div>
-                <div className="cart-item-options">
-                    <button
-                        className="remove-btn"
-                        onClick={() => onRemove(item.sno)}
-                        aria-label={`Remove ${product?.ITEMNAME || "item"} from cart`}
-                    >
-                        REMOVE
-                    </button>
-                    <button
-                        className="save-btn"
-                        onClick={() => alert("Feature coming soon")}
-                        aria-label={`Save ${product?.ITEMNAME || "item"} for later`}
-                    >
-                        SAVE FOR LATER
-                    </button>
-                </div>
-            </div>
-        </div>
-    );
-};
-
-const CartSummaryModal = ({ isOpen, onClose, totalPrice, itemCount, onCheckout }) => {
-    if (!isOpen) return null;
-
-    return (
-        <div className="cart-summary-modal">
-            <div className="modal-content">
-                <button className="modal-close" onClick={onClose} aria-label="Close summary">
-                    ×
-                </button>
-                <h3>Cart Summary</h3>
-                <div className="price-row">
-                    <span>Price ({itemCount} items)</span>
-                    <span>₹{totalPrice.toFixed(2)}</span>
-                </div>
-                <div className="price-row">
-                    <span>Delivery Charges</span>
-                    <span className="free-delivery">FREE</span>
-                </div>
-                <div className="price-row total">
-                    <strong>Total Amount</strong>
-                    <strong>₹{totalPrice.toFixed(2)}</strong>
-                </div>
-                <Button
-                    label="CHECKOUT"
-                    className="place-order-btn"
-                    onClick={onCheckout}
-                    aria-label="Proceed to checkout"
-                />
-            </div>
-        </div>
-    );
-};
 
 const CartPage = () => {
     const { cartItems, isLoading, updateCart, deleteCart, error } = useCart();
@@ -124,20 +20,20 @@ const CartPage = () => {
     const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
     const priceDetailsRef = useRef(null);
     const cartContainerRef = useRef(null);
-    const cartList = cartItems?.data || [];
+    const cartList = Array.isArray(cartItems?.data) ? cartItems.data : [];
+    const [productMap, setProductMap] = useState({});
+    const [selectedItems, setSelectedItems] = useState([]);
+    const navigate = useNavigate();
 
-    // Handle screen size detection
     useEffect(() => {
         const handleResize = () => {
-            const mobile = window.innerWidth <= 768;
-            setIsMobile(mobile);
+            setIsMobile(window.innerWidth <= 768);
         };
         window.addEventListener('resize', handleResize);
-        handleResize(); // Run on mount to set initial state
+        handleResize();
         return () => window.removeEventListener('resize', handleResize);
     }, []);
 
-    // Handle sticky price details
     useEffect(() => {
         const handleScroll = () => {
             if (!priceDetailsRef.current || !cartContainerRef.current) return;
@@ -150,7 +46,6 @@ const CartPage = () => {
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
-    // Ensure cart-actions-mobile visibility on mount for mobile
     useEffect(() => {
         if (isMobile && cartList.length > 0) {
             const mobileActions = document.querySelector('.cart-actions-mobile');
@@ -160,7 +55,14 @@ const CartPage = () => {
         }
     }, [isMobile, cartList.length]);
 
-    if (isLoading) return <Loading />;
+    useEffect(() => {
+        // Initialize selectedItems with all itemTagSno values from cartList
+        setSelectedItems(cartList.map(item => item.itemTagSno).filter(sno => sno));
+    }, [cartList]);
+
+  
+
+    if (isLoading) return <SkeletonLoader />;
     if (error && !cartList.length) {
         return <Error message={error.message || "Something went wrong"} />;
     }
@@ -176,9 +78,63 @@ const CartPage = () => {
     };
 
     const getTotalPrice = () => {
-        return cartList.reduce((total, item) => total + (item.amount * item.quantity), 0) || 0;
+        return cartList.reduce((total, item) => {
+            if (selectedItems.includes(item.itemTagSno)) {
+                const product = productMap[item.itemTagSno] || {};
+                const price = product.GrandTotal || item.amount || 0;
+                return total + price * item.quantity;
+            }
+            return total;
+        }, 0);
     };
 
+    const handleItemSelect = (sno) => {
+        if (!sno) return; // Prevent invalid selections
+        setSelectedItems((prevSelected) => {
+            const newSelected = prevSelected.includes(sno)
+                ? prevSelected.filter(id => id !== sno)
+                : [...prevSelected, sno];
+            console.log("Updated Selected Items:", newSelected);
+            return newSelected;
+        });
+    };
+
+
+
+    const handlePlaceOrder = () => {
+        const orderItems = cartList
+            .filter(item => selectedItems.includes(item.itemTagSno))
+            .map((item) => {
+                const product = productMap[item.itemTagSno] || {};
+                return {
+                    productId: item.id || item.itemTagSno, // make sure ID is consistent
+                    name: product.ITEMNAME || item.name || "Unknown",
+                    quantity: item.quantity,
+                    price: product.GrandTotal || item.amount || 0,
+                    image: item.imageUrl,
+                };
+            });
+            console.log("orderitems",orderItems);
+
+        if (orderItems.length === 0) {
+            alert("Please select at least one item to place the order.");
+            return;
+        }
+
+        const orderData = {
+            cartItems: orderItems,
+            totalAmount: orderItems.reduce((sum, i) => sum + i.price * i.quantity, 0),
+            address: {
+                street: "Palm Court Bldg M", // Replace with actual selected address
+                city: "Mumbai",
+                pincode: "400064"
+            },
+            paymentMode: "CASH", // Replace with selected mode dynamically if needed
+        };
+
+        navigate('/order', { state: orderData });
+    };
+    
     return (
         <div className="cart-page" role="main">
             <div className="cart-header">
@@ -189,20 +145,11 @@ const CartPage = () => {
                     </div>
                 )}
             </div>
+
             <div className="cart-container" ref={cartContainerRef}>
                 <div className="cart-left">
                     {cartList.length === 0 ? (
-                        <div className="empty-cart">
-                            <img src="/images/empty-cart.svg" alt="Empty cart illustration" loading="lazy" />
-                            <h3>Your cart is empty</h3>
-                            <p>Looks like you haven't added anything to your cart yet</p>
-                            <Button
-                                label="Continue Shopping"
-                                className="continue-shopping-btn"
-                                onClick={() => window.location.href = '/'}
-                                aria-label="Continue shopping"
-                            />
-                        </div>
+                        <CartEmptyState />
                     ) : (
                         <>
                             <div className="cart-items-list" role="list">
@@ -213,63 +160,45 @@ const CartPage = () => {
                                         onIncrease={handleIncrease}
                                         onDecrease={handleDecrease}
                                         onRemove={deleteCart}
+                                        onProductDataReady={(sno, product) => {
+                                            setProductMap((prev) => ({ ...prev, [sno]: product }));
+                                        }}
+                                        isSelected={selectedItems.includes(item.itemTagSno)}
+                                        onSelectToggle={handleItemSelect}
                                     />
                                 ))}
                             </div>
                             {isMobile && cartList.length > 0 && (
-                                <div className="cart-actions-mobile">
-                                    <div className="price-summary-mobile">
-                                        <span>₹{getTotalPrice().toFixed(2)}</span>
-                                        <span className="delivery-text">FREE delivery</span>
-                                    </div>
-                                    <Button
-                                        label="VIEW SUMMARY"
-                                        className="place-order-btn-mobile"
-                                        onClick={() => setIsModalOpen(true)}
-                                        aria-label="View cart summary"
-                                    />
-                                </div>
+                                <CartActions
+                                    totalPrice={getTotalPrice()}
+                                    onViewSummary={() => setIsModalOpen(true)}
+                                />
                             )}
                         </>
                     )}
                 </div>
+
                 {cartList.length > 0 && !isMobile && (
                     <div className={`cart-right ${isSticky ? 'sticky' : ''}`} ref={priceDetailsRef}>
-                        <div className="price-details-card">
-                            <h3>PRICE DETAILS</h3>
-                            <div className="price-row">
-                                <span>Price ({cartList.length} items)</span>
-                                <span>₹{getTotalPrice().toFixed(2)}</span>
-                            </div>
-                            <div className="price-row">
-                                <span>Delivery Charges</span>
-                                <span className="free-delivery">FREE</span>
-                            </div>
-                            <div className="divider"></div>
-                            <div className="price-row total">
-                                <strong>Total Amount</strong>
-                                <strong>₹{getTotalPrice().toFixed(2)}</strong>
-                            </div>
-                            <Button
-                                label="PLACE ORDER"
-                                className="place-order-btn"
-                                onClick={() => alert("Proceed to checkout")}
-                                aria-label="Proceed to checkout"
-                            />
-                            <div className="secure-payment">
-                                <img src={secureImage} alt="Secure payment icon" loading="lazy" />
-                                <span>Safe and Secure Payments</span>
-                            </div>
-                        </div>
+                        <PriceDetails
+                            totalPrice={getTotalPrice()}
+                            itemCount={selectedItems.length}
+                            onPlaceOrder={handlePlaceOrder}
+                        />
                     </div>
                 )}
             </div>
+
             <CartSummaryModal
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
-                totalPrice={getTotalPrice()}
-                itemCount={cartList.length}
-                onCheckout={() => alert("Proceed to checkout")}
+                selectedItems={selectedItems}
+                cartList={cartList}
+                productMap={productMap}
+                onCheckout={(selectedItems, total) => {
+                    console.log("Selected Order Items:", selectedItems);
+                    alert(`Proceeding to checkout with ₹${total.toFixed(2)}`);
+                }}
             />
         </div>
     );

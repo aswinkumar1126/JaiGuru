@@ -6,6 +6,7 @@ import { usePaginatedProductsQuery } from "../../hook/product/usePaginatedProduc
 import SkeletonLoader from "../../components/loader/SkeletonLoader";
 import Error from "../../components/error/Error";
 import { useCart } from "../../hook/cart/useCartQuery";
+import CategorySection from "../category/CategorySection";
 
 function Products() {
     const navigate = useNavigate();
@@ -70,7 +71,12 @@ function Products() {
     if (isError) return <Error />;
 
     return (
+
+        <>
+            <CategorySection />
         <div className="product-page">
+
+           
             <div className="page-header">
                 <h2 className="title animate-char">Our Premium Collection</h2>
                 <p className="subtitle animate-subtitle">Discover quality products for your needs</p>
@@ -95,6 +101,7 @@ function Products() {
                 </div>
             )}
         </div>
+        </>
     );
 }
 

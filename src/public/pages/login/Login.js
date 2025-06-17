@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion } from "framer-motion";
 import { useAuth } from "../../context/authContext/AuthContext";
 import { registerUser, loginUser } from "../../service/AuthService";
@@ -46,7 +46,7 @@ const Login = () => {
                     roles: ["USER"],
                 };
                 const response = await registerUser(userData);
-                loginContext(response);
+                loginContext(response);;
                 navigate("/");
             } else {
                 const loginData = {

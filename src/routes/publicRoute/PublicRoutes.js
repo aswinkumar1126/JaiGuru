@@ -15,6 +15,11 @@ import UserPrivateRoute from '../protecteRoute/UserProtecteRoute';
 import CartPage from '../../public/pages/cart/CartPage';
 import UserProfile from '../../public/pages/profile/UserProfile'
 import WishlistItem from '../../public/pages/WishlistPage/WishlistPage';
+import ForgotPasswordPage from '../../public/pages/forget-reset/ForgotPasswordPage';
+import ResetPasswordPage from '../../public/pages/forget-reset/ResetPasswordPage';
+import OrderPage from '../../public/pages/order/OrderPage';
+import PaymentPage from '../../public/pages/payment/PaymentPage';
+
 const PublicRoutes = () => {
     return (
         <LayoutWrapper>
@@ -33,6 +38,10 @@ const PublicRoutes = () => {
                 <Route path='/cart' element={<UserPrivateRoute><CartPage /></UserPrivateRoute>} />
                 <Route path='/wishlist' element={<UserPrivateRoute><WishlistItem /></UserPrivateRoute>} />
                 <Route path='/user/profile' element={<UserProfile />} />
+                <Route path='/forgot-password' element={<ForgotPasswordPage />} />
+                <Route path='/reset-password' element={<ResetPasswordPage />} />
+                <Route path='/order' element={<OrderPage />} />
+                <Route path="/payment/:orderId" element={<PaymentPage />} />
             </Routes>
         </LayoutWrapper>
     );

@@ -31,7 +31,11 @@ const Header = () => {
     const navigate = useNavigate();
 
     const { cartItems } = useCart();
-    const cartCount = cartItems?.data?.length || 0;
+
+    const cartList = Array.isArray(cartItems?.data) ? cartItems.data : [];
+    const cartCount = cartList.length;
+
+    console.log("🛒 Items in cart:", cartCount);
 
     const { data, isLoading, isError } = useFavorites();
 
@@ -160,15 +164,7 @@ const Header = () => {
                             </span>
                         </motion.div>
 
-                        <button
-                            className="mobile-menu-toggle"
-                            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                            aria-label={isMobileMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
-                            aria-expanded={isMobileMenuOpen}
-                            aria-controls="main-navigation"
-                        >
-                            {isMobileMenuOpen ? <FaTimes className="menu-icon" /> : <FaBars className="menu-icon" />}
-                        </button>
+                        
                     </div>
 
                     {!isMobile && (
@@ -215,7 +211,7 @@ const Header = () => {
                             whileHover={{ scale: isMobile ? 1 : 1.05 }}
                             whileTap={{ scale: 0.95 }}
                         >
-                            <Link
+                            <NavLink
                                 to="/cart"
                                 className="cart-button"
                                 aria-label="Shopping Cart"
@@ -235,7 +231,7 @@ const Header = () => {
                                 >
                                     {cartCount}
                                 </motion.span>
-                            </Link>
+                            </NavLink>
                         </motion.div>
 
                         <motion.div
@@ -254,9 +250,18 @@ const Header = () => {
                                 <FaUserCircle className="profile-icon" />
                             </button>
                         </motion.div>
+                        <button
+                            className="mobile-menu-toggle"
+                            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                            aria-label={isMobileMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
+                            aria-expanded={isMobileMenuOpen}
+                            aria-controls="main-navigation"
+                        >
+                            {isMobileMenuOpen ? <FaTimes className="menu-icon" /> : <FaBars className="menu-icon" />}
+                        </button>
                     </div>
-                    
-                </div>
+                   
+                </div> 
             </div>
 
             <nav
