@@ -12,13 +12,12 @@ import { FiClock } from 'react-icons/fi';
 import { useCart } from '../../hook/cart/useCartQuery';
 
 const RecentlyViewedPage = () => {
+
+
     const navigate = useNavigate();
     const {
         data,
         isLoading: isSnoLoading,
-        isError,
-        error,
-        refetch
     } = useRecentlyViewed();
     const { addToCartHandler } = useCart();
 
@@ -33,12 +32,15 @@ const RecentlyViewedPage = () => {
         })),
     });
    
-
-    const isLoading = isSnoLoading || productQueries.some((q) => q.isLoading);
-    const isErrorState = isError || productQueries.some((q) => q.isError);
+    const isLoading = isSnoLoading || productQueries.every((q) => q.isLoading);
+    const isAllFailed = productQueries.every((q) => q.isError);
+    
     const products = productQueries
         .filter(q => q.isSuccess && q.data)
         .map(q => q.data);
+
+        console.log("productsforrecently ",products)
+ 
 
     if (isLoading) {
         return (
@@ -52,14 +54,9 @@ const RecentlyViewedPage = () => {
         );
     }
 
-    if (isErrorState) {
-        return (
-            <Error
-                message="Failed to load recently viewed items"
-                onRetry={refetch}
-            />
-        );
-    }
+    if (isAllFailed) {
+        return <Error message="No recently viewed items found" />;
+      }
     const handleAddToCart = (product) => {
         console.log("🛒 Sending to addToCartHandler:", product);
 

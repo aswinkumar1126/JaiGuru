@@ -22,10 +22,12 @@ import PaymentPage from '../../public/pages/payment/PaymentPage';
 
 const PublicRoutes = () => {
     return (
+        
         <LayoutWrapper>
             <Routes>
-                <Route path="/" element={<Home />} />
+                <Route path='/' element={ <Home />} />
                 <Route path='/login' element={<Login />} />
+                
 
                 <Route path="/product/:sno" element={<UserPrivateRoute> <ProductDetails /> </UserPrivateRoute> } />
 

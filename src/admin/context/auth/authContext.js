@@ -5,6 +5,7 @@ import { fetchUserProfile } from '../../service/authService';
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
+  
    
     const [authToken, setAuthToken] = useState(localStorage.getItem('auth_token'));
     const [user, setUser] = useState(null);
@@ -22,13 +23,13 @@ export const AuthProvider = ({ children }) => {
     }, [authToken]);
 
     const login = (token, userData) => {
-        localStorage.setItem('token', token);
+        localStorage.setItem('auth_token', token);
         setAuthToken(token);
         setUser(userData);
     };
 
     const logout = () => {
-        localStorage.removeItem('token');
+        localStorage.removeItem('auth_token');
         setAuthToken(null);
         setUser(null);
     };

@@ -1,4 +1,3 @@
-// src/service/favoriteService.js
 import publicUrl from '../api/publicUrl'; // axios instance with Authorization header
 
 // Add to favorites

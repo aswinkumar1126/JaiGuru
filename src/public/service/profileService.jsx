@@ -3,7 +3,7 @@ import publicUrl from '../api/publicUrl'
 
 // Get current user's profile
 export const getProfile = async () => {
-    const response = await publicUrl.get('/auth/user/profile');
+    const response = await publicUrl.get('/user/profile');
     return response.data;
 };
 

@@ -1,7 +1,7 @@
 import PublicUrl from '../api/publicUrl';
 
 export const getAllProducts = async (metalId = '', page = 1, pageSize = 50) => {
-    const response = await PublicUrl.get('/getAllDetails', {
+    const response = await PublicUrl.get('/product/getAllDetails', {
         params: {
             metalId,
             page,
@@ -11,7 +11,7 @@ export const getAllProducts = async (metalId = '', page = 1, pageSize = 50) => {
     return response.data;
 };
 export const getProductBySno = async (sno) => {
-    const response = await PublicUrl.get('/getSnofilter', {
+    const response = await PublicUrl.get('/product/getSnofilter', {
         params: { sno }
     });
 
@@ -26,7 +26,7 @@ export const getProductBySno = async (sno) => {
 
 
 export const getProductsByMetalId = async (metalId) => {
-    const response = await PublicUrl.get("/getAllPurityWise", {
+    const response = await PublicUrl.get("/product/getAllPurityWise", {
         params: { metalId },
     });
     return response.data;

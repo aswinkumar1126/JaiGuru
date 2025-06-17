@@ -3,7 +3,7 @@ import React from 'react';
 import { useLocation } from 'react-router-dom';
 import Header from '../header/Header';
 import Footer from '../footer/Footer';
-import './LayoutWrapper.css'; // optional for layout-specific styles
+import './LayoutWrapper.css'; 
 
 const LayoutWrapper = ({ children }) => {
     const location = useLocation();

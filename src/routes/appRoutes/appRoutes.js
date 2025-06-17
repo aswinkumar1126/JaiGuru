@@ -9,10 +9,10 @@ const AppRoutes = () => {
         <Router>
             <Routes>
                 
-                {/* Public user-facing routes (coming soon) */}
+         
                 <Route path="/*" element={<PublicRoutes />} />
 
-                {/* Admin dashboard at /admin/* */}
+             
                 <Route path="/admin/*" element={<AdminRoutes />} />
 
                  
