@@ -1,7 +1,7 @@
-// src/api/axiosInstance.js
 import axios from 'axios';
 
-const BASE_URL = 'https://app.bmgjewellers.com/api/v1';
+const BASE_URL = process.env.REACT_APP_BASE_URL;
+console.log(BASE_URL);
 
 const PublicUrl = axios.create({
     baseURL: BASE_URL,

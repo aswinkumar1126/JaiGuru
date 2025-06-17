@@ -54,15 +54,16 @@
     z-index: 1002;
 }
 
+
 .main-header-content {
-    max-width: 1440px;
+    max-width: 2000px;
     width: 100%;
     margin: 0 auto;
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 1rem;
-    padding: 0 1rem;
+  
 }
 
 /* Header Sections */
@@ -278,6 +279,7 @@
     height: var(--nav-height);
     background: var(--nav-bg);
     display: flex;
+    
     align-items: center;
     transition: transform 0.3s ease;
     z-index: 1001;
@@ -286,6 +288,7 @@
 
 .nav-links.scrolled {
     background: var(--nav-bg-scrolled);
+    
     
 }
 
@@ -602,7 +605,17 @@
 }
 
 
-@media(max-width:550px){
+@media (max-width:550px) {
+    .wishlist-badge {
+            top: 15px;
+            right: 10px;
+            width: 18px;
+            height: 18px;
+            font-size: 0.65rem;
+        }
+}
+
+@media(max-width:500px){
     .logo-container {
             display: flex;
             align-items: center;
@@ -615,8 +628,8 @@
    
     .wishlist-badge
      {
-            top:20px;
-            right: 20px;
+            top:12px;
+            right: 8px;
             width: 18px;
             height: 18px;
             font-size: 0.65rem;
@@ -625,7 +638,7 @@
 /* Extra Small Screens */
 @media (max-width: 400px) {
     .logo-img{    
-        height: 15 10px;
+        height: 25 15px;
         display: flex;
         display: block;
     }
@@ -639,8 +652,8 @@
         padding: 0.4rem;
     }
         .wishlist-badge {
-            top: 20px;
-            right: 15px;
+            top: 10px;
+            right: 5px;
             width: 18px;
             height: 18px;
             font-size: 0.65rem;

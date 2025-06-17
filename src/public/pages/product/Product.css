@@ -10,7 +10,7 @@
 }
 
 .product-container {
-    background-color: #f3e5d5;
+    background-color: inherit;
     margin: auto;
     padding: 20px;
 }

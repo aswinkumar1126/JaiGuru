@@ -60,7 +60,7 @@ const LoginPage = () => {
 
             if (roles.includes('ROLE_ADMIN') || roles.includes('ROLE_EMPLOYEE')) {
                 login(token, userData);
-                navigate('/');
+                navigate('/admin');
             } else {
                 setError('Access Denied: You are not authorized to access the dashboard.');
             }

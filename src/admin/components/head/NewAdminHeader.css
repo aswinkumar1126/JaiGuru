@@ -1,13 +1,14 @@
-/* New Admin Header - Minimal Responsive CSS */
 :root {
     --header-height: 66px;
-    --primary-color: #596cd4;
-    --primary-hover: #4a5bc5;
+    --primary-color: #e6802c !important;
+    --primary-hover: #f17908;
     --text-light: #ffffff;
-    --text-dark: #333333;
+    --text-dark: #201f1f;
     --bg-light: #f8f9fa;
     --bg-dark: #1a2238;
     --shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    --dark-text: black;
+    --light-gray:rgb(150, 150, 150) !important; 
 }
 
 .new-header {
@@ -24,22 +25,22 @@
 }
 
 .new-header.light {
-    background-color: var(--bg-light);
-    color: var(--text-dark);
+    background-color: var(--primary-color);
+    color: var(--text-dark) ;
 }
 
 .new-header.dark {
     background-color: var(--bg-dark);
-    color: var(--text-light);
+    color: var(--bg-light);
 }
 
 .new-header.scrolled {
-    background-color: rgba(var(--bg-light), 0.95);
+    background-color: rgba(248, 249, 250, 0.95);
     backdrop-filter: blur(5px);
 }
 
 .new-header.dark.scrolled {
-    background-color: rgba(var(--bg-dark), 0.95);
+    background-color: rgba(26, 34, 56, 0.95);
 }
 
 body {
@@ -67,7 +68,7 @@ body {
 .new-menu-toggle {
     background: none;
     border: none;
-    color: inherit;
+    color: var(--dark-text);
     font-size: 1.5rem;
     cursor: pointer;
     padding: 0.4rem;
@@ -91,6 +92,11 @@ body {
     font-weight: 600;
     margin: 0;
     white-space: nowrap;
+    color: var(--light-gray);
+}
+
+.new-company-name{
+    color: #e0e0e0 ;
 }
 
 .new-header-center {
@@ -102,28 +108,7 @@ body {
     margin: 0 0.5rem;
 }
 
-.new-search-container {
-    position: relative;
-    flex: 1;
-    max-width: 300px;
-    min-width: 100px;
-}
 
-.new-search-input {
-    width: 100%;
-    padding: 0.6rem 0.8rem 0.6rem 2.2rem;
-    border-radius: 6px;
-    border: 1px solid #e0e0e0;
-    font-size: 0.9rem;
-}
-
-.new-search-icon {
-    position: absolute;
-    left: 0.8rem;
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: 0.9rem;
-}
 
 .new-date-time-container {
     min-width: 160px;
@@ -136,6 +121,9 @@ body {
     border: 1px solid #e0e0e0;
     font-size: 0.85rem;
     text-align: center;
+    background-color: var(--bg-light);
+    color: var(--dark-text);
+
 }
 
 .new-header-right {
@@ -146,9 +134,9 @@ body {
 }
 
 .new-icon-button {
-    background: rgba(var(--primary-color), 0.1);
+    background: var(--light-gray);
     border: none;
-    color: inherit;
+    color: var(--bg-light);
     font-size: 1.1rem;
     width: 36px;
     height: 36px;
@@ -168,8 +156,8 @@ body {
     position: absolute;
     top: -4px;
     right: -4px;
-    background-color: #ff9800;
-    color: white;
+    background-color: var(--primary-color) ;
+    color: rgb(0, 0, 0) !important;
     border-radius: 50%;
     width: 18px;
     height: 18px;
@@ -183,17 +171,17 @@ body {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    background: none;
+    background: var(--light-gray);
     border: none;
     cursor: pointer;
-    padding: 0.3rem;
-    border-radius: 20px;
+    padding: 0.2rem;
+    border-radius: 50px;
 }
 
 .new-profile-avatar {
     width: 36px;
     height: 36px;
-    border-radius: 50%;
+    border-radius: 20%;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -203,6 +191,7 @@ body {
 .new-profile-name {
     font-size: 0.9rem;
     font-weight: 600;
+    color: var(--bg-light);
 }
 
 .new-dropdown-wrapper {
@@ -214,6 +203,7 @@ body {
     right: 0;
     top: calc(100% + 8px);
     background-color: var(--bg-light);
+    color: var(--dark-text);
     border-radius: 8px;
     box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
     width: 240px;
@@ -221,7 +211,7 @@ body {
 }
 
 .new-header.dark .new-dropdown-menu {
-    background-color: var(--bg-dark);
+    background-color: var(--bg-light);
     color: var(--text-light);
 }
 
@@ -291,17 +281,9 @@ body {
 }
 
 /* Responsive Styles */
-@media (max-width: 992px) {
+@media (max-width: 1024px) {
     .new-menu-toggle {
         display: flex;
-    }
-
-    .new-date-time-container {
-        display: none;
-    }
-
-    .new-search-container {
-        max-width: 200px;
     }
 }
 
@@ -350,5 +332,4 @@ body {
 
     .new-dropdown-menu {
         width: 180px;
-    }
-}
+    } }

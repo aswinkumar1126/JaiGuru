@@ -1,5 +1,4 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
 import Banner from "../banner/Banner";
 import { useBannersQuery } from "../../../admin/hooks/banners/useBannersQuery";
 import SkeletonLoader from "../../components/loader/SkeletonLoader";
@@ -7,13 +6,14 @@ import Error from "../../components/error/Error";
 import { useVideos } from "../../hook/video/useVideoQuery";
 import Video from "../video/video";
 import { useProductsQuery } from "../../hook/product/useProductsQuery";
-import Product from "../../pages/product/Product"; // adjust the path if needed
-import RecentlyViewedPage from "../recentlyViewed/RecentlyViewed";
+import Product from "../../pages/product/Product"; 
 import './Home.css';
 import CategorySection from "../category/CategorySection";
-import AdminHeader from "../../../admin/components/head/header";
+import ProtectedRecentlyViewedWrapper from "../recentlyViewed/ProtectedRecentlyViewedWrapper";
+
+
 function Home() {
-    const navigate = useNavigate();
+
     const {
         data: bannersData,
         isLoading: bannersLoading,
@@ -61,13 +61,14 @@ function Home() {
                 <Banner images={bannerData} loading={bannersLoading} />
                 
                 <CategorySection />
+            
             <Product
                 products={topTenProducts}
                 loading={productsLoading}
                 error={productsError}
             />
+            <ProtectedRecentlyViewedWrapper />
             
-            <RecentlyViewedPage />
 
                 {firstVideoUrl && (
                     <Video

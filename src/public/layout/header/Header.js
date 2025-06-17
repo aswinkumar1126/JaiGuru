@@ -22,6 +22,7 @@ const Header = () => {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [isMobile, setIsMobile] = useState(window.innerWidth <= 992);
     const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
+    const [isAuthenticated, setIsAuthenticated] = useState(false); // New state for auth
     const location = useLocation();
     const [showNav, setShowNav] = useState(true);
     const lastScrollY = useRef(0);
@@ -29,21 +30,56 @@ const Header = () => {
     const profileMenuRef = useRef(null);
     const dropdownRef = useRef(null);
     const navigate = useNavigate();
+    const [username, setUsername] = useState(null);
 
-    const { cartItems } = useCart();
+    // Check authentication status on mount
+    useEffect(() => {
+        const userData = localStorage.getItem("user");
+        const token = localStorage.getItem("user_token"); // Assuming token is stored separately
+        if (userData && token) {
+            try {
+                const user = JSON.parse(userData);
+                setUsername(user?.username || null);
+                setIsAuthenticated(true); // Set authenticated if token exists
+            } catch (error) {
+                console.error("Invalid user data:", error);
+                setUsername(null);
+                setIsAuthenticated(false);
+                localStorage.removeItem("user");
+                localStorage.removeItem("token");
+            }
+        } else {
+            setUsername('');
+            setIsAuthenticated(false);
+        }
+    }, []);
 
-    const cartList = Array.isArray(cartItems?.data) ? cartItems.data : [];
+    // Fetch cart and favorites only if authenticated
+    const { cartItems, error: cartError } = useCart({ enabled: isAuthenticated });
+    const { data: favoritesData, error: favoritesError } = useFavorites({ enabled: isAuthenticated });
+
+    // Handle 401 errors from hooks
+    useEffect(() => {
+        if (cartError?.response?.status === 401 || favoritesError?.response?.status === 401) {
+            setIsAuthenticated(false);
+            localStorage.removeItem("token");
+            localStorage.removeItem("user");
+            navigate("/login");
+        }
+    }, [cartError, favoritesError, navigate]);
+
+    const cartList = isAuthenticated && Array.isArray(cartItems?.data) ? cartItems.data : [];
     const cartCount = cartList.length;
 
-    console.log("🛒 Items in cart:", cartCount);
-
-    const { data, isLoading, isError } = useFavorites();
-
-    const wishlistCount = data?.data?.length || 0;
+    const wishlistCount = isAuthenticated && Array.isArray(favoritesData?.data) ? favoritesData.data.length : 0;
 
     const handleProfileClick = useCallback(() => {
-        navigate('/user/profile');
-    }, [navigate]);
+        if (!isAuthenticated) {
+            navigate("/login");
+        } else {
+            navigate("/user/profile");
+        }
+    }, [navigate, isAuthenticated]);
 
     // Handle click outside for closing menus
     useEffect(() => {
@@ -163,8 +199,6 @@ const Header = () => {
                                 <pre>BMG Jewellers{'\n'}<span className="sub-logotext">Private Limited</span></pre>
                             </span>
                         </motion.div>
-
-                        
                     </div>
 
                     {!isMobile && (
@@ -174,65 +208,69 @@ const Header = () => {
                             </div>
                         </div>
                     )}
-                    
-                    <div className="header-right">
-                        <motion.div
-                            className="wishlist-container"
-                            whileHover={{ scale: isMobile ? 1 : 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                        >
-                            <Link
-                                to="/wishlist"
-                                className="wishlist-button"
-                                aria-label="Wishlist"
-                                onClick={closeMobileMenu}
-                            >
-                                <motion.div
-                                    animate={isMobile ? {} : { scale: [1, 1.1, 1] }}
-                                    transition={isMobile ? {} : { repeat: Infinity, duration: 2 }}
-                                >
-                                    <FaHeart className="wishlist-icon" />
-                                </motion.div>
-                                <span className="wishlist-text">Wishlist</span>
-                                {wishlistCount > 0 && (
-                                <motion.span
-                                    className="wishlist-badge"
-                                    animate={isMobile ? {} : { scale: [1, 1.2, 1] }}
-                                    transition={isMobile ? {} : { repeat: Infinity, duration: 2 }}
-                                >
-                                        {wishlistCount}
-                                </motion.span>
-                                )}
-                            </Link>
-                        </motion.div>
 
-                        <motion.div
-                            className="cart-container"
-                            whileHover={{ scale: isMobile ? 1 : 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                        >
-                            <NavLink
-                                to="/cart"
-                                className="cart-button"
-                                aria-label="Shopping Cart"
-                                onClick={closeMobileMenu}
-                            >
+                    <div className="header-right">
+                        {isAuthenticated && (
+                            <>
                                 <motion.div
-                                    animate={isMobile ? {} : { rotate: [0, 10, -10, 0] }}
-                                    transition={isMobile ? {} : { repeat: Infinity, repeatDelay: 5, duration: 2 }}
+                                    className="wishlist-container"
+                                    whileHover={{ scale: isMobile ? 1 : 1.05 }}
+                                    whileTap={{ scale: 0.95 }}
                                 >
-                                    <FaShoppingCart className="cart-icon" />
+                                    <Link
+                                        to="/wishlist"
+                                        className="wishlist-button"
+                                        aria-label="Wishlist"
+                                        onClick={closeMobileMenu}
+                                    >
+                                        <motion.div
+                                            animate={isMobile ? {} : { scale: [1, 1.1, 1] }}
+                                            transition={isMobile ? {} : { repeat: Infinity, duration: 2 }}
+                                        >
+                                            <FaHeart className="wishlist-icon" />
+                                        </motion.div>
+                                        <span className="wishlist-text">Wishlist</span>
+                                        {wishlistCount > 0 && (
+                                            <motion.span
+                                                className="wishlist-badge"
+                                                animate={isMobile ? {} : { scale: [1, 1.2, 1] }}
+                                                transition={isMobile ? {} : { repeat: Infinity, duration: 2 }}
+                                            >
+                                                {wishlistCount}
+                                            </motion.span>
+                                        )}
+                                    </Link>
                                 </motion.div>
-                                <span className="cart-text">Cart</span>
-                                <motion.span
-                                    className="cart-badge"
-                                    animate={isMobile ? {} : { scale: [1, 1.2, 1] }}
-                                    transition={isMobile ? {} : { repeat: Infinity, duration: 2 }}
+
+                                <motion.div
+                                    className="cart-container"
+                                    whileHover={{ scale: isMobile ? 1 : 1.05 }}
+                                    whileTap={{ scale: 0.95 }}
                                 >
-                                    {cartCount}
-                                </motion.span>
-                            </NavLink>
-                        </motion.div>
+                                    <NavLink
+                                        to="/cart"
+                                        className="cart-button"
+                                        aria-label="Shopping Cart"
+                                        onClick={closeMobileMenu}
+                                    >
+                                        <motion.div
+                                            animate={isMobile ? {} : { rotate: [0, 10, -10, 0] }}
+                                            transition={isMobile ? {} : { repeat: Infinity, repeatDelay: 5, duration: 2 }}
+                                        >
+                                            <FaShoppingCart className="cart-icon" />
+                                        </motion.div>
+                                        <span className="cart-text">Cart</span>
+                                        <motion.span
+                                            className="cart-badge"
+                                            animate={isMobile ? {} : { scale: [1, 1.2, 1] }}
+                                            transition={isMobile ? {} : { repeat: Infinity, duration: 2 }}
+                                        >
+                                            {cartCount}
+                                        </motion.span>
+                                    </NavLink>
+                                </motion.div>
+                            </>
+                        )}
 
                         <motion.div
                             className="profile-icon-wrapper"
@@ -248,6 +286,7 @@ const Header = () => {
                                 aria-haspopup="true"
                             >
                                 <FaUserCircle className="profile-icon" />
+                                <span>{username || 'Guest'}</span>
                             </button>
                         </motion.div>
                         <button
@@ -260,8 +299,7 @@ const Header = () => {
                             {isMobileMenuOpen ? <FaTimes className="menu-icon" /> : <FaBars className="menu-icon" />}
                         </button>
                     </div>
-                   
-                </div> 
+                </div>
             </div>
 
             <nav

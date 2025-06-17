@@ -26,7 +26,7 @@ import { useUserProfile } from '../../hooks/profile/useUserProfile';
 const NewAdminHeader = ({ toggleSidebar, isSidebarOpen }) => {
   const { themeMode, setThemeMode } = useContext(MyContext);
   const [scrolled, setScrolled] = useState(false);
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 992);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 1024); // Adjusted to 1024px
   const [searchQuery, setSearchQuery] = useState('');
   const [currentDateTime, setCurrentDateTime] = useState('');
   const [isProfileOpen, setIsProfileOpen] = useState(false);
@@ -46,7 +46,7 @@ const NewAdminHeader = ({ toggleSidebar, isSidebarOpen }) => {
 
   // Handle window resize
   useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth < 992);
+    const handleResize = () => setIsMobile(window.innerWidth <= 1024);
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
@@ -130,22 +130,13 @@ const NewAdminHeader = ({ toggleSidebar, isSidebarOpen }) => {
           </button>
           <div className="new-logo">
             <img src={logo} alt="BMG Jewelers Logo" className="new-logo-image" />
-            <h1 className="new-company-name">BMG Jewelers</h1>
+            <h1 className="new-company-name">BMG Jewelers <span>pvt ltd</span></h1>
           </div>
         </div>
 
         {/* Center: Search & Date-Time */}
         <div className="new-header-center">
-          <div className="new-search-container">
-            <input
-              type="text"
-              placeholder={t('searchPlaceholder')}
-              value={searchQuery}
-              onChange={(e) => handleSearch(e.target.value)}
-              className="new-search-input"
-            />
-            <FaSearch className="new-search-icon" />
-          </div>
+         
           {!isMobile && (
             <div className="new-date-time-container">
               <input

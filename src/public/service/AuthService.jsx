@@ -1,4 +1,3 @@
-import axios from "axios";
 import PublicUrl from "../api/publicUrl";
 
 // Register

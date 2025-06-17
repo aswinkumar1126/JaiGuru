@@ -9,34 +9,43 @@ import { MyContextProvider } from './admin/context/themeContext/themeContext';
 import { PageTitleProvider } from './admin/context/pageTitle/PageTitleContext';
 import { AuthProvider } from './admin/context/auth/authContext';
 import { UserAuthProvider } from './public/context/authContext/AuthContext';
-
-
+import { useEffect } from 'react';
+import PublicUrl from './public/api/publicUrl'; // Make sure this path is correct
+import axiosInstance from './admin/api/axiosInstance';
 function App() {
-
   const queryClient = new QueryClient();
+
+  useEffect(() => {
+    
+  //  localStorage.clear();
+    const userToken = localStorage.getItem("user_token");
+    const adminToken = localStorage.getItem("admin_token");
+
+    if (userToken) {
+      PublicUrl.defaults.headers.common["Authorization"] = `Bearer ${userToken}`;
+    }
+
+    if (adminToken) {
+      axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${adminToken}`;
+    }
+  }, []);
+  
+
   return (
     <div className="App">
-
       <QueryClientProvider client={queryClient}>
         <MyContextProvider>
           <ProductProvider>
-            <PageTitleProvider>   
+            <PageTitleProvider>
               <AuthProvider>
-
                 <UserAuthProvider>
-                 
-
-                  < AppRoutes /> 
-
-                 
+                  <AppRoutes />
                 </UserAuthProvider>
-
               </AuthProvider>
-              </PageTitleProvider>
+            </PageTitleProvider>
           </ProductProvider>
         </MyContextProvider>
-    </QueryClientProvider>
-    
+      </QueryClientProvider>
     </div>
   );
 }
