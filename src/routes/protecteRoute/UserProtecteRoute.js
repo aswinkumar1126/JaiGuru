@@ -1,12 +1,12 @@
 // src/routes/UserPrivateRoute.js
 import React from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
-import { useAuth } from '../../public/context/authContext/AuthContext';
+import { useAuth } from '../../public/context/authContext/UserAuthContext';
 
 const UserPrivateRoute = ({ children }) => {
     const { user } = useAuth();
     const location = useLocation();
-    
+
 
     if (!user) {
         // Redirect unauthenticated users to login, preserving the current location

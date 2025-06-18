@@ -20,6 +20,7 @@ const OrderPage = () => {
     const [showAddressForm, setShowAddressForm] = useState(!localStorage.getItem('checkoutAddress'));
 
     const { cartItems = [], totalAmount = 0 } = state || {};
+    console.log("orderCart",cartItems)
     const [formMode, setFormMode] = useState('');
    
     useEffect(() => {

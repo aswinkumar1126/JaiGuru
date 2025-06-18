@@ -5,13 +5,13 @@ import './ProductCard.css';
 import {
     useAddFavorite,
     useRemoveFavorite,
-    useFavorites,
+    // useFavorites,
 } from '../../hook/favorites/useFavoritesQuery';
 
 
 function ProductCard({ product, onQuickView, onAddToCart }) {
     const itemSno = product?.SNO;
-    const { data } = useFavorites(); // fetch current favorites
+    // const { data } = useFavorites(); // fetch current favorites
     const addFavorite = useAddFavorite();
     const removeFavorite = useRemoveFavorite();
 
@@ -33,10 +33,10 @@ function ProductCard({ product, onQuickView, onAddToCart }) {
     const imageUrl = getFirstProductImage(product.ImagePath);
 
     // Update wishlist state based on server data
-    useEffect(() => {
-        const favoriteList = data?.data || [];
-        setIsWishlisted(favoriteList.includes(itemSno));
-    }, [data, itemSno]);
+    // useEffect(() => {
+    //     const favoriteList = data?.data || [];
+    //     setIsWishlisted(favoriteList.includes(itemSno));
+    // }, [data, itemSno]);
 
     // Toggle wishlist state with animation
     const handleWishlistToggle = (e) => {
@@ -89,13 +89,13 @@ function ProductCard({ product, onQuickView, onAddToCart }) {
                     <span>Quick View</span>
                 </button>
 
-                <button
+                {/* <button
                     className={`product-card__wishlist ${isWishlisted ? 'active' : ''} ${animateHeart ? 'animate' : ''}`}
                     onClick={handleWishlistToggle}
                     aria-label={isWishlisted ? 'Remove from wishlist' : 'Add to wishlist'}
                 >
                     {isWishlisted ? <AiFillHeart size={18} /> : <FiHeart size={18} />}
-                </button>
+                </button> */}
             </div>
 
             <div className="product-card__info">

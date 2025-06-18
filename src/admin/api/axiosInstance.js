@@ -11,7 +11,7 @@ const axiosInstance = axios.create({
 // ✅ Dynamically attach token from localStorage on every request
 axiosInstance.interceptors.request.use(
     (config) => {
-        
+
         const authtoken = localStorage.getItem('auth_token'); // Moved inside so it's fresh
         if (authtoken) {
             config.headers.Authorization = `Bearer ${authtoken}`;

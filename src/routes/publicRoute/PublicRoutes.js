@@ -25,9 +25,9 @@ const PublicRoutes = () => {
         
         <LayoutWrapper>
             <Routes>
-                <Route path='/' element={ <Home />} />
-                <Route path='/login' element={<Login />} />
-                
+                <Route path='/' element={<Home />} />
+                <Route path='/login' element={ <Login />} />
+                <Route path='/home' element={ <Home />} />
 
                 <Route path="/product/:sno" element={<UserPrivateRoute> <ProductDetails /> </UserPrivateRoute> } />
 
@@ -38,12 +38,12 @@ const PublicRoutes = () => {
                 <Route path='/videos' element={<AllVideos />} />
                 <Route path='/contact' element={<Contact />} />
                 <Route path='/cart' element={<UserPrivateRoute><CartPage /></UserPrivateRoute>} />
-                <Route path='/wishlist' element={<UserPrivateRoute><WishlistItem /></UserPrivateRoute>} />
-                <Route path='/user/profile' element={<UserProfile />} />
+                <Route path='/wishlist' element={<UserPrivateRoute><WishlistItem /></UserPrivateRoute>} /> 
+                <Route path='/user/profile' element={<UserPrivateRoute><UserProfile /></UserPrivateRoute>} />
                 <Route path='/forgot-password' element={<ForgotPasswordPage />} />
                 <Route path='/reset-password' element={<ResetPasswordPage />} />
-                <Route path='/order' element={<OrderPage />} />
-                <Route path="/payment/:orderId" element={<PaymentPage />} />
+                <Route path='/order' element={<UserPrivateRoute><OrderPage /></UserPrivateRoute> } />
+                <Route path="/payment/:orderId" element={<UserPrivateRoute><PaymentPage /></UserPrivateRoute>} />
             </Routes>
         </LayoutWrapper>
     );

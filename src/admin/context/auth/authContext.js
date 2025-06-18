@@ -5,8 +5,8 @@ import { fetchUserProfile } from '../../service/authService';
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  
-   
+
+
     const [authToken, setAuthToken] = useState(localStorage.getItem('auth_token'));
     const [user, setUser] = useState(null);
 

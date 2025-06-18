@@ -8,28 +8,19 @@ import { ProductProvider } from './admin/context/product/productContext';
 import { MyContextProvider } from './admin/context/themeContext/themeContext';
 import { PageTitleProvider } from './admin/context/pageTitle/PageTitleContext';
 import { AuthProvider } from './admin/context/auth/authContext';
-import { UserAuthProvider } from './public/context/authContext/AuthContext';
-import { useEffect } from 'react';
-import PublicUrl from './public/api/publicUrl'; // Make sure this path is correct
-import axiosInstance from './admin/api/axiosInstance';
+import { UserAuthProvider } from './public/context/authContext/UserAuthContext';
+
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 function App() {
   const queryClient = new QueryClient();
 
-  useEffect(() => {
+
+
     
-  //  localStorage.clear();
-    const userToken = localStorage.getItem("user_token");
-    const adminToken = localStorage.getItem("admin_token");
+  //localStorage.clear();
 
-    if (userToken) {
-      PublicUrl.defaults.headers.common["Authorization"] = `Bearer ${userToken}`;
-    }
-
-    if (adminToken) {
-      axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${adminToken}`;
-    }
-  }, []);
-  
 
   return (
     <div className="App">
@@ -40,6 +31,7 @@ function App() {
               <AuthProvider>
                 <UserAuthProvider>
                   <AppRoutes />
+                  <ToastContainer position="top-center" autoClose={3000} />
                 </UserAuthProvider>
               </AuthProvider>
             </PageTitleProvider>

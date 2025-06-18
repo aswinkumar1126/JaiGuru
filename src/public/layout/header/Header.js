@@ -161,7 +161,7 @@ const Header = () => {
     }, []);
 
     const navItems = [
-        { name: 'HOME', path: '/' },
+        { name: 'HOME', path: '/home' },
         { name: 'PRODUCTS', path: '/products' },
         { name: 'ABOUT US', path: '/about' },
         { name: 'WHY US', path: '/why-us' },
@@ -185,7 +185,7 @@ const Header = () => {
                             whileHover={{ scale: isMobile ? 1 : 1.05 }}
                             transition={{ type: 'spring', stiffness: 300 }}
                         >
-                            <Link to="/" onClick={closeMobileMenu} aria-label="Home">
+                            <Link to="/home" onClick={closeMobileMenu} aria-label="Home">
                                 <motion.img
                                     src={Logo}
                                     alt="BMJ Jewellers Logo"

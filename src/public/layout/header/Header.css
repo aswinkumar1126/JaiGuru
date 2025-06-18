@@ -277,9 +277,11 @@
 .nav-links {
     width: 100%;
     height: var(--nav-height);
+    text-align: center;
+    justify-content: center;
+    align-items: center;
     background: var(--nav-bg);
-    display: flex;
-    
+    display: flex; 
     align-items: center;
     transition: transform 0.3s ease;
     z-index: 1001;
@@ -288,8 +290,7 @@
 
 .nav-links.scrolled {
     background: var(--nav-bg-scrolled);
-    
-    
+
 }
 
 .nav-list {
@@ -298,10 +299,12 @@
     height: 100%;
     align-items: center;
     justify-content: center;
+    text-align: center;
     max-width: 1340px;
     width: 100%;
     margin: 0 auto;
     padding: 0 1rem;
+    padding-top: 10px;
 }
 
 .nav-item {
@@ -346,6 +349,7 @@
 
 .nav-hover-indicator {
     position: absolute;
+   top:20px;
     bottom: 0;
     left: 0;
     width: 0;
@@ -366,6 +370,7 @@
 .active-nav-link::after {
     content: '';
     position: absolute;
+    top:20px;
     bottom: 0;
     left: 0;
     width: 100%;
@@ -645,6 +650,13 @@
     .logo-text pre {
         display:none;
     }
+        .nav-hover-indicator{
+            margin-top: 20px;
+        }
+ 
+.active-nav-link::after{
+    top: 40px;
+}
 
     .wishlist-button,
     .cart-button,

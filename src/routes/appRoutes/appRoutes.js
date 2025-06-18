@@ -13,7 +13,7 @@ const AppRoutes = () => {
                 <Route path="/*" element={<PublicRoutes />} />
 
              
-                <Route path="/admin/*" element={<AdminRoutes />} />
+              <Route path="/admin/*" element={<AdminRoutes />} /> 
 
                  
             </Routes>

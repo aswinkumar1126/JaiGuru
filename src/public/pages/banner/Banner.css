@@ -62,7 +62,7 @@
 .image-wrapper {
     position: relative;
     width: 100%;
-    padding-top: 38.85%;
+    padding-top: 31.85%;
     /* 21:9 aspect ratio for modern banners */
     background-color: var(--skeleton-color);
 }
@@ -73,7 +73,7 @@
     left: 0;
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain;
     object-position: center;
     transition: transform 0.5s ease;
 }

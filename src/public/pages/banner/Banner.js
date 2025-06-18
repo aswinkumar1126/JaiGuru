@@ -55,12 +55,7 @@ function Banner({ images, loading, error }) {
                             decoding="async"
                         />
                     </div>
-                    {(img.title || img.description) && (
-                        <figcaption className="slide-caption">
-                            {img.title && <h3 className="slide-title">{img.title}</h3>}
-                            {img.description && <p className="slide-description">{img.description}</p>}
-                        </figcaption>
-                    )}
+                   
                 </figure>
             </div>
         );
