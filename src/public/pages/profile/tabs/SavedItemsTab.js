@@ -1,5 +1,5 @@
 import React from 'react';
-
+import './SavedItemsTab.css';
 const SavedItemsTab = () => (
     <section className="profile-section">
         <div className="section-header">

@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useOrderHistory } from '../../../hook/order/useOrderHistoryQuery';
+import './OrdersTab.css';
 
 const OrdersTab = () => {
     const [page, setPage] = useState(0);
@@ -7,11 +8,12 @@ const OrdersTab = () => {
     const [status, setStatus] = useState('');
 
     const { data, isLoading, isError, refetch } = useOrderHistory({ page, size, status });
-    console.log('data', data);
 
     const handleStatusFilterChange = (e) => {
         setStatus(e.target.value);
     };
+
+    const orders = Array.isArray(data) ? data : [];
 
     return (
         <section className="profile-section">
@@ -28,9 +30,16 @@ const OrdersTab = () => {
                 </div>
             </div>
 
-            {data?.length > 0 ? (
+            {isLoading ? (
+                <p>Loading orders...</p>
+            ) : isError ? (
+                <div className="error-message">
+                    <p>Failed to load orders.</p>
+                    <button onClick={() => refetch()}>Retry</button>
+                </div>
+            ) : orders.length > 0 ? (
                 <div className="order-list">
-                    {data.map((order) => (
+                    {orders.map((order) => (
                         <div className="order-card" key={order.orderId}>
                             <div className="order-header">
                                 <span><strong>Order ID:</strong> {order.orderId}</span>
@@ -41,7 +50,7 @@ const OrdersTab = () => {
                                 <p><strong>Contact:</strong> {order.contact}</p>
                                 <p><strong>Email:</strong> {order.email}</p>
                                 <p><strong>Items:</strong> {order.orderItems?.length}</p>
-                                <p><strong>Total:</strong> ₹{order.totalAmount.toFixed(2)}</p>
+                                <p><strong>Total:</strong> ₹{Number(order.totalAmount).toFixed(2)}</p>
                                 <p><strong>Date:</strong> {new Date(order.orderTime).toLocaleDateString()}</p>
                             </div>
                         </div>

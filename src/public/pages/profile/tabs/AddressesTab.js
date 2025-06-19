@@ -1,6 +1,6 @@
 import React from 'react';
 import { FiMapPin } from 'react-icons/fi';
-
+import './AddressesTab.css';
 const AddressesTab = () => (
     <section className="profile-section">
         <div className="section-header">

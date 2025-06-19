@@ -138,12 +138,6 @@ const CartPage = () => {
         const orderData = {
             cartItems: orderItems,
             totalAmount: orderItems.reduce((sum, i) => sum + i.price * i.quantity, 0),
-            address: {
-                street: "Palm Court Bldg M",
-                city: "Mumbai",
-                pincode: "400064"
-            },
-            paymentMode: "ONLINE",
         };
 
         navigate('/order', { state: orderData });

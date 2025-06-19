@@ -1,8 +1,12 @@
 import React, { useContext, useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
+
+// Contexts for theme and auth
 import { MyContext } from '../../admin/context/themeContext/themeContext';
 import { useAuth } from '../../admin/context/auth/authContext';
-import ProtectedRoute from '../protecedRoute/ProtectedRoute';
+
+// Components
+import ProtectedRoute from '../adminProtectedRoute/ProtectedRoute';
 import LoginPage from '../../admin/pages/login/loginPage';
 import Sidebar from '../../admin/components/slide/Sidebar';
 import MainContent from '../../admin/components/mainContent/mainContent';
@@ -20,29 +24,32 @@ import ManageEmployees from '../../admin/pages/employee/manage/ManageEmployees';
 import Unauthorized from '../../admin/pages/unauthorized/Unauthorized';
 import UserDetails from '../../admin/pages/dashboard/userDetails';
 import NewAdminHeader from '../../admin/components/head/header';
+
 import './AdminRoutes.css';
 
 const AdminRoutes = () => {
     const { isSidebarOpen, setIsSidebarOpen, themeMode } = useContext(MyContext);
     const { authToken } = useAuth();
-    const allowedRoles = ['ROLE_ADMIN', 'ROLE_EMPLOYEE'];
+    const allowedRoles = ['ROLE_ADMIN', 'ROLE_EMPLOYEE']; // Only these roles can access protected admin pages
 
+    // Toggle sidebar based on screen size
     useEffect(() => {
         const handleResize = () => {
             const isLargeScreen = window.innerWidth > 1024;
-            setIsSidebarOpen(isLargeScreen); // Open by default on large screens
+            setIsSidebarOpen(isLargeScreen);
         };
-
         handleResize();
         window.addEventListener('resize', handleResize);
         return () => window.removeEventListener('resize', handleResize);
     }, [setIsSidebarOpen]);
 
+    // Apply current theme to body
     useEffect(() => {
         document.body.classList.remove('dark', 'light');
         document.body.classList.add(themeMode);
     }, [themeMode]);
 
+    // If not logged in, redirect all admin paths to login
     if (!authToken) {
         return (
             <Routes>
@@ -52,115 +59,39 @@ const AdminRoutes = () => {
         );
     }
 
+    // If logged in, render admin layout and routes
     return (
         <div className="app-layout">
+            {/* Top admin header */}
             <NewAdminHeader
                 toggleSidebar={() => setIsSidebarOpen((prev) => !prev)}
                 isSidebarOpen={isSidebarOpen}
             />
+
+            {/* Sidebar and page content layout */}
             <div className="layout-body">
                 <Sidebar
                     isOpen={isSidebarOpen}
                     toggleSidebar={() => setIsSidebarOpen((prev) => !prev)}
                 />
+
                 <main className={`main-content ${isSidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
                     <Routes>
-                        <Route
-                            path="/"
-                            element={
-                                <ProtectedRoute allowedRoles={allowedRoles}>
-                                    <MainContent />
-                                </ProtectedRoute>
-                            }
-                        />
-                        <Route
-                            path="/product/add"
-                            element={
-                                <ProtectedRoute allowedRoles={allowedRoles}>
-                                    <AddProduct />
-                                </ProtectedRoute>
-                            }
-                        />
-                        <Route
-                            path="product/manage"
-                            element={
-                                <ProtectedRoute allowedRoles={allowedRoles}>
-                                    <ManageProduct />
-                                </ProtectedRoute>
-                            }
-                        />
-                        <Route
-                            path="banner/add"
-                            element={
-                                <ProtectedRoute allowedRoles={allowedRoles}>
-                                    <AddBanner />
-                                </ProtectedRoute>
-                            }
-                        />
-                        <Route
-                            path="banner/manage"
-                            element={
-                                <ProtectedRoute allowedRoles={allowedRoles}>
-                                    <ManageBanner />
-                                </ProtectedRoute>
-                            }
-                        />
-                        <Route
-                            path="video/add"
-                            element={
-                                <ProtectedRoute allowedRoles={allowedRoles}>
-                                    <AddVideos />
-                                </ProtectedRoute>
-                            }
-                        />
-                        <Route
-                            path="video/manage"
-                            element={
-                                <ProtectedRoute allowedRoles={allowedRoles}>
-                                    <ManageVideos />
-                                </ProtectedRoute>
-                            }
-                        />
-                        <Route
-                            path="rates/add"
-                            element={
-                                <ProtectedRoute allowedRoles={allowedRoles}>
-                                    <AddRates />
-                                </ProtectedRoute>
-                            }
-                        />
-                        <Route
-                            path="rates/manage"
-                            element={
-                                <ProtectedRoute allowedRoles={allowedRoles}>
-                                    <ManageRates />
-                                </ProtectedRoute>
-                            }
-                        />
-                        <Route
-                            path="employee/add"
-                            element={
-                                <ProtectedRoute allowedRoles={allowedRoles}>
-                                    <AddEmployee />
-                                </ProtectedRoute>
-                            }
-                        />
-                        <Route
-                            path="employee/manage"
-                            element={
-                                <ProtectedRoute allowedRoles={allowedRoles}>
-                                    <ManageEmployees />
-                                </ProtectedRoute>
-                            }
-                        />
-                        <Route
-                            path="profile"
-                            element={
-                                <ProtectedRoute allowedRoles={allowedRoles}>
-                                    <EmployeeProfile />
-                                </ProtectedRoute>
-                            }
-                        />
+                        {/* Protected admin routes */}
+                        <Route path="/" element={<ProtectedRoute allowedRoles={allowedRoles}><MainContent /></ProtectedRoute>} />
+                        <Route path="product/add" element={<ProtectedRoute allowedRoles={allowedRoles}><AddProduct /></ProtectedRoute>} />
+                        <Route path="product/manage" element={<ProtectedRoute allowedRoles={allowedRoles}><ManageProduct /></ProtectedRoute>} />
+                        <Route path="banner/add" element={<ProtectedRoute allowedRoles={allowedRoles}><AddBanner /></ProtectedRoute>} />
+                        <Route path="banner/manage" element={<ProtectedRoute allowedRoles={allowedRoles}><ManageBanner /></ProtectedRoute>} />
+                        <Route path="video/add" element={<ProtectedRoute allowedRoles={allowedRoles}><AddVideos /></ProtectedRoute>} />
+                        <Route path="video/manage" element={<ProtectedRoute allowedRoles={allowedRoles}><ManageVideos /></ProtectedRoute>} />
+                        <Route path="rates/add" element={<ProtectedRoute allowedRoles={allowedRoles}><AddRates /></ProtectedRoute>} />
+                        <Route path="rates/manage" element={<ProtectedRoute allowedRoles={allowedRoles}><ManageRates /></ProtectedRoute>} />
+                        <Route path="employee/add" element={<ProtectedRoute allowedRoles={allowedRoles}><AddEmployee /></ProtectedRoute>} />
+                        <Route path="employee/manage" element={<ProtectedRoute allowedRoles={allowedRoles}><ManageEmployees /></ProtectedRoute>} />
+                        <Route path="profile" element={<ProtectedRoute allowedRoles={allowedRoles}><EmployeeProfile /></ProtectedRoute>} />
+
+                        {/* Open admin routes */}
                         <Route path="userDetails" element={<UserDetails />} />
                         <Route path="unauthorized" element={<Unauthorized />} />
                         <Route path="*" element={<Navigate to="/admin" replace />} />

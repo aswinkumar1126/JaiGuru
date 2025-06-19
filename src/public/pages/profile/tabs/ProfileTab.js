@@ -1,4 +1,5 @@
 import React from 'react';
+import './ProfileTab.css';
 
 const ProfileTab = ({ user }) => (
     <section className="profile-section">
