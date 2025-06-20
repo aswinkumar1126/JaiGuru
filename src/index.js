@@ -4,17 +4,16 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { GoogleOAuthProvider } from '@react-oauth/google';
-import 'bootstrap/dist/css/bootstrap.min.css'
+import 'bootstrap/dist/css/bootstrap.min.css';
 
-const clientId = "1059348243794-1kjqfmr81g2uv2t9o0hgdoak7p20i9bm.apps.googleusercontent.com";
+// Mount the React app to the root div in HTML
 const root = ReactDOM.createRoot(document.getElementById('root'));
+
 root.render(
   <React.StrictMode>
-    <GoogleOAuthProvider clientId={clientId}>
-    <App />
-    </GoogleOAuthProvider>
+    <App /> {/* Main application component */}
   </React.StrictMode>
 );
 
-
+// For measuring performance (optional)
 reportWebVitals();

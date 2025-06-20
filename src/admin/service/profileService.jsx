@@ -3,7 +3,7 @@ import axiosInstance from '../api/axiosInstance';
 
 // Get current user's profile
 export const getProfile = async () => {
-    const response = await axiosInstance.get('/auth/user/profile');
+    const response = await axiosInstance.get('/user/profile');
     return response.data;
 };
 

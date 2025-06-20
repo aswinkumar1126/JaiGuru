@@ -11,6 +11,7 @@ import PriceDetails from "../../pages/cart/PriceDetails/PriceDetails";
 import "./CartPage.css";
 
 import { useNavigate } from "react-router-dom";
+import RecentlyViewedPage from "../recentlyViewed/RecentlyViewed";
 
 
 const CartPage = () => {
@@ -101,20 +102,33 @@ const CartPage = () => {
 
 
 
+    const baseUrl = "https://app.bmgjewellers.com";
+
     const handlePlaceOrder = () => {
         const orderItems = cartList
             .filter(item => selectedItems.includes(item.itemTagSno))
             .map((item) => {
                 const product = productMap[item.itemTagSno] || {};
+                let imageUrls = [];
+
+                try {
+                    imageUrls = JSON.parse(product.ImagePath || "[]");
+                } catch (err) {
+                    console.error("Error parsing ImagePath", err);
+                }
+
+                const firstImage = imageUrls.length > 0 ? baseUrl + imageUrls[0] : "/fallback.jpg";
+
                 return {
-                    productId: item.id || item.itemTagSno, // make sure ID is consistent
+                    productId: item.id || item.itemTagSno,
                     name: product.ITEMNAME || item.name || "Unknown",
                     quantity: item.quantity,
                     price: product.GrandTotal || item.amount || 0,
-                    image: item.imageUrl,
+                    image: firstImage,
                 };
             });
-            console.log("orderitems",orderItems);
+
+        console.log("orderItems", orderItems);
 
         if (orderItems.length === 0) {
             alert("Please select at least one item to place the order.");
@@ -124,16 +138,11 @@ const CartPage = () => {
         const orderData = {
             cartItems: orderItems,
             totalAmount: orderItems.reduce((sum, i) => sum + i.price * i.quantity, 0),
-            address: {
-                street: "Palm Court Bldg M", // Replace with actual selected address
-                city: "Mumbai",
-                pincode: "400064"
-            },
-            paymentMode: "CASH", // Replace with selected mode dynamically if needed
         };
 
         navigate('/order', { state: orderData });
     };
+    
     
     return (
         <div className="cart-page" role="main">
@@ -198,8 +207,10 @@ const CartPage = () => {
                 onCheckout={(selectedItems, total) => {
                     console.log("Selected Order Items:", selectedItems);
                     alert(`Proceeding to checkout with ₹${total.toFixed(2)}`);
+                    handlePlaceOrder();
                 }}
             />
+            <RecentlyViewedPage />
         </div>
     );
 };

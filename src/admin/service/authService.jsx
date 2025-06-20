@@ -13,7 +13,7 @@ export const loginUser = async (credentials) => {
 
 // ✅ Fetch user profile using token
 export const fetchUserProfile = async () => {
-    const response = await axiosInstance.get(`/auth/user/profile`);
+    const response = await axiosInstance.get(`/user/profile`);
     return response.data;
 };
 
@@ -24,7 +24,7 @@ export const logoutUser = () => {
 
 // ✅ Create new employee
 export const createEmployee = async (values) => {
-    
+
 
     const payload = {
         username: values.username,

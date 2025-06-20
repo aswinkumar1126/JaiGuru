@@ -2,32 +2,62 @@
 <html lang="en">
 
 <head>
+  <!-- Character encoding set to UTF-8 -->
   <meta charset="utf-8" />
+
+  <!-- Responsive design: ensures proper scaling on all devices -->
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- Sets the browser theme color -->
   <meta name="theme-color" content="#000000" />
+
+  <!-- Short description of the website -->
   <meta name="description" content="BMG" />
 
-  <!-- Google Identity Services script -->
+  <!-- Google Identity Services for OAuth or Sign-In -->
   <script src="https://accounts.google.com/gsi/client" async defer></script>
 
-  <!-- Styling -->
+  <!-- Website favicon (appears on browser tab) -->
   <link rel="icon" href="%PUBLIC_URL%/assets/icon/icon-512.png" />
+
+  <!-- Apple-specific icon for iOS home screen -->
   <link rel="apple-touch-icon" href="%PUBLIC_URL%/assets/icon/icon-512.png" />
+
+  <!-- PWA manifest file for progressive web app configuration -->
   <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+
+  <!-- Tailwind CSS framework for utility-first styling -->
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+
+  <!-- Google Fonts: Roboto for body content, Inter for UI and headings -->
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome for using icons like social media, cart, etc. -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
     crossorigin="anonymous" />
+
+  <!-- Title of the web application -->
   <title>BMG</title>
 </head>
 
 <body>
+  <!-- Message for users who have JavaScript disabled -->
   <noscript>You need to enable JavaScript to run this app.</noscript>
+
+  <!-- jsPDF library for generating PDF documents -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+  <!-- jsPDF plugin for creating tables in PDFs -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+
+  <!-- Razorpay payment gateway script -->
   <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+  <!-- React root element where the app is rendered -->
   <div id="root"></div>
+
+  <!-- Separate div for rendering dropdown portals or modals -->
   <div id="dropdown-root"></div>
 </body>
 

@@ -1,4 +1,3 @@
-// src/pages/recentlyViewed/RecentlyViewedPage.jsx
 import React from 'react';
 import { useRecentlyViewed } from '../../hook/recentlyViewed/useRecentlyViewedQuery';
 import { useQueries } from '@tanstack/react-query';
@@ -10,15 +9,15 @@ import './RecentlyViewedPage.css';
 import { useNavigate } from 'react-router-dom';
 import { FiClock } from 'react-icons/fi';
 import { useCart } from '../../hook/cart/useCartQuery';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const RecentlyViewedPage = () => {
-
-
     const navigate = useNavigate();
     const {
         data,
         isLoading: isSnoLoading,
     } = useRecentlyViewed();
+    // const { mutate: clearRecentlyViewed } = useClearRecentlyViewed();
     const { addToCartHandler } = useCart();
 
     const snoArray = data?.data || [];
@@ -31,16 +30,36 @@ const RecentlyViewedPage = () => {
             staleTime: 1000 * 60 * 30, // 30 minutes cache
         })),
     });
-   
+
     const isLoading = isSnoLoading || productQueries.every((q) => q.isLoading);
     const isAllFailed = productQueries.every((q) => q.isError);
-    
+
     const products = productQueries
         .filter(q => q.isSuccess && q.data)
         .map(q => q.data);
 
-        console.log("productsforrecently ",products)
- 
+    const handleAddToCart = (product) => {
+        addToCartHandler({
+            itemTagSno: product.SNO,
+            itemId: product.ITEMID,
+            subItemId: product.SubItemId,
+            tagNo: product.TAGNO,
+            grsWt: parseFloat(product.GRSWT),
+            netWt: parseFloat(product.NETWT),
+            stnWt: 0,
+            stnAmount: parseFloat(product.StoneAmount || 0),
+            amount: parseFloat(product.GrandTotal || 0),
+            purity: parseFloat(product.PURITY),
+            quantity: 1,
+        });
+    };
+
+    // const handleClearHistory = () => {
+    //     clearRecentlyViewed(null, {
+    //         onSuccess: () => console.log('Recently viewed history cleared'),
+    //         onError: (error) => console.error('Failed to clear history:', error),
+    //     });
+    // };
 
     if (isLoading) {
         return (
@@ -56,23 +75,21 @@ const RecentlyViewedPage = () => {
 
     if (isAllFailed) {
         return <Error message="No recently viewed items found" />;
-      }
-    const handleAddToCart = (product) => {
-        console.log("🛒 Sending to addToCartHandler:", product);
+    }
 
-        addToCartHandler({
-            itemTagSno: product.SNO,             // corresponds to `SNO`
-            itemId: product.ITEMID,              // `ITEMID`
-            subItemId: product.SubItemId,        // `SubItemId` already correctly cased
-            tagNo: product.TAGNO,                // `TAGNO`
-            grsWt: parseFloat(product.GRSWT),    // convert string to number
-            netWt: parseFloat(product.NETWT),
-            stnWt: 0,                            // not present in your data, set to default
-            stnAmount: parseFloat(product.StoneAmount || 0),
-            amount: parseFloat(product.GrandTotal || 0),
-            purity: parseFloat(product.PURITY),
-            quantity: 1,
-        });
+    const gridVariants = {
+        hidden: { opacity: 0 },
+        visible: {
+            opacity: 1,
+            transition: {
+                staggerChildren: 0.1,
+            },
+        },
+    };
+
+    const itemVariants = {
+        hidden: { opacity: 0, y: 20 },
+        visible: { opacity: 1, y: 0 },
     };
 
     return (
@@ -108,24 +125,36 @@ const RecentlyViewedPage = () => {
                 </div>
             ) : (
                 <>
-                    <div className="product-grid">
-                        {products.map((product) => (
-                            <ProductCard
-                                key={product.SNO}
-                                product={product}
-                                onQuickView={() => navigate(`/product/${product.SNO}`)}
-                                onAddToCart={() => handleAddToCart(product)}
-                            />
-                        ))}
-                    </div>
-                    <div className="recently-viewed-actions">
+                    <motion.div
+                        className="product-grid"
+                        initial="hidden"
+                        animate="visible"
+                        variants={gridVariants}
+                    >
+                        <AnimatePresence>
+                            {products.map((product) => (
+                                <motion.div
+                                    key={product.SNO}
+                                    variants={itemVariants}
+                                    layout
+                                >
+                                    <ProductCard
+                                        product={product}
+                                        onQuickView={() => navigate(`/product/${product.SNO}`)}
+                                        onAddToCart={() => handleAddToCart(product)}
+                                    />
+                                </motion.div>
+                            ))}
+                        </AnimatePresence>
+                    </motion.div>
+                    {/* <div className="recently-viewed-actions">
                         <button
                             className="clear-history-button"
-                            onClick={() => console.log('Clear history')}
+                            onClick={handleClearHistory}
                         >
                             Clear History
                         </button>
-                    </div>
+                    </div> */}
                 </>
             )}
         </div>

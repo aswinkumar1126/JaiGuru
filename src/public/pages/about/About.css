@@ -23,15 +23,19 @@
 .about-header {
     background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
         url('../../assets/image.png');
-    background-size: auto;
+    background-size: cover;
+    /* Changed from 'auto' to 'cover' */
     background-position: center;
-    background-attachment: fixed;
-    padding: 180px 20px;
+    background-attachment: scroll;
+    /* Changed from 'fixed' to 'scroll' for mobile compatibility */
+    background-repeat: no-repeat;
+    padding: 220px 20px;
     text-align: center;
     position: relative;
     overflow: hidden;
+    min-height: 200px;
+    /* Added minimum height */
 }
-
 .about-header::after {
     content: '';
     position: absolute;
@@ -48,7 +52,7 @@
     font-size: 3.5rem;
     color: rgb(255, 255, 255);
     font-weight: 700;
-    text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    text-shadow: 0 4px 8px rgba(20, 3, 3, 0.3);
     letter-spacing: 1px;
     position: relative;
     z-index: 2;
@@ -99,12 +103,15 @@
 /* Responsive Design */
 @media (max-width: 768px) {
     .about-header {
-        padding: 60px 20px;
-    }
-
-    .about-header h1 {
-        font-size: 2.5rem;
-    }
+            padding: 100px 20px;
+            /* Adjusted padding */
+            min-height: 200px;
+            /* Smaller minimum height for mobile */
+        }
+    
+        .about-header h1 {
+            font-size: 2.5rem;
+        }
 
     .about-content {
         padding: 25px;

@@ -5,79 +5,55 @@ import "./CategorySection.css";
 import goldIcon from "../../assets/icons/gold.jpg";
 import silverIcon from "../../assets/icons/silver.jpg";
 import diamondIcon from "../../assets/icons/diamond.avif";
-import AllProuctsIcon from "../../assets/icons/gold.jpg";
+import allProductsIcon from "../../assets/icons/gold.jpg"; // Renamed for clarity
 
 const categories = [
     { label: "Gold", id: "G", icon: goldIcon },
     { label: "Silver", id: "S", icon: silverIcon },
     { label: "Diamond", id: "D", icon: diamondIcon },
-    { label: "All Products", id: "", icon: AllProuctsIcon },
+    { label: "All Products", id: "", icon: allProductsIcon },
 ];
 
 const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
         opacity: 1,
-        transition: {
-            staggerChildren: 0.1,
-            delayChildren: 0.2
-        }
-    }
+        transition: { staggerChildren: 0.1 },
+    },
 };
 
 const itemVariants = {
-    hidden: { y: 20, opacity: 0 },
-    visible: {
-        y: 0,
-        opacity: 1,
-        transition: {
-            type: "spring",
-            stiffness: 100,
-            damping: 10
-        }
-    },
-    hover: {
-        y: -10,
-        scale: 1.05,
-        transition: {
-            type: "spring",
-            stiffness: 300,
-            damping: 10
-        }
-    }
+    hidden: { y: 10, opacity: 0 },
+    visible: { y: 0, opacity: 1, transition: { type: "spring", stiffness: 100, damping: 10 } },
+    hover: { y: -5, scale: 1.05, transition: { type: "spring", stiffness: 300, damping: 10 } },
 };
 
 function CategorySection() {
     const navigate = useNavigate();
 
-    const handleClick = (metalId) => {
-        navigate(`/products?metalId=${metalId}`);
-    };
-
     return (
         <section className="category-section">
             <motion.h2
                 className="category-title"
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 10 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-50px" }}
-                transition={{ duration: 0.5 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4 }}
             >
                 Shop by Category
             </motion.h2>
-
             <motion.div
                 className="category-grid"
                 variants={containerVariants}
                 initial="hidden"
                 whileInView="visible"
-                viewport={{ once: true, margin: "-50px" }}
+                viewport={{ once: true }}
             >
                 {categories.map((cat) => (
                     <motion.div
                         key={cat.id}
                         className="category-card"
-                        onClick={() => handleClick(cat.id)}
+                        onClick={() => navigate(`/products?metalId=${cat.id}`)}
                         variants={itemVariants}
                         whileHover="hover"
                         whileTap={{ scale: 0.95 }}

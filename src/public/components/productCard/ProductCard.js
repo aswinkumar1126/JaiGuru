@@ -8,17 +8,17 @@ import {
     useFavorites,
 } from '../../hook/favorites/useFavoritesQuery';
 
-
 function ProductCard({ product, onQuickView, onAddToCart }) {
     const itemSno = product?.SNO;
-    const { data } = useFavorites(); // fetch current favorites
+    const { data } = useFavorites();
     const addFavorite = useAddFavorite();
     const removeFavorite = useRemoveFavorite();
 
     const [isWishlisted, setIsWishlisted] = useState(false);
+    const [isHovered, setIsHovered] = useState(false);
     const [animateHeart, setAnimateHeart] = useState(false);
+    const [imageLoaded, setImageLoaded] = useState(false);
 
-    // Extract first image from ImagePath JSON
     const getFirstProductImage = (imagePath) => {
         try {
             const images = JSON.parse(imagePath || '[]');
@@ -32,15 +32,14 @@ function ProductCard({ product, onQuickView, onAddToCart }) {
 
     const imageUrl = getFirstProductImage(product.ImagePath);
 
-    // Update wishlist state based on server data
     useEffect(() => {
         const favoriteList = data?.data || [];
         setIsWishlisted(favoriteList.includes(itemSno));
     }, [data, itemSno]);
 
-    // Toggle wishlist state with animation
     const handleWishlistToggle = (e) => {
         e.preventDefault();
+        e.stopPropagation();
         setAnimateHeart(true);
 
         if (isWishlisted) {
@@ -49,14 +48,22 @@ function ProductCard({ product, onQuickView, onAddToCart }) {
             addFavorite.mutate(itemSno);
         }
 
-        setIsWishlisted(!isWishlisted); // optimistic update
+        setIsWishlisted(!isWishlisted);
+        setTimeout(() => setAnimateHeart(false), 500);
+    };
 
-        // Reset animation class
-        setTimeout(() => setAnimateHeart(false), 300);
+    const handleAddToCart = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        onAddToCart();
     };
 
     return (
-        <article className="product-card">
+        <article
+            className="product-card"
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+        >
             <div className="product-card__badge">
                 {product.isNew && <span className="badge badge--new">New</span>}
                 {product.discount && (
@@ -64,16 +71,22 @@ function ProductCard({ product, onQuickView, onAddToCart }) {
                 )}
             </div>
 
-            <div className="product-card__image-container">
+            <div className="product-card__image-container" onClick={onQuickView}>
                 {imageUrl ? (
-                    <img
-                        src={imageUrl}
-                        alt={product.ITEMNAME}
-                        className="product-card__image"
-                        loading="lazy"
-                        width="300"
-                        height="300"
-                    />
+                    <>
+                        {!imageLoaded && (
+                            <div className="product-card__image-skeleton"></div>
+                        )}
+                        <img
+                            src={imageUrl}
+                            alt={product.ITEMNAME}
+                            className={`product-card__image ${imageLoaded ? 'loaded' : ''}`}
+                            loading="lazy"
+                            width="300"
+                            height="300"
+                            onLoad={() => setImageLoaded(true)}
+                        />
+                    </>
                 ) : (
                     <div className="product-card__image-placeholder">
                         <span>No Image Available</span>
@@ -81,8 +94,11 @@ function ProductCard({ product, onQuickView, onAddToCart }) {
                 )}
 
                 <button
-                    className="product-card__quick-view"
-                    onClick={onQuickView}
+                    className={`product-card__quick-view ${isHovered ? 'visible' : ''}`}
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        onQuickView();
+                    }}
                     aria-label={`Quick view ${product.SNO}`}
                 >
                     <FiEye size={18} />
@@ -94,12 +110,18 @@ function ProductCard({ product, onQuickView, onAddToCart }) {
                     onClick={handleWishlistToggle}
                     aria-label={isWishlisted ? 'Remove from wishlist' : 'Add to wishlist'}
                 >
-                    {isWishlisted ? <AiFillHeart size={18} /> : <FiHeart size={18} />}
+                    {isWishlisted ? (
+                        <AiFillHeart size={20} className="filled-heart" />
+                    ) : (
+                        <FiHeart size={20} className="outline-heart" />
+                    )}
                 </button>
             </div>
 
             <div className="product-card__info">
-                <h3 className="product-card__name">{product.ITEMNAME}</h3>
+                <h3 className="product-card__name" title={product.ITEMNAME}>
+                    {product.ITEMNAME}
+                </h3>
                 <div className="product-card__price">
                     {product.originalPrice && (
                         <span className="product-card__original-price">
@@ -113,11 +135,12 @@ function ProductCard({ product, onQuickView, onAddToCart }) {
 
                 <button
                     className="product-card__add-to-cart"
-                    onClick={onAddToCart}
+                    onClick={handleAddToCart}
                     aria-label={`Add ${product.ITEMNAME} to cart`}
                 >
                     <FiShoppingCart size={16} />
                     <span>Add to Cart</span>
+                    <span className="product-card__cart-effect"></span>
                 </button>
             </div>
         </article>

@@ -37,7 +37,8 @@ function Banner({ images, loading, error }) {
         e.target.alt = "Fallback content image";
     };
 
-    const baseUrl ="https://app.bmgjewellers.com/";
+    const baseUrl = "https://app.bmgjewellers.com";
+
     const renderSlideContent = (img, index) => {
         const imgSrc = img?.image_path ? `${baseUrl}${img.image_path}` : img?.image || img;
         const altText = img?.alt || img?.title || `Slide ${index + 1}`;
@@ -55,17 +56,10 @@ function Banner({ images, loading, error }) {
                             decoding="async"
                         />
                     </div>
-                    {(img.title || img.description) && (
-                        <figcaption className="slide-caption">
-                            {img.title && <h3 className="slide-title">{img.title}</h3>}
-                            {img.description && <p className="slide-description">{img.description}</p>}
-                        </figcaption>
-                    )}
                 </figure>
             </div>
         );
     };
-    
 
     return (
         <section
@@ -134,7 +128,7 @@ const EmptyState = () => (
 
 const NextArrow = ({ className, style, onClick }) => (
     <button
-        className={`${className} custom-arrow`}
+        className={`${className} custom-arrow next-arrow`}
         style={{ ...style }}
         onClick={onClick}
         aria-label="Next slide"
@@ -147,7 +141,7 @@ const NextArrow = ({ className, style, onClick }) => (
 
 const PrevArrow = ({ className, style, onClick }) => (
     <button
-        className={`${className} custom-arrow`}
+        className={`${className} custom-arrow prev-arrow`}
         style={{ ...style }}
         onClick={onClick}
         aria-label="Previous slide"

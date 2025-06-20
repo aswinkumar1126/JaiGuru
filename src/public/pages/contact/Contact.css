@@ -22,9 +22,11 @@
 .contact-header {
     background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
         url('../../assets/image.png');
-    background-size: cover;
+    background-size: contain;
     background-position: center 30%;
-    padding: 100px 20px;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    padding: 180px 20px;
     text-align: center;
     position: relative;
 }
@@ -288,7 +290,7 @@
 /* Responsive Design */
 @media (max-width: 768px) {
     .contact-header {
-        padding: 70px 20px;
+        padding: 120px 20px;
     }
 
     .contact-header h1 {

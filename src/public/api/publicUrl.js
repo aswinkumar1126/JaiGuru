@@ -1,26 +1,19 @@
 import axios from 'axios';
-
+import { toast } from 'react-toastify';
 const BASE_URL = process.env.REACT_APP_BASE_URL;
 console.log(BASE_URL);
 
 const PublicUrl = axios.create({
     baseURL: BASE_URL,
-    headers: {
-        'Content-Type': 'application/json'
-    }
+    withCredentials: true, // Enable if using cookies
 });
 
-// ✅ Dynamically attach token from localStorage on every request
-PublicUrl.interceptors.request.use(
-    (config) => {
+// Attach user token
+PublicUrl.interceptors.request.use((config) => {
+    const token = localStorage.getItem('user_token');
+    if (token) config.headers.Authorization = `Bearer ${token}`;
+    return config;
+}, (error) => Promise.reject(error));
 
-        const usertoken = localStorage.getItem('user_token'); // Moved inside so it's fresh
-        if (usertoken) {
-            config.headers.Authorization = `Bearer ${usertoken}`;
-        }
-        return config;
-    },
-    (error) => Promise.reject(error)
-);
 
 export default PublicUrl;
