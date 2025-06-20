@@ -20,6 +20,8 @@ import ForgotPasswordPage from '../../public/pages/forget-reset/ForgotPasswordPa
 import ResetPasswordPage from '../../public/pages/forget-reset/ResetPasswordPage';
 import OrderPage from '../../public/pages/order/OrderPage';
 import PaymentPage from '../../public/pages/payment/PaymentPage';
+import VerifyPaymentResult from '../../public/pages/payment/VerifyPaymentResult';
+import PaymentCallback from '../../public/pages/payment/PaymentCallback';
 
 // Route guard for authenticated users
 import UserPrivateRoute from '../protecteRoute/UserProtecteRoute';
@@ -49,6 +51,9 @@ const PublicRoutes = () => {
                 <Route path='/user/profile' element={<UserPrivateRoute><UserProfile /></UserPrivateRoute>} />
                 <Route path='/order' element={<UserPrivateRoute><OrderPage /></UserPrivateRoute>} />
                 <Route path="/payment/:orderId" element={<UserPrivateRoute><PaymentPage /></UserPrivateRoute>} />
+                <Route path="/payment/callback/:orderId" element={<PaymentCallback />} />
+           
+
             </Routes>
         </LayoutWrapper>
     );

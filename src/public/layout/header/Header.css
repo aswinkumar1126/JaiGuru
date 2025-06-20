@@ -1,9 +1,7 @@
+/* Header.css */
 :root {
-    /* Colors */
     --primary-color: #d4af37;
-    /* Gold from ProductDetails.css */
     --secondary-color: #1a1a1a;
-    /* Dark from ProductDetails.css */
     --text-color: #333;
     --text-light: #666;
     --bg-primary: #fff;
@@ -56,12 +54,14 @@
 
 .main-header-content {
     max-width: 2000px;
+    /* Reduced for better tablet fit */
     width: 100%;
     margin: 0 auto;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 1rem;
+    flex-wrap: wrap;
+    /* Allow wrapping to prevent overlap */
 }
 
 /* Header Sections */
@@ -70,6 +70,7 @@
     align-items: center;
     flex-shrink: 0;
     min-width: 0;
+    gap: 0.5rem;
 }
 
 .header-middle {
@@ -77,13 +78,13 @@
     flex: 1;
     min-width: 0;
     max-width: 450px;
-    padding: 0 1rem;
+    padding: 0 0.8rem;
 }
 
 .header-right {
     display: flex;
     align-items: center;
-    gap: 0.15rem;
+    gap: 0.3rem;
     flex-shrink: 0;
 }
 
@@ -91,13 +92,13 @@
 .logo-container {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
+    gap: 0.5rem;
     text-decoration: none;
     min-width: 0;
 }
 
 .logo-img {
-    height: 60px;
+    height: 55px;
     width: auto;
     border-radius: 50%;
     object-fit: contain;
@@ -108,7 +109,7 @@
     margin: 0;
     font-family: 'Poppins', sans-serif;
     font-weight: 600;
-    font-size: 1.3rem;
+    font-size: 1.2rem;
     line-height: 1.2;
     background: linear-gradient(270deg, rgb(91, 189, 0), rgb(2, 15, 75), rgb(175, 71, 2), rgb(91, 189, 0));
     background-size: 400% 100%;
@@ -133,11 +134,27 @@
 }
 
 .sub-logotext {
-    font-size: 0.7rem;
+    font-size: 0.65rem;
     font-weight: 400;
     letter-spacing: 0.5px;
     color: var(--primary-color);
     display: block;
+}
+
+.header-rates-container {
+    margin-left: 0.8rem;
+    flex-shrink: 1;
+    max-width: 280px;
+    /* Match RatesCard max-width */
+}
+
+.mobile-rates-container {
+    width: 100%;
+    padding: 0.8rem;
+    background: rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    justify-content: center;
 }
 
 /* Search Bar */
@@ -148,8 +165,8 @@
 
 .mobile-search-container {
     display: none;
-    padding: 1rem;
-    background: var(--text-light);
+    padding: 0.8rem;
+    background: var(--bg-secondary);
     width: 100%;
 }
 
@@ -166,13 +183,13 @@
     display: flex;
     align-items: center;
     gap: 0.4rem;
-    padding: 0.6rem 1rem;
+    padding: 0.5rem 0.8rem;
     border: none !important;
     border-radius: 25px;
     background: transparent;
     color: var(--text-color);
     font-weight: 500;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     text-decoration: none;
     transition: all var(--transition-speed) ease;
     cursor: pointer;
@@ -189,7 +206,7 @@
 .wishlist-icon,
 .cart-icon,
 .profile-icon {
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     transition: color var(--transition-speed) ease;
     flex-shrink: 0;
 }
@@ -221,30 +238,31 @@
     background: var(--cart-color);
     color: #fff;
     border-radius: 50%;
-    width: 20px;
-    height: 20px;
+    width: 18px;
+    height: 18px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     font-weight: 600;
     pointer-events: none;
 }
-.wishlist-badge{
-position: absolute;
-    top: 22px;
-    right: 13px;
-    background: var(--cart-color);
-    color: #fff;
-    border-radius: 50%;
-    width: 20px;
-    height: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.75rem;
-    font-weight: 600;
-    pointer-events: none;
+.wishlist-badge {
+    position: absolute;
+        top: 25px;
+        right: 15px;
+        background: var(--cart-color);
+        color: #fff;
+        border-radius: 50%;
+        width: 18px;
+        height: 18px;
+        display: flex;
+       
+        align-items: center;
+        justify-content: center;
+        font-size: 0.7rem;
+        font-weight: 600;
+        pointer-events: none;
 }
 /* Profile Menu */
 .profile-menu {
@@ -254,12 +272,11 @@ position: absolute;
     background: var(--bg-primary);
     border-radius: var(--border-radius);
     box-shadow: var(--box-shadow);
-    min-width: 160px;
-    max-width: 200px;
+    min-width: 150px;
+    max-width: 180px;
     padding: 0.5rem 0;
     z-index: 1003;
     border: 1px solid rgba(212, 175, 55, 0.2);
-    overflow: hidden;
 }
 
 .profile-menu li {
@@ -272,10 +289,10 @@ position: absolute;
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    padding: 0.75rem 1rem;
+    padding: 0.6rem 1rem;
     color: var(--secondary-color);
     font-weight: 400;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     text-decoration: none;
     transition: all var(--transition-speed) ease;
     width: 100%;
@@ -288,7 +305,7 @@ position: absolute;
 }
 
 .profile-menu .inline-icon {
-    font-size: 0.9rem;
+    font-size: 0.85rem;
 }
 
 /* Mobile Menu Toggle */
@@ -296,18 +313,13 @@ position: absolute;
     display: none;
     background: transparent;
     border: none;
-    font-size: 1.5rem;
+    font-size: 1.4rem;
     color: var(--text-color);
     cursor: pointer;
-    padding: 0.5rem;
-    margin-left: 1rem;
+    padding: 0.4rem;
+    margin-left: 0.8rem;
     border-radius: var(--border-radius);
     z-index: 1003;
-    transition: all var(--transition-speed) ease;
-}
-
-.mobile-menu-toggle:hover {
-    color: var(--primary-color);
 }
 
 /* Navigation */
@@ -332,11 +344,10 @@ position: absolute;
     height: 100%;
     align-items: center;
     justify-content: center;
-    max-width: 1340px;
+    max-width: 1200px;
     width: 100%;
     margin: 0 auto;
     padding: 0 1rem;
-    padding-top: 10px;
 }
 
 .nav-item {
@@ -350,7 +361,7 @@ position: absolute;
     text-decoration: none;
     color: #000000;
     font-weight: 500;
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     text-transform: uppercase;
     padding: 0 1rem;
     display: flex;
@@ -360,6 +371,7 @@ position: absolute;
     height: 100%;
     transition: all var(--transition-speed) ease;
     position: relative;
+    padding-top: 10px;
 }
 
 .nav-list li a:hover {
@@ -368,7 +380,8 @@ position: absolute;
 }
 
 .dropdown-arrow {
-    font-size: 1rem;
+    font-size: 0.9rem;
+   
     transition: transform var(--transition-speed) ease;
 }
 
@@ -379,7 +392,7 @@ position: absolute;
 
 .nav-hover-indicator {
     position: absolute;
-    top: 20px;
+    top: 28px ;
     bottom: 0;
     left: 0;
     width: 0;
@@ -400,7 +413,7 @@ position: absolute;
 .active-nav-link::after {
     content: '';
     position: absolute;
-    top: 20px;
+    top:27px;
     bottom: 0;
     left: 0;
     width: 100%;
@@ -421,10 +434,9 @@ position: absolute;
     background: var(--bg-primary);
     border-radius: var(--border-radius);
     box-shadow: var(--box-shadow);
-    min-width: 220px;
+    min-width: 200px;
     padding: 0.5rem 0;
     z-index: 1001;
-    overflow: hidden;
     border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
@@ -436,7 +448,7 @@ position: absolute;
 
 .dropdown-link {
     display: block;
-    padding: 0.75rem 1.5rem;
+    padding: 0.6rem 1.2rem;
     color: var(--text-color);
     font-weight: 400;
     text-transform: capitalize;
@@ -455,20 +467,56 @@ position: absolute;
     background: rgba(212, 175, 55, 0.05);
 }
 
-/* Mobile Navigation Styles */
+/* Responsive Design */
+@media (max-width: 1300px) {
+ 
+    .main-header-content {
+            flex-wrap: nowrap;
+            gap: 0.4rem;
+            padding: 0 0.8rem;
+        }
+    
+        .header-left {
+            flex: 1;
+            max-width: 100%;
+        }
+                .wishlist-badge {
+                    top: 25px;
+                    right: 15px;
+                    width: 18px;
+                    height: 18px;
+                    font-size: 0.65rem;
+                }
+  .header-rates-container {
+            margin-left: 90px;
+            flex: 0 0 auto;
+            flex-wrap: nowrap;
+            max-width: 260px;
+
+        }
+    .search-bar-wrapper {
+        margin-left: 72px;
+        width: 100%;
+        max-width: 100%;
+    }
+    .header-middle { 
+        padding: 0.5rem 0;
+    }
+
+}
+
 @media (max-width: 992px) {
     body {
         padding-top: var(--main-header-height);
     }
-
+       
     .main-header {
-        padding: 0.5rem;
+        padding: 0.4rem;
     }
 
     .main-header-content {
-        flex-wrap: nowrap;
-        gap: 0.5rem;
-        padding: 0 0.5rem;
+        flex-wrap: wrap;
+        gap: 0.4rem;
     }
 
     .header-left {
@@ -491,6 +539,13 @@ position: absolute;
     .mobile-menu-toggle {
         display: block;
     }
+        .wishlist-badge {
+            top: 25px;
+            right: 15px;
+            width: 18px;
+            height: 18px;
+            font-size: 0.65rem;
+        }
 
     .nav-links {
         position: fixed;
@@ -498,7 +553,7 @@ position: absolute;
         left: 0;
         width: 100%;
         height: calc(100vh - var(--main-header-height));
-        background: var(--text-light);
+        background: var(--text-color);
         transform: translateX(-100%);
         transition: transform var(--transition-speed) ease;
         z-index: 1001;
@@ -506,7 +561,7 @@ position: absolute;
         flex-direction: column;
         align-items: flex-start;
         justify-content: flex-start;
-        padding-top: 1rem;
+        
     }
 
     .nav-links.active {
@@ -527,24 +582,21 @@ position: absolute;
         height: auto;
         border-bottom: 1px solid rgba(0, 0, 0, 0.05);
     }
-
+        .nav-hover-indicator {
+            top:40px;
+        }
     .nav-list li a {
-        color: var(--text-color);
-        font-size: 1rem;
+        color: var(--bg-primary);
+        font-size: 0.95rem;
         padding: 1rem;
         width: 100%;
         justify-content: space-between;
     }
-        .active-nav-link::after {
-            content: '';
-            position: absolute;
-            top: 40px;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 3px;
-            background: #fff;
-        }
+
+    .active-nav-link::after {
+        top: 40px;
+        bottom: 0;
+    }
 
     .dropdown-container {
         width: 100%;
@@ -561,40 +613,25 @@ position: absolute;
     }
 
     .dropdown-link {
-        padding-left: 2rem;
+        padding-left: 1.5rem;
     }
 
     .mobile-search-container {
         display: block;
     }
 
-    .logo-img {
-        height: 50px;
+    .mobile-rates-container .rates-card-wrapper {
+        flex-direction: row;
+        width: 100%;
+        justify-content: space-between;
     }
 
-    .logo-text pre {
-        font-size: 1.1rem;
-    }
-
-    .wishlist-button,
-    .cart-button,
-    .profile-icon-button {
-        padding: 0.5rem;
-    }
-
-    .profile-menu {
-        min-width: 140px;
-        max-width: 160px;
-        right: -10px;
-    }
-
-    .profile-menu .dropdown-link {
-        font-size: 0.85rem;
-        padding: 0.6rem 1rem;
+    .mobile-rates-container .rate-card {
+        width: 48%;
+        justify-content: center;
     }
 }
 
-/* Medium Screens */
 @media (max-width: 768px) {
     .logo-img {
         height: 45px;
@@ -605,15 +642,21 @@ position: absolute;
     }
 
     .sub-logotext {
-        font-size: 0.65rem;
+        font-size: 0.6rem;
     }
-
+        .wishlist-badge {
+            top: 25px;
+            right: 15px;
+            width: 18px;
+            height: 18px;
+            font-size: 0.65rem;
+        }
     .wishlist-button,
     .cart-button,
     .profile-icon-button {
         padding: 0.4rem;
         font-size: 0;
-        gap: 0.4rem;
+        gap: 0.3rem;
     }
 
     .wishlist-text,
@@ -633,16 +676,19 @@ position: absolute;
         right: -5px;
     }
 
-    .profile-menu .dropdown-link {
-        font-size: 0.8rem;
-        padding: 0.5rem 0.8rem;
+    .mobile-rates-container .rates-card-wrapper {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .mobile-rates-container .rate-card {
+        width: 100%;
     }
 }
 
-/* Small Screens */
 @media (max-width: 576px) {
     .main-header {
-        padding: 0.25rem;
+        padding: 0.3rem;
     }
 
     .logo-img {
@@ -654,43 +700,32 @@ position: absolute;
     }
 
     .sub-logotext {
-        font-size: 0.6rem;
+        font-size: 0.55rem;
     }
 
-    .wishlist-badge,
+
     .cart-badge {
-        width: 18px;
-        height: 18px;
+        width: 16px;
+        height: 16px;
         font-size: 0.65rem;
+        top: -3px;
+        right: -3px;
     }
+        .wishlist-badge {
+            top: 16px;
+            right: 12px;
+            width: 18px;
+            height: 18px;
+            font-size: 0.65rem;
+        }
 
     .profile-menu {
         min-width: 100px;
         max-width: 120px;
         right: 0;
     }
-
-    .profile-menu .dropdown-link {
-        font-size: 0.75rem;
-        padding: 0.5rem 0.6rem;
-    }
 }
-
-@media (max-width: 550px) {
-    .wishlist-badge {
-        top: 15px;
-        right: 10px;
-        width: 18px;
-        height: 18px;
-        font-size: 0.65rem;
-    }
-}
-
-@media (max-width: 500px) {
-    .logo-container {
-        gap: 0.5rem;
-    }
-
+@media (max-width:550px) {
     .wishlist-badge {
         top: 12px;
         right: 8px;
@@ -699,36 +734,31 @@ position: absolute;
         font-size: 0.65rem;
     }
 }
-
 @media (max-width: 400px) {
     .logo-img {
         height: 35px;
-        display: block;
     }
 
     .logo-text pre {
-        display: none;
+        font-size: 0.8rem;
     }
-
-    .nav-hover-indicator {
-        margin-top: 20px;
-    }
-
-    .active-nav-link::after {
-        top: 40px;
-    }
-
+        .wishlist-badge {
+            top: 10px;
+            right: 5px;
+            width: 18px;
+            height: 18px;
+            font-size: 0.65rem;
+        }
     .wishlist-button,
     .cart-button,
     .profile-icon-button {
         padding: 0.3rem;
     }
 
-    .wishlist-badge {
-        top: 10px;
-        right: 5px;
-        width: 16px;
-        height: 16px;
+    .wishlist-badge,
+    .cart-badge {
+        width: 14px;
+        height: 14px;
         font-size: 0.6rem;
     }
 
@@ -736,26 +766,12 @@ position: absolute;
         min-width: 90px;
         max-width: 110px;
     }
-
-    .profile-menu .dropdown-link {
-        font-size: 0.7rem;
-        padding: 0.4rem 0.5rem;
-    }
 }
 
-/* Accessibility */
 @media (prefers-reduced-motion: reduce) {
     * {
         transition: none !important;
         animation: none !important;
         scroll-behavior: auto !important;
-    }
-
-    .logo-img {
-        height: 35px;
-    }
-
-    .profile-menu {
-        transition: none !important;
     }
 }

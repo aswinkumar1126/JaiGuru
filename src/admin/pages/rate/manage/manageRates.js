@@ -170,7 +170,7 @@ const ManageRates = () => {
                                                 aria-label="Edit Gold Rate"
                                             />
                                         ) : (
-                                                `₹${parseFloat(rate.GOLDRATE || 0).toFixed(2)}`
+                                                `₹${parseFloat(rate.goldRate || 0).toFixed(2)}`
 
                                         )}
                                     </td>
@@ -185,7 +185,7 @@ const ManageRates = () => {
                                                 aria-label="Edit Silver Rate"
                                             />
                                         ) : (
-                                                `₹${parseFloat(rate.SILVERRATE || 0).toFixed(2)}`
+                                                `₹${parseFloat(rate.silverRate || 0).toFixed(2)}`
 
                                         )}
                                     </td>

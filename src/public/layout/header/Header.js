@@ -1,6 +1,7 @@
 import { NavLink, Link, useLocation } from 'react-router-dom';
 import Logo from '../../assets/logo/weblogo.png';
 import Search from '../../components/search/Search';
+import RatesCard from '../../components/rateCard/RatesCard';
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 import './Header.css';
 import {
@@ -179,6 +180,11 @@ const Header = () => {
                                 <pre>BMG Jewellers{'\n'}<span className="sub-logotext">Private Limited</span></pre>
                             </span>
                         </motion.div>
+                        {!isMobile && (
+                            <motion.div className="header-rates-container">
+                                <RatesCard isMobile={isMobile} />
+                            </motion.div>
+                        )}
                     </div>
 
                     {!isMobile && (
@@ -332,9 +338,14 @@ const Header = () => {
                 aria-label="Main navigation"
             >
                 {isMobile && (
-                    <div className="mobile-search-container">
-                        <Search />
-                    </div>
+                    <>
+                        <div className="mobile-search-container">
+                            <Search />
+                        </div>
+                        <div className="mobile-rates-container">
+                            <RatesCard isMobile={isMobile} />
+                        </div>
+                    </>
                 )}
                 <ul className="nav-list">
                     {navItems.map((item) => (

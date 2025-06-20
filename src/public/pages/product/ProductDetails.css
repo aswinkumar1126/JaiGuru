@@ -548,13 +548,13 @@
         margin: 0 30px;
     }
 
-    .spec-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .spec-value {
-        text-align: left;
-    }
+        .specs-header {
+            padding: 0.5rem 0.8rem;
+        }
+    
+        .specs-content {
+            padding: 0.5rem 0.8rem;
+        }
 
     .product-title-row {
         flex-direction: column;
