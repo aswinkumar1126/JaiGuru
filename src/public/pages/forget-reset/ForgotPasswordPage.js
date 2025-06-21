@@ -19,7 +19,7 @@ const ForgotPasswordPage = () => {
         try {
             // Call mutation first
             const result = await mutateAsync({ contactNumber });
-            console.log("✅ Forgot Password Result:", result);
+            // console.log("✅ Forgot Password Result:", result);
 
             // Save contact and OTP only if success
             sessionStorage.setItem("contactNumber", contactNumber);

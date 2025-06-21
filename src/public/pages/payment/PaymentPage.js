@@ -49,7 +49,7 @@ const PaymentPage = () => {
                 cancel_url: `${window.location.origin}/payment/callback/${orderId}`
             };
 
-            console.log('Creating payment link with payload:', payload);
+            // console.log('Creating payment link with payload:', payload);
 
             createPaymentLink(payload, {
                 onSuccess: (res) => {

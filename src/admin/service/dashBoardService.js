@@ -10,7 +10,7 @@ export const getDashboardData = async () => {
             cancelledOrdersRes,
             shippedOrdersRes,
             userCountRes,
-            categoryCount,
+           
         ] = await Promise.all([
             axiosInstance.get(`/order/pending-orders`),
             axiosInstance.get(`/order/all-ordersCount`),
@@ -18,7 +18,7 @@ export const getDashboardData = async () => {
             axiosInstance.get(`/order/cancelled-orders`),
             axiosInstance.get(`/order/shipped-orders`),
             axiosInstance.get(`/auth/user/count`),
-            axiosInstance.get('/getMetalCategoryCounts'),
+          
 
         ]);
 
@@ -29,7 +29,7 @@ export const getDashboardData = async () => {
             cancelledOrders: cancelledOrdersRes.data,
             shippedOrders: shippedOrdersRes.data,
             totalUsers: userCountRes.data,
-            metalCategory: categoryCount.data
+           
         };
     } catch (error) {
         console.error('Error fetching dashboard data:', error);

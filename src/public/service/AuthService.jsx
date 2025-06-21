@@ -31,7 +31,7 @@ export const forgotPassword = async ({ contactNumber }) => {
         const smsRes = await fetch(`https://sms.textspeed.in/vb/apikey.php?${params.toString()}`);
         const smsText = await smsRes.text();
 
-        console.log("📨 SMS Response:", smsText);
+        // console.log("📨 SMS Response:", smsText);
 
         if (!smsText.toLowerCase().includes("success")) {
             throw new Error("SMS failed: " + smsText);

@@ -63,6 +63,7 @@ function Home() {
                 onRetry={() => window.location.reload()}
             />
         );
+        
 
     // Render the full home page layout
     return (

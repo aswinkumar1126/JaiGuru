@@ -61,7 +61,7 @@ export const useCart = () => {
 
     // ✅ Handler for checking and adding/updating cart
     const addToCartHandler = (newItem) => {
-        console.log("🛒 Add to Cart Handler Triggered:", newItem);
+        // console.log("🛒 Add to Cart Handler Triggered:", newItem);
 
         const mobileNumber = localStorage.getItem("userMobileNumber");
         if (!mobileNumber) {

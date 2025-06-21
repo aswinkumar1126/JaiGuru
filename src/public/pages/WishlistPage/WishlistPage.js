@@ -56,7 +56,7 @@ const WishlistItem = ({ sno }) => {
     const { mutate: removeFavorite, isLoading: isRemoving } = useRemoveFavorite();
 
     const handleAddToCart = (product) => {
-        console.log("🛒 Sending to addToCartHandler:", product);
+        // console.log("🛒 Sending to addToCartHandler:", product);
         addToCartHandler({
             itemTagSno: product.SNO,
             itemId: product.ITEMID,

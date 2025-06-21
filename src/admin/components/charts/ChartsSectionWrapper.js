@@ -11,6 +11,7 @@ const ChartsSectionWrapper = () => {
             try {
                 const dashboardData = await getDashboardData();
                 const metalCategory = dashboardData.metalCategory;
+            
 
                 const transformed = Object.entries(metalCategory).map(([key, value]) => ({
                     name: key.charAt(0).toUpperCase() + key.slice(1).toLowerCase(), // Format: GOLD -> Gold
@@ -25,7 +26,7 @@ const ChartsSectionWrapper = () => {
 
         fetchData();
     }, []);
-    console.log("categoryDistributionData", categoryDistributionData)
+    //console.log("categoryDistributionData", categoryDistributionData)
 
     return (
         <ChartsSection

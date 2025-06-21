@@ -7,8 +7,11 @@ import {
     useRemoveFavorite,
     useFavorites,
 } from '../../hook/favorites/useFavoritesQuery';
+import { useNavigate } from 'react-router-dom';
 
 function ProductCard({ product, onQuickView, onAddToCart }) {
+    const user = localStorage.getItem("user");
+    const navigate = useNavigate();
     const itemSno = product?.SNO;
     const { data } = useFavorites();
     const addFavorite = useAddFavorite();
@@ -40,14 +43,27 @@ function ProductCard({ product, onQuickView, onAddToCart }) {
     const handleWishlistToggle = (e) => {
         e.preventDefault();
         e.stopPropagation();
-        setAnimateHeart(true);
 
+        if (!user) {
+            localStorage.setItem(
+                "redirectAfterLogin",
+                JSON.stringify({
+                    path: window.location.pathname,
+                    action: "wishlistToggle",
+                    itemSno: itemSno,
+                    isWishlisted: isWishlisted,
+                })
+            );
+            navigate("/login");
+            return;
+        }
+
+        setAnimateHeart(true);
         if (isWishlisted) {
             removeFavorite.mutate(itemSno);
         } else {
             addFavorite.mutate(itemSno);
         }
-
         setIsWishlisted(!isWishlisted);
         setTimeout(() => setAnimateHeart(false), 500);
     };
@@ -55,7 +71,42 @@ function ProductCard({ product, onQuickView, onAddToCart }) {
     const handleAddToCart = (e) => {
         e.preventDefault();
         e.stopPropagation();
+        
+        if (!user) {
+            localStorage.setItem(
+                "redirectAfterLogin",
+                JSON.stringify({
+                    path: window.location.pathname,
+                    action: "addToCart",
+                    itemSno: itemSno,
+                })
+            );
+            navigate("/login");
+            return;
+        }
         onAddToCart();
+
+        
+    };
+
+    const handleQuickView = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        if (!user) {
+            localStorage.setItem(
+                "redirectAfterLogin",
+                JSON.stringify({
+                    path: window.location.pathname,
+                    action: "quickView",
+                    itemSno: itemSno,
+                })
+            );
+            navigate("/login");
+            return;
+        }
+
+        onQuickView();
     };
 
     return (
@@ -71,7 +122,7 @@ function ProductCard({ product, onQuickView, onAddToCart }) {
                 )}
             </div>
 
-            <div className="product-card__image-container" onClick={onQuickView}>
+            <div className="product-card__image-container" onClick={handleQuickView}>
                 {imageUrl ? (
                     <>
                         {!imageLoaded && (
@@ -95,10 +146,7 @@ function ProductCard({ product, onQuickView, onAddToCart }) {
 
                 <button
                     className={`product-card__quick-view ${isHovered ? 'visible' : ''}`}
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        onQuickView();
-                    }}
+                    onClick={handleQuickView}
                     aria-label={`Quick view ${product.SNO}`}
                 >
                     <FiEye size={18} />

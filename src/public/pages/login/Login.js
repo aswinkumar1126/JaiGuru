@@ -10,7 +10,7 @@ import Logo from '../../assets/image.png';
 import "./Login.css";
 
 const Login = () => {
-    const { user, login, signup } = useUserAuth();
+    const {  login, signup } = useUserAuth();
     const [mode, setMode] = useState("login");
     const [mobileNumber, setMobileNumber] = useState("");
     const [email, setEmail] = useState("");
@@ -45,15 +45,24 @@ const Login = () => {
                     roles: ["USER"],
                 };
                 await signup(userData);
-                navigate("/");
             } else {
                 const loginData = {
                     contactOrEmailOrUsername: mobileNumber,
                     password,
                 };
                 await login(loginData);
+            }
+
+            // ✅ Handle redirect AFTER login/signup
+            const redirectData = JSON.parse(localStorage.getItem("redirectAfterLogin"));
+            // console.log(redirectData);
+            if (redirectData?.path) {
+                localStorage.removeItem("redirectAfterLogin");
+                navigate(redirectData.path, { replace: true });
+            } else {
                 navigate(from, { replace: true });
             }
+
         } catch (err) {
             setError(
                 err?.response?.data?.message ||
@@ -64,6 +73,7 @@ const Login = () => {
             setLoading(false);
         }
     };
+    
 
     const containerVariants = {
         hidden: { opacity: 0, y: 20 },
@@ -89,12 +99,6 @@ const Login = () => {
             },
         },
     };
-
-    useEffect(() => {
-        if (user) {
-            navigate("/home");
-        }
-    }, [user, navigate]);
 
     const images = [Image1, Image2, Image3, Image4];
 

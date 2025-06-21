@@ -298,7 +298,7 @@ const Header = () => {
                                                     onClick={() => setIsProfileMenuOpen(false)}
                                                     role="menuitem"
                                                 >
-                                                    Profile
+                                                    <FaUserCircle /> Profile
                                                 </NavLink>
                                             </motion.li>
                                             <motion.li

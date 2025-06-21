@@ -36,6 +36,8 @@ body.dark .app-layout {
     margin-left: 0;
     transition: margin-left var(--transition-speed) ease;
     overflow-x: hidden;
+    margin-top: var(--header-height);
+    /* Ensure main content starts below header */
 }
 
 /* Sidebar States */
@@ -46,7 +48,30 @@ body.dark .app-layout {
 .main-content.sidebar-closed {
     margin-left: var(--sidebar-collapsed-width);
 }
+.sidebar {
+    position: fixed;
+    top: var(--header-height);
+    /* Start below the header */
+    left: 0;
+    height: calc(100vh - var(--header-height));
+    /* Full height minus header */
+    width: var(--sidebar-width);
+    background-color: var(--light-bg);
+    transition: width var(--transition-speed) ease;
+    z-index: 999;
+    /* Below header but above content */
+}
 
+body.dark .sidebar {
+    background-color: var(--dark-bg);
+}
+body {
+    padding-top: var(--header-height);
+    /* Ensure body content starts below header */
+}
+.sidebar-collapsed {
+    width: var(--sidebar-collapsed-width);
+}
 @media (max-width: 768px) {
     .main-content.sidebar-open {
         margin-left: var(--sidebar-width-mobile);

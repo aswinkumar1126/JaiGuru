@@ -49,7 +49,24 @@ const DashboardCards = () => {
         return num.toString();
     };
 
-    const calculateChange = (trend) => {
+    const calculateChange = (trend, cardId, dashboardData) => {
+        // Use the percentage from API if available
+        const percentageMap = {
+            pendingOrders: dashboardData?.pendingPercentage,
+            deliveredOrders: dashboardData?.deliveredPercentage,
+            shippedOrders: dashboardData?.shippedPercentage,
+            cancelledOrders: dashboardData?.cancelledPercentage
+        };
+
+        if (percentageMap[cardId]) {
+            const percentageValue = parseFloat(percentageMap[cardId]);
+            return {
+                value: Math.abs(percentageValue),
+                direction: percentageValue > 0 ? 'up' : percentageValue < 0 ? 'down' : 'neutral'
+            };
+        }
+
+        // Fallback to trend calculation if no percentage from API
         if (!trend || trend.length < 2) return { value: 0, direction: 'neutral' };
 
         const current = trend[trend.length - 1];
@@ -68,17 +85,28 @@ const DashboardCards = () => {
                 setIsLoading(true);
                 setError(null);
                 const data = await getDashboardData();
+                console.log('trans', data);
 
                 const transformedData = {
                     totalUsers: data.totalUsers?.totalUsers || 0,
                     totalOrders: data.totalOrders?.totalOrders || 0,
-                    pendingOrders: data.pendingOrders?.PendingOrders || 0,
-                    deliveredOrders: data.deliveredOrders?.DeliveredOrders || 0,
-                    shippedOrders: data.shippedOrders?.ShippedOrders || 0,
-                    cancelledOrders: data.cancelledOrders?.CancelledOrders || 0,
+
+                    // Order counts
+                    pendingOrders: data.pendingOrders?.totalPending || 0,
+                    deliveredOrders: data.deliveredOrders?.deliveredOrders?.length || 0,
+                    shippedOrders: data.shippedOrders?.shippedOrders?.length || 0,
+                    cancelledOrders: data.cancelledOrders?.cancelledOrders?.length || 0,
+
+                    // Percentages (optional, if you want to show them)
+                    pendingPercentage: data.pendingOrders?.pendingPercentage || '0%',
+                    deliveredPercentage: data.deliveredOrders?.deliveredPercentage || '0%',
+                    shippedPercentage: data.shippedOrders?.ShippedPercentage || '0%',
+                    cancelledPercentage: data.cancelledOrders?.cancelledPercentage || '0%',
+
+                    // Additional metrics
                     conversionRate: data.conversionRate || 0,
                     avgOrderValue: data.avgOrderValue || 0,
-                    trends: data.trends || generateDefaultTrends(data)
+                    trends: data.trends || generateDefaultTrends(data),
                 };
 
                 setDashboardData(transformedData);
@@ -121,6 +149,7 @@ const DashboardCards = () => {
         fetchData();
     }, []);
 
+    console.log(dashboardData);
     const cardsData = dashboardData ? [
         {
             id: 'totalUsers',
@@ -172,7 +201,7 @@ const DashboardCards = () => {
             color: '#e74c3c'
         }
     ] : [];
-    console.log(dashboardData)
+
     const getChartOptions = (metricId) => {
         const metric = cardsData.find(m => m.id === metricId);
         return {
@@ -302,6 +331,7 @@ const DashboardCards = () => {
                             }}
                             calculateChange={calculateChange}
                             formatNumber={formatNumber}
+                            dashboardData={dashboardData}
                         />
                     ))}
                 </motion.div>
@@ -315,14 +345,15 @@ const DashboardCards = () => {
                     getChartOptions={getChartOptions}
                     formatNumber={formatNumber}
                     calculateChange={calculateChange}
+                    dashboardData={dashboardData}
                 />
             )}
         </div>
     );
 };
 
-const DashboardCard = ({ card, isSelected, onSelect, trend, onViewAnalytics, calculateChange, formatNumber }) => {
-    const change = calculateChange(trend);
+const DashboardCard = ({ card, isSelected, onSelect, trend, onViewAnalytics, calculateChange, formatNumber, dashboardData }) => {
+    const change = calculateChange(trend, card.id, dashboardData);
 
     return (
         <motion.div
@@ -396,11 +427,12 @@ const AnalyticsView = ({
     trendData,
     getChartOptions,
     formatNumber,
-    calculateChange
+    calculateChange,
+    dashboardData
 }) => {
     const currentMetric = cardsData.find(m => m.id === selectedMetric);
     const currentTrend = trendData[selectedMetric]?.[timeRange] || [];
-    const change = calculateChange(currentTrend);
+    const change = calculateChange(currentTrend, selectedMetric, dashboardData);
 
     if (!currentMetric) {
         return (
@@ -474,7 +506,7 @@ const MetricStats = ({ metric, trend, timeRange, formatNumber }) => {
         {
             label: `Avg (${timeRange})`,
             value: Math.round(trend.reduce((a, b) => a + b, 0) / Math.max(1, trend.length))
-        }
+        },
     ];
 
     return (
