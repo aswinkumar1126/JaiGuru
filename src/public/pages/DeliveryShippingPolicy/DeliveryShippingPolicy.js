@@ -1,6 +1,13 @@
 import React from 'react';
 import { FaTruck, FaClock, FaMapMarkerAlt, FaBox, FaRupeeSign, FaCheck } from 'react-icons/fa';
 import './DeliveryShippingPolicy.css';
+import deliverImage from '../../assets/images/delivery/delivery-logo.svg'
+import delivery2 from'../../assets/images/delivery/blue dart.png';
+import delivery3 from'../../assets/images/delivery/dhl-express.svg';
+import delivery4 from'../../assets/images/delivery/india-post.png';
+
+
+
 
 const DeliveryShippingPolicy = () => {
     return (
@@ -65,11 +72,11 @@ const DeliveryShippingPolicy = () => {
                             <p className="card-text mb-3">
                                 We partner with leading and reliable courier services to ensure safe and timely delivery:
                             </p>
-                            <div className="d-flex flex-wrap align-items-center gap-4 partner-logos">
-                                <img src="/images/delhivery-logo.png" alt="Delhivery" className="partner-logo" />
-                                <img src="/images/blue-dart-logo.png" alt="Blue Dart" className="partner-logo" />
-                                <img src="/images/dtdc-logo.png" alt="DTDC" className="partner-logo" />
-                                <img src="/images/india-post-logo.png" alt="India Post" className="partner-logo" />
+                            <div className="d-flex flex-wrap align-items-center gap-20 partner-logos">
+                                <img src={deliverImage} alt="Delivery" className="partner-logo" />
+                                <img src={delivery2} alt="Blue Dart" className="partner-logo" />
+                                <img src={delivery3} alt="DTDC" className="partner-logo" />
+                                <img src={delivery4} alt="India Post" className="partner-logo" />
                             </div>
                         </div>
                     </div>

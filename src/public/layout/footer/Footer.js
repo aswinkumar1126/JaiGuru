@@ -130,10 +130,21 @@ const Footer = () => {
                     <motion.p variants={itemVariants} className="footer-contact-text">
                         websupport@justdial.com
                     </motion.p>
+                    
+                </motion.div>
+               
+                <motion.div
+                    className="footer-bottom"
+                    initial={{ opacity: 0 }}
+                    whileInView={{ opacity: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.3 }}
+                >
                     <motion.div
                         className="social-icons"
                         variants={itemVariants}
                     >
+
                         {[
                             { icon: 'fab fa-facebook-f', url: 'https://www.facebook.com' },
                             { icon: 'fab fa-instagram', url: 'https://www.instagram.com' },
@@ -149,28 +160,24 @@ const Footer = () => {
                                 variants={socialIconVariants}
                                 whileHover="hover"
                                 whileTap="tap"
+
                             >
                                 <i className={social.icon}></i>
                             </motion.a>
                         ))}
                     </motion.div>
-                </motion.div>
-                <motion.div
-                    className="footer-bottom"
-                    initial={{ opacity: 0 }}
-                    whileInView={{ opacity: 1 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.3 }}
-                >
+
                     <p className="copy-rights">© 2025 BMG Jewellery Pvt Ltd. All rights reserved.</p>
-                    <p className="design">Designed by <a href="https://www.brightechsoftware.com" className="designed-by">Brightech Software</a></p>
+                    <p className="design">Powered by <a href="https://www.brightechsoftware.com" className="designed-by">BrightechSoftwareSolutions</a></p>
                     <div className="payment-methods">
                         <i className="fab fa-cc-visa"></i>
                         <i className="fab fa-cc-mastercard"></i>
                         <i className="fab fa-cc-paypal"></i>
                         <i className="fab fa-cc-apple-pay"></i>
                     </div>
+                    
                 </motion.div>
+               
             </div>
 
            

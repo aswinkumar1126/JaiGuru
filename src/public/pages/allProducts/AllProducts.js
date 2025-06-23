@@ -37,10 +37,12 @@ function Products() {
         }
     }, [data]);
 
+
     const handleAddToCart = (product) => {
         
         addToCartHandler({
             itemTagSno: product.SNO,
+            
             itemId: product.ITEMID,
             subItemId: product.SubItemId,
             tagNo: product.TAGNO,

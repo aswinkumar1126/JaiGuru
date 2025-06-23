@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import PropTypes from 'prop-types';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useParams } from 'react-router-dom';
 import { useProductContext } from '../../../context/product/productContext';
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
@@ -13,14 +13,16 @@ const MAX_RETRIES = 3;
 const RETRY_DELAY_MS = 1000;
 
 const ManageProduct = ({
-    sno ='00SFH2510227',
     baseUrl = process.env.REACT_APP_API_BASE_URL || 'https://app.bmgjewellers.com',
 }) => {
     const navigate = useNavigate();
+    const { sno: snoFromUrl } = useParams();
     const { images, description, getImages, deleteImage, updateDescription, loading } = useProductContext();
 
-    // State management
+    // State management (move selectedImages up)
+    const [selectedImages, setSelectedImages] = useState([]); // Moved before useMemo
     const [isInitialLoad, setIsInitialLoad] = useState(true);
+    const [sno, setSno] = useState(snoFromUrl || localStorage.getItem('sno') || '');
     const [newDescription, setNewDescription] = useState(description || '');
     const [feedback, setFeedback] = useState({ error: '', success: '' });
     const [editMode, setEditMode] = useState(false);
@@ -29,6 +31,8 @@ const ManageProduct = ({
     const [showFilters, setShowFilters] = useState(false);
     const fetchAttempts = useRef(0);
     const printRef = useRef();
+
+   
 
     // Filters state
     const [filters, setFilters] = useState({
@@ -42,8 +46,6 @@ const ManageProduct = ({
         withoutImage: true,
         checkPhysicalImage: false,
     });
-
-    const [selectedImages, setSelectedImages] = useState([]);
 
     // Handle window resize
     useEffect(() => {
@@ -63,6 +65,11 @@ const ManageProduct = ({
 
     // Fetch images with retry logic
     const fetchImages = useCallback(async () => {
+        if (!sno) {
+            setFeedback({ error: 'No serial number provided.', success: '' });
+            setIsInitialLoad(false);
+            return;
+        }
         if (fetchAttempts.current >= MAX_RETRIES) {
             setFeedback({ error: 'Maximum retry attempts reached. Please check your connection.', success: '' });
             return;
@@ -98,6 +105,17 @@ const ManageProduct = ({
     useEffect(() => {
         setNewDescription(description);
     }, [description]);
+
+    // Listen for localStorage changes (for cross-tab updates)
+    useEffect(() => {
+        const handleStorageChange = (e) => {
+            if (e.key === 'sno' && !snoFromUrl) {
+                setSno(e.newValue || '');
+            }
+        };
+        window.addEventListener('storage', handleStorageChange);
+        return () => window.removeEventListener('storage', handleStorageChange);
+    }, [snoFromUrl]);
 
     // Clear feedback after timeout
     useEffect(() => {
@@ -213,8 +231,7 @@ const ManageProduct = ({
             (img, index) => `
                 <tr>
                   <td>${index + 1}</td>
-                  <td><img class="print-image" src="${baseUrl}${img}" alt="Product Image ${index + 1
-                }" onerror="this.src='https://via.placeholder.com/150?text=Image+Not+Available';"></td>
+                  <td><img class="print-image" src="${baseUrl}${img}" alt="Product Image ${index + 1}" onerror="this.src='https://via.placeholder.com/150?text=Image+Not+Available';"></td>
                   <td>${img}</td>
                   <td>${baseUrl}${img}</td>
                 </tr>
@@ -232,8 +249,8 @@ const ManageProduct = ({
     }, [images, sno, baseUrl, description, hasImages]);
 
     // Navigation handlers
-    const handleNew = useCallback(() => navigate('/product/add'), [navigate]);
-    const handleExit = useCallback(() => navigate('/'), [navigate]);
+    const handleNew = useCallback(() => navigate('/admin/product/add'), [navigate]);
+    const handleExit = useCallback(() => navigate('/admin'), [navigate]);
 
     // Image management
     const handleDeleteImage = useCallback(
@@ -566,7 +583,7 @@ const ManageProduct = ({
                         <Link to="/">Dashboard</Link>
                     </li>
                     <li className="breadcrumb-item active" aria-current="page">
-                        Manage Product - {sno}
+                        Manage Product - {sno || 'No Serial Number'}
                     </li>
                 </ol>
             </nav>
@@ -614,7 +631,7 @@ const ManageProduct = ({
                             aria-label="Export to Excel"
                             disabled={!hasImages}
                             title="Export to Excel"
-                            style={{ color: 'white', background:'#616161' }}
+                            style={{ color: 'white', background: '#616161' }}
                         >
                             <span className="icon" aria-hidden="true">📊</span>
                             {!isMobileView && 'Excel'}
@@ -691,7 +708,7 @@ const ManageProduct = ({
                     <div className="section-actions">
                         <span className="sno-badge">
                             <span className="sno-label">Serial:</span>
-                            <span className="sno-value">{sno}</span>
+                            <span className="sno-value">{sno || 'N/A'}</span>
                         </span>
                         {editMode ? (
                             <>
@@ -774,11 +791,11 @@ const ManageProduct = ({
                                 </span>
                                 {imageEditMode ? (
                                     <>
-                                            <button style={{ color: 'black' }}
+                                        <button
+                                            style={{ color: 'black' }}
                                             className="btn small"
                                             onClick={selectAllImages}
                                             aria-label={allSelected ? 'Deselect all images' : 'Select all images'}
-                                            
                                         >
                                             {allSelected ? (
                                                 <>
@@ -887,7 +904,7 @@ const ManageProduct = ({
                                                         />
                                                     </div>
                                                 </td>
-                                                <td>{sno}</td>
+                                                <td>{sno || 'N/A'}</td>
                                                 <td className="description-cell">{description || 'No description available'}</td>
                                                 <td>
                                                     <div className="action-buttons">
@@ -933,7 +950,7 @@ const ManageProduct = ({
                     >
                         <div className="empty-state-icon">📷</div>
                         <h4>No Images Found</h4>
-                        <p>No images are currently associated with product {sno}.</p>
+                        <p>No images are currently associated with product {sno || 'N/A'}.</p>
                         <button
                             onClick={fetchImages}
                             className="btn primary"
@@ -960,7 +977,6 @@ const ManageProduct = ({
 };
 
 ManageProduct.propTypes = {
-    sno: PropTypes.string,
     baseUrl: PropTypes.string,
 };
 

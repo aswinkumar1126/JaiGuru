@@ -52,6 +52,7 @@ const DashboardCards = () => {
     const calculateChange = (trend, cardId, dashboardData) => {
         // Use the percentage from API if available
         const percentageMap = {
+            totalOrders:dashboardData?.totalPercentage,
             pendingOrders: dashboardData?.pendingPercentage,
             deliveredOrders: dashboardData?.deliveredPercentage,
             shippedOrders: dashboardData?.shippedPercentage,
@@ -98,6 +99,7 @@ const DashboardCards = () => {
                     cancelledOrders: data.cancelledOrders?.cancelledOrders?.length || 0,
 
                     // Percentages (optional, if you want to show them)
+                    totalPercentage:data.totalOrders?.totalPercentage || '0%',
                     pendingPercentage: data.pendingOrders?.pendingPercentage || '0%',
                     deliveredPercentage: data.deliveredOrders?.deliveredPercentage || '0%',
                     shippedPercentage: data.shippedOrders?.ShippedPercentage || '0%',

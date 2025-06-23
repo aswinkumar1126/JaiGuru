@@ -164,7 +164,7 @@ const AddressesTab = () => {
                                 value={formData.name}
                                 onChange={handleInputChange}
                                 required
-                                placeholder="John Doe"
+                                placeholder="Enter Your Name"
                             />
                         </div>
 
@@ -177,7 +177,7 @@ const AddressesTab = () => {
                                 onChange={handleInputChange}
                                 pattern="[0-9]{10}"
                                 required
-                                placeholder="9876543210"
+                                placeholder="Enter Your Mobile Number"
                             />
                         </div>
                     </div>
@@ -189,7 +189,7 @@ const AddressesTab = () => {
                             value={formData.addressLine}
                             onChange={handleInputChange}
                             required
-                            placeholder="No. 10, Main Street"
+                            placeholder="Enter Your Address"
                         />
                     </div>
 
@@ -201,7 +201,7 @@ const AddressesTab = () => {
                                 value={formData.locality}
                                 onChange={handleInputChange}
                                 required
-                                placeholder="T Nagar"
+                                placeholder="Enter Your Locality"
                             />
                         </div>
 
@@ -212,7 +212,7 @@ const AddressesTab = () => {
                                 value={formData.landmark}
                                 onChange={handleInputChange}
                                 required
-                                placeholder="Near Temple"
+                                placeholder="Landmark"
                             />
                         </div>
                     </div>
@@ -225,7 +225,7 @@ const AddressesTab = () => {
                                 value={formData.city}
                                 onChange={handleInputChange}
                                 required
-                                placeholder="Chennai"
+                                placeholder="Enter Your City"
                             />
                         </div>
 
@@ -236,7 +236,7 @@ const AddressesTab = () => {
                                 value={formData.state}
                                 onChange={handleInputChange}
                                 required
-                                placeholder="Tamil Nadu"
+                                placeholder="Enter Your State"
                             />
                         </div>
 
@@ -249,7 +249,7 @@ const AddressesTab = () => {
                                 onChange={handleInputChange}
                                 pattern="[0-9]{6}"
                                 required
-                                placeholder="600075"
+                                placeholder="Enter Your Pincode"
                             />
                         </div>
                     </div>
@@ -286,7 +286,7 @@ const AddressesTab = () => {
                                 name="companyName"
                                 value={formData.companyName}
                                 onChange={handleInputChange}
-                                placeholder="John Enterprises"
+                                placeholder="Enter Your CompanyName"
                             />
                         </div>
 
@@ -296,7 +296,7 @@ const AddressesTab = () => {
                                 name="gstNumber"
                                 value={formData.gstNumber}
                                 onChange={handleInputChange}
-                                placeholder="22AAAAA0000A1Z5"
+                                placeholder="Enter Your GST Number"
                                 pattern="^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$"
                             />
                         </div>

@@ -233,7 +233,7 @@ const ManageBanner = () => {
                                 <h3 className="table-title">Manage Banners</h3>
                                 <div className="action-buttons">
                                     <button
-                                        onClick={() => navigate('/banners/add')}
+                                        onClick={() => navigate('/admin/banner/add')}
                                         className="btn btn-primary add-btn"
                                         title="Add Banner"
                                     >

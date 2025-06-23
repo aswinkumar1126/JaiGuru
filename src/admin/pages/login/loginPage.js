@@ -13,8 +13,8 @@ import './LoginPage.css';
 import image1 from '../../assets/images/login/Login1.jpg';
 import image2 from '../../assets/images/login/Login2.jpg';
 import image3 from '../../assets/images/login/Login3.png';
-import logo from '../../assets/images/bg-img-01.png';
 
+import Logo from '../../assets/logo/logo.jpg';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 const LoginPage = () => {
@@ -57,12 +57,13 @@ const LoginPage = () => {
                 roles: result.user.roles,
             };
             const roles = userData.roles || [];
-
             if (roles.includes('ROLE_ADMIN') || roles.includes('ROLE_EMPLOYEE')) {
                 login(token, userData);
                 navigate('/admin');
+            } else if (roles.includes('ROLE_USER') || roles.includes('USER')) {
+                setError('Access Denied: Please use the main site for shopping. Contact support for admin access.');
             } else {
-                setError('Access Denied: You are not authorized to access the dashboard.');
+                setError('Access Denied: Please use the main site for shopping. Contact support for admin access.');
             }
         } catch (err) {
             setError(err.response?.data?.message || 'Invalid credentials. Please try again.');
@@ -82,12 +83,14 @@ const LoginPage = () => {
         <section className="sign-in-page">
             <div className={`container sign-in-page-bg ${isMobile ? 'mobile-view' : ''} mt-4 mb-md-4 mb-0 p-0`}>
                 <div className="row no-gutters">
+                    
                     {/* Left Side - Carousel (hidden on mobile) */}
                     {!isMobile && (
                         <div className="col-md-6 text-center sign-in-details">
-                            <div className="sign-in-detail text-white">
+                            <div className="sign-in-detail text-white"> 
+                                
                                 <p className="sign-in-logo mb-8">
-                                    <img src={logo} className="img-fluid" alt="logo" />
+                                    <img src={Logo} className="img-fluid" alt="logo" />
                                     <span className="logName">Admin Portal</span>
                                 </p>
 
@@ -146,19 +149,24 @@ const LoginPage = () => {
 
                             <form className="mt-4" onSubmit={handleLogin}>
                                 <div className="form-group">
-                                    <label className="mb-0">{isMobile ? 'Admin ID' : 'Admin Name / Email'}</label>
+                                    <label className="mb-0">
+                                        {isMobile ? 'Admin ID' : 'Admin Name / Email'}
+                                    </label>
                                     <input
-                                        type={isMobile ? 'tel' : 'text'}
+                                        type="text" // Always use text to allow full input
                                         className="form-control mb-1"
                                         name="contactOrEmailOrUsername"
                                         placeholder={isMobile ? 'Enter admin ID' : 'Enter admin name or email'}
                                         value={form.contactOrEmailOrUsername}
-                                        onChange={(e) => setForm({ ...form, contactOrEmailOrUsername: e.target.value })}
+                                        onChange={(e) =>
+                                            setForm({ ...form, contactOrEmailOrUsername: e.target.value })
+                                        }
                                         onKeyDown={handleKeyDown}
                                         required
                                         autoFocus
                                     />
                                 </div>
+
                                 <div className="d-flex justify-content-between my-2">
                                     <label>Password</label>
                                 </div>

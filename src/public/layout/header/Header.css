@@ -608,7 +608,7 @@
         font-size: 0.95rem;
         padding: 1rem;
         width: 100%;
-        justify-content: space-between;
+     
     }
 
     .active-nav-link::after {
@@ -640,7 +640,7 @@
 
     .mobile-rates-container .rates-card-wrapper {
         flex-direction: row;
-        width: 100%;
+        width: 50%;
         justify-content: space-between;
     }
 
@@ -694,14 +694,16 @@
         right: -5px;
     }
 
-    .mobile-rates-container .rates-card-wrapper {
-        flex-direction: column;
-        gap: 0.5rem;
-    }
-
-    .mobile-rates-container .rate-card {
-        width: 100%;
-    }
+        .mobile-rates-container .rates-card-wrapper {
+            flex-direction: row;
+            width: 40%;
+            justify-content: space-between;
+        }
+    
+        .mobile-rates-container .rate-card {
+            width: 100%;
+            justify-content: center;
+        }
 }
 
 @media (max-width: 576px) {

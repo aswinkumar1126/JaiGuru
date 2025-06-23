@@ -2,38 +2,33 @@ import { useEffect, useState } from 'react';
 import { useCreateOrder } from '../../../hook/order/useOrderMutation';
 import { useCurrentProfile } from '../../../hook/userProfile/useUserProfileQuery';
 import { useCreateAddress, useUpdateAddress, useAddressesByCustomer } from '../../../hook/address/useAddress';
-
+import { addressService } from '../../../service/AddressService';
 export const useOrderForm = (navigate, location) => {
     const { state } = location;
     const { mutate: createOrder, isLoading: isOrderLoading } = useCreateOrder();
     const { data: user, isLoading: isUserLoading, error: userError } = useCurrentProfile();
 
-    // Address hooks
     const createAddress = useCreateAddress();
     const updateAddress = useUpdateAddress();
-    const { data: customerAddresses } = useAddressesByCustomer(user?.id);
-
-    const [selectedAddress, setSelectedAddress] = useState(() => {
-        const saved = localStorage.getItem('selectedAddress');
-        return saved ? JSON.parse(saved) : null;
+    const { data: customerAddresses } = useAddressesByCustomer(user?.id, {
+        enabled: !!user?.id
     });
 
+    const [selectedAddress, setSelectedAddress] = useState(null);
     const [showAddressForm, setShowAddressForm] = useState(false);
     const [formMode, setFormMode] = useState('add');
-    const [paymentMode, setPaymentMode] = useState(() => localStorage.getItem('paymentMode') || 'ONLINE');
+    const [paymentMode, setPaymentMode] = useState('ONLINE');
     const [isAddressLoading, setIsAddressLoading] = useState(false);
 
     const { cartItems = [], totalAmount = 0 } = state || {};
 
-    // Set default address if available
+    // Set default address from customer's saved addresses
     useEffect(() => {
         if (customerAddresses?.length > 0 && !selectedAddress) {
             const defaultAddress = customerAddresses.find(addr => addr.isDefault) || customerAddresses[0];
             setSelectedAddress(defaultAddress);
-            localStorage.setItem('selectedAddress', JSON.stringify(defaultAddress));
         }
     }, [customerAddresses, selectedAddress]);
-
     const handleAddressSave = async (formData) => {
         setIsAddressLoading(true);
         try {
@@ -51,8 +46,13 @@ export const useOrderForm = (navigate, location) => {
                 });
             }
 
-            setSelectedAddress(savedAddress);
-            localStorage.setItem('selectedAddress', JSON.stringify(savedAddress));
+            // ✅ Use direct API call to fetch fresh list
+            const updatedList = await addressService.getAddressesByCustomer(user.id);
+
+            // ✅ Set the updated or fallback address
+            const updated = updatedList.find(addr => addr.id === savedAddress.id);
+            setSelectedAddress(updated || updatedList[0]);
+
             setShowAddressForm(false);
         } catch (error) {
             console.error('Error saving address:', error);
@@ -60,7 +60,14 @@ export const useOrderForm = (navigate, location) => {
             setIsAddressLoading(false);
         }
     };
-
+    
+    
+    useEffect(() => {
+        console.log("🧾 user:", user);
+        console.log("📦 customerAddresses:", customerAddresses);
+        console.log("✅ selectedAddress:", selectedAddress);
+    }, [user, customerAddresses, selectedAddress]);
+    
     const handleOrderSubmit = async () => {
         if (!selectedAddress) {
             alert('Please select a delivery address');
@@ -85,7 +92,6 @@ export const useOrderForm = (navigate, location) => {
 
         createOrder(orderPayload, {
             onSuccess: (data) => {
-                localStorage.removeItem('selectedAddress');
                 if (paymentMode === 'ONLINE') {
                     navigate(`/payment/${data.orderId}`);
                 } else {
@@ -128,13 +134,7 @@ export const useOrderForm = (navigate, location) => {
         },
         handleAddressSave,
         handleAddressCancel: () => setShowAddressForm(false),
-        handlePaymentChange: (mode) => {
-            setPaymentMode(mode);
-            localStorage.setItem('paymentMode', mode);
-        },
-        handleAddressSelect: (address) => {
-            setSelectedAddress(address);
-            localStorage.setItem('selectedAddress', JSON.stringify(address));
-        }
+        handlePaymentChange: (mode) => setPaymentMode(mode),
+        handleAddressSelect: (address) => setSelectedAddress(address),
     };
 };

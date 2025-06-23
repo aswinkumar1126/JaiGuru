@@ -32,6 +32,15 @@ export const UserAuthProvider = ({ children }) => {
     const signup = async (userData) => {
         const response = await registerUser(userData);
 
+        // If user already exists, don't proceed
+        if (
+            typeof response.message === "string" &&
+            response.message.toLowerCase().includes("already exists")
+        ) {
+            return response; // Send back to caller to show warning
+        }
+
+        // Only save if it's a successful signup
         localStorage.setItem("user", JSON.stringify(response));
         localStorage.setItem("user_token", response.token);
         localStorage.setItem("userMobileNumber", response.contact);
@@ -39,6 +48,7 @@ export const UserAuthProvider = ({ children }) => {
 
         return response;
     };
+    
 
     const logout = () => {
         setUser(null);
@@ -48,7 +58,7 @@ export const UserAuthProvider = ({ children }) => {
     };
 
     return (
-        <UserAuthContext.Provider value={{ user, login, signup, logout }}>
+        <UserAuthContext.Provider value={{ user, login, signup, logout, currentUser: user,  }}>
             {children}
         </UserAuthContext.Provider>
     );

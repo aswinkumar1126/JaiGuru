@@ -339,6 +339,7 @@
 
 @media (max-width: 576px) {
     .rates-card-container {
+        flex-direction: row;
         max-width: 100%;
     }
 

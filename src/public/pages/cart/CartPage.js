@@ -25,6 +25,7 @@ const CartPage = () => {
     const [productMap, setProductMap] = useState({});
     const [selectedItems, setSelectedItems] = useState([]);
     const navigate = useNavigate();
+    console.log(cartList)
 
     useEffect(() => {
         const handleResize = () => {

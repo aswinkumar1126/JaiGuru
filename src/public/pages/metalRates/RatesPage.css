@@ -1,0 +1,250 @@
+/* Desktop Styles */
+.rp-desktop-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 1rem;
+    text-align: center;
+}
+
+.rp-title {
+    font-size: 1.8rem;
+    color: #333;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+
+.rp-subtitle {
+    font-size: 0.9rem;
+    color: #666;
+    margin-bottom: 2rem;
+}
+
+.rp-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    justify-content: center;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.rp-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 250px;
+}
+
+.rp-gold {
+    border-top: 3px solid #FFD700;
+}
+
+.rp-silver {
+    border-top: 3px solid #C0C0C0;
+}
+
+.rp-coin-container {
+    height: 80px;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.rp-coin {
+    width: 70px;
+    height: 70px;
+    object-fit: contain;
+    filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.16));
+}
+
+.rp-gold-coin {
+    width: 75px;
+    height: 75px;
+}
+
+.rp-rate-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.rp-rate-content h2 {
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+    color: #444;
+}
+
+.rp-rate-value {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin: 0.5rem 0;
+    color: #222;
+}
+
+.rp-gold .rp-rate-value {
+    color: #D4AF37;
+}
+
+.rp-silver .rp-rate-value {
+    color: #A6A6A6;
+}
+
+.rp-rate-per {
+    font-size: 0.85rem;
+    color: #666;
+    display: inline-block;
+}
+.rp-rate-per-mobile{
+    font-size: 0.60rem;
+        color: #666;
+        display: inline-block;
+}
+/* Mobile Styles */
+.rp-mobile-container {
+    display: none;
+    padding: 0.5rem;
+    width: 100%;
+    max-width: 100%;
+}
+
+.rp-mobile-row {
+    display: flex;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    width: 100%;
+    justify-content: center;
+}
+
+.rp-mobile-card {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 0.8rem;
+    border-radius: 8px;
+    background: white;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    min-width: 140px;
+    max-width: 160px;
+    flex: 1;
+}
+
+.rp-mobile-gold {
+    border-left: 3px solid #FFD700;
+}
+
+.rp-mobile-silver {
+    border-left: 3px solid #C0C0C0;
+}
+
+.rp-mobile-coin {
+    width: 30px;
+    height: 30px;
+    margin-right: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.rp-mobile-coin-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.2));
+}
+
+.rp-mobile-content {
+    display: flex;
+    flex-direction: column;
+}
+
+.rp-mobile-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #444;
+    white-space: nowrap;
+}
+
+.rp-mobile-value {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #222;
+    white-space: nowrap;
+}
+
+.rp-mobile-gold .rp-mobile-value {
+    color: #D4AF37;
+}
+
+.rp-mobile-silver .rp-mobile-value {
+    color: #A6A6A6;
+}
+
+/* Common Styles */
+.rp-loading,
+.rp-error {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 200px;
+    padding: 1rem;
+}
+
+.rp-loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #FFD700;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 1rem;
+}
+.sm-rp-title{
+    justify-content: center;
+    align-items: center;
+    font-size: 18px;
+    font-weight: 600;
+    text-align: center;
+    color: #222;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* Responsive Behavior */
+@media (max-width: 992px) {
+    .rp-desktop-container {
+        display: none;
+    }
+
+    .rp-mobile-container {
+        display: block;
+    }
+}
+
+@media (max-width: 480px) {
+    .rp-mobile-card {
+        min-width: 120px;
+        padding: 0.5rem;
+    }
+
+    .rp-mobile-label {
+        font-size: 0.7rem;
+    }
+
+    .rp-mobile-value {
+        font-size: 0.8rem;
+    }
+}

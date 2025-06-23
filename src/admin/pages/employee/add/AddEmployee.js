@@ -116,7 +116,7 @@ const AddEmployee = () => {
                                 </Button>
                                 <Button
                                     size="large"
-                                    onClick={() => navigate('/employee/manage')}
+                                    onClick={() => navigate('/admin/employee/manage')}
                                     className="cancel-button"
                                 >
                                     Cancel

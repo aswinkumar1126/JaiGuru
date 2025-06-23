@@ -1,11 +1,12 @@
 .footer {
-    background: linear-gradient(135deg, #e65806, #d66c15);
-    color: #ffffff;
+    background: linear-gradient(135deg, #fff8f5, #ffe8dd);
+    color: #333333;
     padding: 2rem 0 1rem;
     font-family: 'Inter', sans-serif;
     position: relative;
     overflow: hidden;
     width: 100%;
+    border-top: 1px solid #ffd5c2;
 }
 
 .footer::before {
@@ -15,7 +16,7 @@
     left: 0;
     right: 0;
     height: 2px;
-    background: linear-gradient(90deg, #d4a017, #dd6e24, #d4a017);
+    background: linear-gradient(90deg, #ff9a6e, #ff6b45, #ff9a6e);
 }
 
 .footer-container {
@@ -36,7 +37,7 @@
     font-weight: 700;
     font-size: 1.2rem;
     margin-bottom: 1rem;
-    color: #ffffff;
+    color: #d64000;
     text-transform: uppercase;
     letter-spacing: 0.5px;
     position: relative;
@@ -49,11 +50,11 @@
     left: 0;
     width: 40px;
     height: 2px;
-    background: #d4a017;
+    background: #ff6b45;
 }
 
 .footer-contact-text {
-    color: #141414;
+    color: #5a5a5a;
     font-size: 0.85rem;
     line-height: 1.4;
     margin-bottom: 0.5rem;
@@ -61,7 +62,7 @@
 }
 
 .contact-title {
-    color: #ffffff;
+    color: #d64000;
     font-weight: 600;
     font-size: 0.9rem;
     display: block;
@@ -85,37 +86,49 @@
     content: '→';
     position: absolute;
     left: 0;
-    color: #111110;
+    color: #ff6b45;
     font-size: 0.9rem;
 }
 
 .footer-link-item a {
-    color: #0d0253;
+    color: #5a5a5a;
     text-decoration: none;
     word-wrap: break-word;
-    transition: color 0.2s;
-    font-size:1rem;
+    transition: all 0.2s;
+    font-size: 1rem;
 }
 
 .footer-link-item a:hover {
-    color: #fcfcfc;
+    color: #d64000;
+    text-decoration: underline;
+    padding-left: 3px;
 }
 
 .footer-link-item a.active-footer-link {
-    color: #dff2f8;
+    color: #aa8f17;
     font-weight: 600;
+    background: rgba(255, 107, 69, 0.1);
+    padding: 2px 8px;
+    border-radius: 4px;
+}
+
+.connect {
+    font-size: 1rem;
+    color: #d64000;
+    font-weight: 700;
 }
 
 .social-icons {
     display: flex;
+    justify-content: center;
     gap: 0.75rem;
-    margin-top: 0.5rem;
     flex-wrap: wrap;
+    margin-top: -10px;
 }
 
 .social-icons a {
     font-size: 1.2rem;
-    color: #f8efef;
+    color: #ffffff;
     text-decoration: none;
     width: 32px;
     height: 32px;
@@ -124,10 +137,13 @@
     justify-content: center;
     border-radius: 50%;
     transition: all 0.3s;
+    background: #ff6b45;
 }
 
 .social-icons a:hover {
-    background: rgba(212, 160, 23, 0.1);
+    background: #d64000;
+    transform: translateY(-2px);
+    box-shadow: 0 2px 5px rgba(214, 64, 0, 0.3);
 }
 
 .newsletter {
@@ -137,7 +153,7 @@
 .newsletter h5 {
     font-size: 0.9rem;
     margin-bottom: 0.5rem;
-    color: #252829;
+    color: #d64000;
 }
 
 .newsletter-input {
@@ -149,34 +165,43 @@
 .newsletter-input input {
     flex: 1;
     padding: 0.5rem;
-    border: 1px solid #d1d1d1;
+    border: 1px solid #ffc7b3;
     border-radius: 4px;
     font-size: 0.85rem;
-    background: #2c2c2c;
-    color: #ffffff;
+    background: #ffffff;
+    color: #333333;
     min-width: 0;
     box-sizing: border-box;
 }
 
+.newsletter-input input::placeholder {
+    color: #aaaaaa;
+}
+
 .newsletter-input button {
     padding: 0.5rem 1rem;
-    background: #d4a017;
-    color: #1a1a1a;
+    background: #ff6b45;
+    color: white;
     border: none;
     border-radius: 4px;
     font-weight: 600;
     cursor: pointer;
     font-size: 0.85rem;
     white-space: nowrap;
+    transition: all 0.3s;
+}
+
+.newsletter-input button:hover {
+    background: #d64000;
 }
 
 .footer-bottom {
     text-align: center;
     margin-top: 1.5rem;
     padding-top: 1rem;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    border-top: 1px solid #ffd5c2;
     font-size: 0.8rem;
-    color: #dadada;
+    color: #777777;
     width: 100%;
 }
 
@@ -187,7 +212,7 @@
 }
 
 .designed-by {
-    color: #192de0;
+    color: #ff6b45;
     text-decoration: none;
 }
 
@@ -201,7 +226,7 @@
     justify-content: center;
     gap: 0.75rem;
     font-size: 1.2rem;
-    color: #000000;
+    color: #5a5a5a;
     flex-wrap: wrap;
 }
 
@@ -222,7 +247,6 @@
         grid-template-columns: 1fr 1fr;
         gap: 1rem;
         padding: 0 0.5rem;
-        /* Reduced padding to eliminate right space */
     }
 
     .footer-column {
@@ -248,7 +272,6 @@
     .footer-container {
         grid-template-columns: 1fr;
         padding: 0 0.25rem;
-        /* Further reduced padding for smaller screens */
     }
 
     .footer-header {

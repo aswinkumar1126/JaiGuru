@@ -39,7 +39,7 @@ const PublicRoutes = () => {
                 {/* Publicly accessible routes */}
                 <Route path='/' element={<Home />} />
                 <Route path='/home' element={<Home />} />
-                <Route path='/login' element={<Login />} />
+                <Route path='/login' element={<Login /> } />
                 <Route path='/products' element={<AllProducts />} />
                 <Route path='/about' element={<About />} />
                 <Route path='/why-us' element={<WhyUs />} />
