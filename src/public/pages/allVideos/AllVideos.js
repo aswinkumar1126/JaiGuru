@@ -16,8 +16,8 @@ function AllVideos({ onRetry }) {
     );
 
     const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
-    const [isPlaying, setIsPlaying] = useState(false);
-    const [isMuted, setIsMuted] = useState(true);
+    const [isPlaying, setIsPlaying] = useState(true); // Changed to true for autoplay
+    const [isMuted, setIsMuted] = useState(true); // Muted by default for autoplay
     const [currentTime, setCurrentTime] = useState(0);
     const [duration, setDuration] = useState(0);
     const videoRef = useRef(null);
@@ -25,12 +25,24 @@ function AllVideos({ onRetry }) {
     useEffect(() => {
         if (videoRef.current && videos.length > 0) {
             videoRef.current.load();
+            if (isPlaying) {
+                videoRef.current.play().catch(() => {
+                    // Handle autoplay failure (e.g., browser restrictions)
+                    setIsPlaying(false);
+                });
+            }
         }
     }, [videos, currentVideoIndex]);
 
     const togglePlay = () => {
         if (videoRef.current) {
-            isPlaying ? videoRef.current.pause() : videoRef.current.play();
+            if (isPlaying) {
+                videoRef.current.pause();
+            } else {
+                videoRef.current.play().catch(() => {
+                    // Handle play failure
+                });
+            }
             setIsPlaying(!isPlaying);
         }
     };
@@ -62,8 +74,12 @@ function AllVideos({ onRetry }) {
 
     const handleNextVideo = () => {
         setCurrentVideoIndex((prev) => (prev + 1) % videos.length);
-        setIsPlaying(false);
+        setIsPlaying(true); // Ensure next video autoplays
         setCurrentTime(0);
+    };
+
+    const handleVideoEnded = () => {
+        handleNextVideo(); // Automatically play the next video when the current one ends
     };
 
     return (
@@ -79,7 +95,7 @@ function AllVideos({ onRetry }) {
                 ) : videoError ? (
                     <div className="video-error-state">
                         <p>Error loading videos.</p>
-                            <Button onClick={onRetry || refetch} label="Retry" />
+                        <Button onClick={onRetry || refetch} label="Retry" />
                     </div>
                 ) : videos.length > 0 ? (
                     <div className="video-player-container">
@@ -90,11 +106,12 @@ function AllVideos({ onRetry }) {
                                 className="responsive-video"
                                 poster="/video-poster.jpg"
                                 preload="metadata"
-                                loop
+                                autoPlay // Added for autoplay
                                 muted={isMuted}
                                 onClick={togglePlay}
                                 onTimeUpdate={handleTimeUpdate}
                                 onLoadedMetadata={handleLoadedMetadata}
+                                onEnded={handleVideoEnded} // Added to loop through playlist
                             >
                                 <source
                                     src={`https://app.bmgjewellers.com${videos[currentVideoIndex]?.video_path}`}
@@ -104,7 +121,7 @@ function AllVideos({ onRetry }) {
                             </video>
 
                             <div className="video-controls">
-                                        <Button
+                                <Button
                                     className="control-button"
                                     onClick={togglePlay}
                                     variant="secondary"
@@ -120,7 +137,7 @@ function AllVideos({ onRetry }) {
                                     )}
                                 />
 
-                                        <Button
+                                <Button
                                     className="control-button"
                                     onClick={toggleMute}
                                     variant="secondary"
@@ -143,7 +160,7 @@ function AllVideos({ onRetry }) {
                                 </div>
 
                                 {videos.length > 1 && (
-                                            <Button
+                                    <Button
                                         className="control-button"
                                         onClick={handleNextVideo}
                                         variant="secondary"

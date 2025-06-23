@@ -2,7 +2,8 @@
 import axios from 'axios';
 
 const BASE_URL = process.env.REACT_APP_BASE_URL;
-console.log(BASE_URL);
+
+// console.log(BASE_URL);
 
 const axiosInstance = axios.create({
     baseURL: BASE_URL,
@@ -12,7 +13,7 @@ const axiosInstance = axios.create({
 axiosInstance.interceptors.request.use(
     (config) => {
 
-        const authtoken = localStorage.getItem('auth_token'); // Moved inside so it's fresh
+        const authtoken = sessionStorage.getItem('auth_token'); // Moved inside so it's fresh
         if (authtoken) {
             config.headers.Authorization = `Bearer ${authtoken}`;
         }

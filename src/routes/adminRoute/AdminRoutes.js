@@ -80,7 +80,7 @@ const AdminRoutes = () => {
                         {/* Protected admin routes */}
                         <Route path="/" element={<ProtectedRoute allowedRoles={allowedRoles}><MainContent /></ProtectedRoute>} />
                         <Route path="product/add" element={<ProtectedRoute allowedRoles={allowedRoles}><AddProduct /></ProtectedRoute>} />
-                        <Route path="product/manage" element={<ProtectedRoute allowedRoles={allowedRoles}><ManageProduct /></ProtectedRoute>} />
+                        <Route path="product/manage/:sno?" element={<ProtectedRoute allowedRoles={allowedRoles}><ManageProduct /></ProtectedRoute>} />
                         <Route path="banner/add" element={<ProtectedRoute allowedRoles={allowedRoles}><AddBanner /></ProtectedRoute>} />
                         <Route path="banner/manage" element={<ProtectedRoute allowedRoles={allowedRoles}><ManageBanner /></ProtectedRoute>} />
                         <Route path="video/add" element={<ProtectedRoute allowedRoles={allowedRoles}><AddVideos /></ProtectedRoute>} />

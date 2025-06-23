@@ -33,7 +33,7 @@ function UserDetails() {
         };
         fetchData();
     }, []);
-    console.log(users)
+    // console.log(users)
 
     // Apply search filter whenever searchTerm changes
     useEffect(() => {

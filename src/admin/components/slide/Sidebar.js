@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { NavLink, useLocation } from 'react-router-dom';
+import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import {
     FaBox,
     FaImage,
@@ -8,6 +8,7 @@ import {
     FaTachometerAlt,
     FaDollarSign,
     FaUserCircle,
+    FaSignOutAlt,
 } from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MyContext } from '../../context/themeContext/themeContext';
@@ -16,6 +17,8 @@ import { getPageTitle } from '../../../utils/pageTitle/getPageTitle';
 import RoleBasedSection from '../common/RoleBasedSection';
 import MenuItem from '../common/MenuItem';
 import { useUserProfile } from '../../hooks/profile/useUserProfile';
+import { useAuth } from '../../context/auth/authContext';
+import { debounce } from 'lodash';
 
 const menuItems = [
     {
@@ -76,21 +79,26 @@ const employeeMenu = {
 
 const Sidebar = ({ isOpen, toggleSidebar }) => {
     const location = useLocation();
+    const navigate = useNavigate();
     const { themeMode } = useContext(MyContext);
+    const { data: user, isLoading } = useUserProfile();
+    const { logout } = useAuth();
     const [expanded, setExpanded] = useState({});
     const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
     const [currentPageTitle, setCurrentPageTitle] = useState('Admin Dashboard');
-    const { data: user } = useUserProfile();
 
     useEffect(() => {
-        const handleResize = () => {
+        const handleResize = debounce(() => {
             const mobile = window.innerWidth <= 768;
             setIsMobile(mobile);
-        };
+        }, 100);
 
         handleResize();
         window.addEventListener('resize', handleResize);
-        return () => window.removeEventListener('resize', handleResize);
+        return () => {
+            window.removeEventListener('resize', handleResize);
+            handleResize.cancel();
+        };
     }, []);
 
     useEffect(() => {
@@ -121,6 +129,11 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
         if (isMobile) {
             toggleSidebar();
         }
+    };
+
+    const handleLogout = () => {
+        logout();
+        navigate('/admin/login');
     };
 
     const sidebarVariants = {
@@ -157,14 +170,19 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
         },
     };
 
+    if (isLoading) {
+        return <div className="sidebar-loading">Loading...</div>;
+    }
+
     return (
         <>
             <motion.aside
-                className={`sidebar ${isOpen ? 'open' : 'closed'} ${themeMode === 'dark' ? 'dark' : 'light'
-                    }`}
+                className={`sidebar ${isOpen ? 'open' : 'closed'} ${themeMode}`}
                 initial="closed"
                 animate={isOpen ? 'open' : 'closed'}
                 variants={sidebarVariants}
+                role="navigation"
+                aria-label="Admin Navigation"
             >
                 <div className="sidebar-content">
                     <div className="sidebar-header">
@@ -187,6 +205,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
                                     onToggle={toggleSection}
                                     onClick={handleLinkClick}
                                     variants={itemVariants}
+                                    isOpen={isOpen}
                                 />
                             ))}
                             <RoleBasedSection allowedRoles={['ROLE_ADMIN']}>
@@ -196,22 +215,31 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
                                     onToggle={toggleSection}
                                     onClick={handleLinkClick}
                                     variants={itemVariants}
+                                    isOpen={isOpen}
                                 />
                             </RoleBasedSection>
                         </div>
                     </nav>
 
                     <div className="sidebar-footer">
-                        <RoleBasedSection allowedRoles={['ROLE_ADMIN']}>
+                        <RoleBasedSection allowedRoles={['ROLE_ADMIN', 'ROLE_EMPLOYEE']}>
                             <div className="user-profile">
                                 <div className="user-avatar">
                                     <FaUserCircle size={26} />
                                 </div>
                                 <div className="user-info">
-                                    <div className="user-name">{user?.username}</div>
-                                    <div className="user-role">Administrator</div>
+                                    <div className="user-name">{user?.username || 'User'}</div>
+                                    <div className="user-role">{user?.role || 'Administrator'}</div>
                                 </div>
                             </div>
+                            <button
+                                className="logout-button"
+                                onClick={handleLogout}
+                                aria-label="Logout"
+                            >
+                                <FaSignOutAlt />
+                                {isOpen && <span>Logout</span>}
+                            </button>
                         </RoleBasedSection>
                     </div>
                 </div>

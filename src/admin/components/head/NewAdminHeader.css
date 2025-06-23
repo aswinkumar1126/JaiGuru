@@ -1,14 +1,25 @@
 :root {
     --header-height: 66px;
-    --primary-color: #e6802c !important;
-    --primary-hover: #f17908;
+    --primary-color: #2563eb;
+    /* Blue for consistency with Sidebar */
+    --active-color: #f97316;
+    /* Orange for active states */
+    --hover-color: #ffffff;
+    /* White for hover states */
+    --primary-hover: rgba(37, 99, 235, 0.1);
+    --active-bg: rgba(249, 115, 22, 0.15);
     --text-light: #ffffff;
-    --text-dark: #201f1f;
-    --bg-light: #f8f9fa;
+    --text-dark: #2d3748;
+    --text-light-dark: #d1d5db;
+    --bg-light: #f8fafc;
+    /* Very light background */
     --bg-dark: #1a2238;
+    /* Dark blue */
     --shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    --dark-text: black;
-    --light-gray:rgb(150, 150, 150) !important; 
+    --border-color: #e2e8f0;
+    --border-dark: #4b5563;
+    --light-gray: #94a3b8;
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .new-header {
@@ -22,16 +33,13 @@
     padding: 0 1rem;
     z-index: 1000;
     box-shadow: var(--shadow);
-}
-
-.new-header.light {
-    background-color: var(--primary-color);
-    color: var(--text-dark) ;
+    background-color: var(--bg-light);
+    color: var(--text-dark);
 }
 
 .new-header.dark {
     background-color: var(--bg-dark);
-    color: var(--bg-light);
+    color: var(--text-light);
 }
 
 .new-header.scrolled {
@@ -43,14 +51,10 @@
     background-color: rgba(26, 34, 56, 0.95);
 }
 
-body {
-    padding-top: var(--header-height);
-}
-
 .new-header-container {
     width: 100%;
     max-width: 1600px;
-    margin: 0 auto;
+    margin: --header-height;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -68,11 +72,15 @@ body {
 .new-menu-toggle {
     background: none;
     border: none;
-    color: var(--dark-text);
+    color: var(--text-dark);
     font-size: 1.5rem;
     cursor: pointer;
     padding: 0.4rem;
     display: none;
+}
+
+.new-header.dark .new-menu-toggle {
+    color: var(--text-light);
 }
 
 .new-logo {
@@ -92,11 +100,11 @@ body {
     font-weight: 600;
     margin: 0;
     white-space: nowrap;
-    color: var(--light-gray);
+    color: var(--text-dark);
 }
 
-.new-company-name{
-    color: #e0e0e0 ;
+.new-header.dark .new-company-name {
+    color: var(--bg-light);
 }
 
 .new-header-center {
@@ -108,7 +116,37 @@ body {
     margin: 0 0.5rem;
 }
 
+.new-search-container {
+    position: relative;
+    max-width: 200px;
+    width: 100%;
+}
 
+.new-search-icon {
+    position: absolute;
+    left: 0.8rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-light-dark);
+    font-size: 0.9rem;
+}
+
+.new-search-input {
+    width: 100%;
+    padding: 0.6rem 0.8rem 0.6rem 2.5rem;
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+    font-size: 0.85rem;
+    background-color: var(--bg-light);
+    color: var(--text-dark);
+    transition: var(--transition);
+}
+
+.new-header.dark .new-search-input {
+    background-color: var(--bg-dark);
+    color: var(--text-light);
+    border-color: var(--border-dark);
+}
 
 .new-date-time-container {
     min-width: 160px;
@@ -118,12 +156,18 @@ body {
     width: 100%;
     padding: 0.6rem 0.8rem;
     border-radius: 6px;
-    border: 1px solid #e0e0e0;
+    border: 1px solid var(--border-color);
     font-size: 0.85rem;
     text-align: center;
     background-color: var(--bg-light);
-    color: var(--dark-text);
+    color: var(--text-dark);
+    transition: var(--transition);
+}
 
+.new-header.dark .new-date-box {
+    background-color: var(--bg-dark);
+    color: var(--bg-light);
+    border-color: var(--border-dark);
 }
 
 .new-header-right {
@@ -134,7 +178,7 @@ body {
 }
 
 .new-icon-button {
-    background: var(--light-gray);
+    background: var(--border-dark);
     border: none;
     color: var(--bg-light);
     font-size: 1.1rem;
@@ -145,19 +189,25 @@ body {
     align-items: center;
     justify-content: center;
     cursor: pointer;
+    transition: var(--transition);
+}
+
+.new-header.dark .new-icon-button {
+    background: var(--text-light-dark);
+    color: var(--text-light);
 }
 
 .new-icon-button:hover {
-    background-color: var(--primary-hover);
-    color: var(--text-light);
+    background-color: var(--primary-color);
+    color: var(--hover-color);
 }
 
 .new-badge {
     position: absolute;
     top: -4px;
     right: -4px;
-    background-color: var(--primary-color) ;
-    color: rgb(0, 0, 0) !important;
+    background-color: var(--active-color);
+    color: var(--text-light);
     border-radius: 50%;
     width: 18px;
     height: 18px;
@@ -165,33 +215,45 @@ body {
     align-items: center;
     justify-content: center;
     font-size: 0.65rem;
+    font-weight: bold;
 }
 
 .new-profile-button {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    background: var(--light-gray);
+    background: var(--border-dark);
     border: none;
     cursor: pointer;
     padding: 0.2rem;
     border-radius: 50px;
+    transition: var(--transition);
+}
+
+.new-header.dark .new-profile-button {
+    background: var(--text-light-dark);
+}
+
+.new-profile-button:hover {
+    background: var(--border-dark);
+    color: var(--hover-color);
 }
 
 .new-profile-avatar {
     width: 36px;
     height: 36px;
-    border-radius: 20%;
+    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 1.4rem;
+    color: var(--primary-color);
 }
 
 .new-profile-name {
     font-size: 0.9rem;
     font-weight: 600;
-    color: var(--bg-light);
+    color: var(--active-color);
 }
 
 .new-dropdown-wrapper {
@@ -203,7 +265,7 @@ body {
     right: 0;
     top: calc(100% + 8px);
     background-color: var(--bg-light);
-    color: var(--dark-text);
+    color: var(--text-dark);
     border-radius: 8px;
     box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
     width: 240px;
@@ -211,14 +273,19 @@ body {
 }
 
 .new-header.dark .new-dropdown-menu {
-    background-color: var(--bg-light);
-    color: var(--text-light);
+    background-color: var(--bg-dark);
+    color: var(--bg-light);
 }
 
 .new-dropdown-header {
     padding: 0.75rem 1rem;
     font-size: 0.9rem;
     font-weight: bold;
+    color: var(--text-dark);
+}
+
+.new-header.dark .new-dropdown-header {
+    color: var(--bg-light);
 }
 
 .new-dropdown-item {
@@ -231,6 +298,17 @@ body {
     width: 100%;
     font-size: 0.85rem;
     cursor: pointer;
+    color: var(--text-dark);
+    transition: var(--transition);
+}
+
+.new-header.dark .new-dropdown-item {
+    color: var(--text-light);
+}
+
+.new-dropdown-item:hover {
+    background: var(--primary-hover);
+    color: var(--hover-color);
 }
 
 .new-dropdown-footer {
@@ -244,6 +322,11 @@ body {
     color: var(--primary-color);
     font-size: 0.85rem;
     cursor: pointer;
+    transition: var(--transition);
+}
+
+.new-dropdown-footer button:hover {
+    color: var(--active-color);
 }
 
 .new-notification-preview {
@@ -254,6 +337,11 @@ body {
 
 .new-notification-icon {
     font-size: 1.2rem;
+    color: var(--text-light-dark);
+}
+
+.new-header.dark .new-notification-icon {
+    color: var(--text-light);
 }
 
 .new-notification-content strong {
@@ -262,22 +350,53 @@ body {
 
 .new-notification-content small {
     font-size: 0.75rem;
+    color: var(--text-light);
+}
+
+.new-header.dark .new-notification-content small {
+    color: var(--text-light-dark);
 }
 
 .new-settings-button {
     background: none;
     border: none;
     font-size: 1rem;
+    color: var(--text-light-dark);
+}
+
+.new-header.dark .new-settings-button {
+    color: var(--text-light);
 }
 
 .new-menu-icon {
     font-size: 1rem;
+    color: var(--text-light-dark);
+}
+
+.new-header.dark .new-menu-icon {
+    color: var(--text-light);
 }
 
 .new-dropdown-divider {
     height: 1px;
-    background-color: #e0e0e0;
+    background-color: var(--border-color);
     margin: 0.25rem 0;
+}
+
+.new-header.dark .new-dropdown-divider {
+    background-color: var(--border-dark);
+}
+
+.header-loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: var(--header-height);
+    color: var(--text-dark);
+}
+
+.new-header.dark .header-loading {
+    color: var(--text-light);
 }
 
 /* Responsive Styles */
@@ -332,4 +451,5 @@ body {
 
     .new-dropdown-menu {
         width: 180px;
-    } }
+    }
+}

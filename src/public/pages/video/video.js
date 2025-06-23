@@ -6,8 +6,8 @@ import Error from '../../components/error/Error';
 
 function Video({ videoUrl, loading, error, onRetry }) {
     const videoRef = useRef(null);
-    const [isPlaying, setIsPlaying] = useState(false);
-    const [isMuted, setIsMuted] = useState(true);
+    const [isPlaying, setIsPlaying] = useState(true); // Changed to true for autoplay
+    const [isMuted, setIsMuted] = useState(true); // Muted by default for autoplay compatibility
     const [currentTime, setCurrentTime] = useState(0);
     const [duration, setDuration] = useState(0);
 
@@ -66,6 +66,7 @@ function Video({ videoUrl, loading, error, onRetry }) {
                             preload="metadata"
                             loop
                             muted={isMuted}
+                            autoPlay // Added for autoplay
                             onClick={togglePlay}
                             onTimeUpdate={handleTimeUpdate}
                             onLoadedMetadata={handleLoadedMetadata}

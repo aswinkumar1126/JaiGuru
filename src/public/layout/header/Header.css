@@ -144,13 +144,13 @@
 .header-rates-container {
     margin-left: 0.8rem;
     flex-shrink: 1;
-    max-width: 280px;
+    max-width: 350px ;
     /* Match RatesCard max-width */
 }
 
 .mobile-rates-container {
     width: 100%;
-    padding: 0.8rem;
+    padding: 0.7rem;
     background: rgba(255, 255, 255, 0.1);
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     display: flex;
@@ -257,7 +257,6 @@
         width: 18px;
         height: 18px;
         display: flex;
-       
         align-items: center;
         justify-content: center;
         font-size: 0.7rem;
@@ -468,6 +467,25 @@
 }
 
 /* Responsive Design */
+@media (max-width: 1500px) {
+
+    
+
+    .header-rates-container {
+    
+        flex: 0 0 auto;
+        flex-wrap: nowrap;
+        max-width: 360px;
+
+    }
+
+    .search-bar-wrapper {
+  
+        width: 100%;
+        max-width: 100%;
+    }
+
+}
 @media (max-width: 1300px) {
  
     .main-header-content {
@@ -590,7 +608,7 @@
         font-size: 0.95rem;
         padding: 1rem;
         width: 100%;
-        justify-content: space-between;
+     
     }
 
     .active-nav-link::after {
@@ -622,7 +640,7 @@
 
     .mobile-rates-container .rates-card-wrapper {
         flex-direction: row;
-        width: 100%;
+        width: 50%;
         justify-content: space-between;
     }
 
@@ -676,14 +694,16 @@
         right: -5px;
     }
 
-    .mobile-rates-container .rates-card-wrapper {
-        flex-direction: column;
-        gap: 0.5rem;
-    }
-
-    .mobile-rates-container .rate-card {
-        width: 100%;
-    }
+        .mobile-rates-container .rates-card-wrapper {
+            flex-direction: row;
+            width: 40%;
+            justify-content: space-between;
+        }
+    
+        .mobile-rates-container .rate-card {
+            width: 100%;
+            justify-content: center;
+        }
 }
 
 @media (max-width: 576px) {

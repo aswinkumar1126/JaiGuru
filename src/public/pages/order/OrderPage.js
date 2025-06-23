@@ -1,19 +1,20 @@
-import React from 'react';
+import React,{useState} from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useOrderForm } from './hooks/useOrderForm';
 import AddressSection from './AddressSection';
 import OrderSummary from './OrderSummary';
 import PaymentSection from './PaymentSection';
 import PriceDetails from './PriceDetails';
+import AddressListModal from './AddressSection/AddressListModal';
 import './OrderPage.css';
 
 const OrderPage = () => {
     const navigate = useNavigate();
     const location = useLocation();
-
     const {
         user,
         address,
+        addresses,
         paymentMode,
         showAddressForm,
         formMode,
@@ -27,36 +28,45 @@ const OrderPage = () => {
         handleAddressAdd,
         handleAddressSave,
         handleAddressCancel,
-        handlePaymentChange
+        handlePaymentChange,
+        handleAddressSelect
     } = useOrderForm(navigate, location);
 
-    if (isUserLoading) return <div className="loading">Loading profile...</div>;
-    if (userError) return <div className="error">Error loading user profile!</div>;
+    const [showAddressList, setShowAddressList] = useState(false);
+
+    if (isUserLoading) return <div className="loading">Loading...</div>;
+    if (userError) return <div className="error">Error loading user data</div>;
 
     return (
         <div className="order-container">
             <main className="order-main">
                 <section className="order-section">
                     <h3>1 LOGIN</h3>
-                    <p><strong>+91 {localStorage.getItem('userMobileNumber') || 'XXXXXXXXXX'}</strong></p>
+                    <p><strong>+91 {user?.contactNumber || 'XXXXXXXXXX'}</strong></p>
                 </section>
 
                 <AddressSection
+                    user={user}
                     address={address}
                     showForm={showAddressForm}
                     formMode={formMode}
-                    onEdit={handleAddressEdit}
+                    onEdit={() => handleAddressEdit(address)}
                     onAdd={handleAddressAdd}
                     onSave={handleAddressSave}
                     onCancel={handleAddressCancel}
                 />
 
-                <OrderSummary items={cartItems} />
+                {!showAddressForm && addresses?.length > 1 && (
+                    <button
+                        className="btn-change-address"
+                        onClick={() => setShowAddressList(true)}
+                    >
+                        Change Address
+                    </button>
+                )}
 
-                <PaymentSection
-                    paymentMode={paymentMode}
-                    onChange={handlePaymentChange}
-                />
+                <OrderSummary items={cartItems} />
+                <PaymentSection paymentMode={paymentMode} onChange={handlePaymentChange} />
             </main>
 
             <aside className="order-sidebar">
@@ -68,6 +78,22 @@ const OrderPage = () => {
                     paymentMode={paymentMode}
                 />
             </aside>
+
+            {showAddressList && (
+                <AddressListModal
+                    addresses={addresses}
+                    selectedAddress={address}
+                    onSelect={(addr) => {
+                        handleAddressSelect(addr);
+                        setShowAddressList(false);
+                    }}
+                    onAddNew={() => {
+                        setShowAddressList(false);
+                        handleAddressAdd();
+                    }}
+                    onClose={() => setShowAddressList(false)}
+                />
+            )}
         </div>
     );
 };

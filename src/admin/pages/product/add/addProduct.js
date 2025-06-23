@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useProductContext } from '../../../context/product/productContext';
 import './AddProduct.css';
+import { useNavigate } from 'react-router-dom';
 
 const AddProducts = () => {
     const { uploadImages, loading } = useProductContext(); // Fixed naming: uploadImages instead of uploadProductImages
-
+    const navigate = useNavigate();
     const [sno, setSno] = useState('');
     const [description, setDescription] = useState('');
     const [selectedFiles, setSelectedFiles] = useState([]);
@@ -64,7 +65,8 @@ const AddProducts = () => {
         try {
             await uploadImages(sno, selectedFiles, description);
             setFeedback({ error: '', success: 'Images and description uploaded successfully!'});
-            localStorage.setItem('sno',sno);
+            localStorage.setItem('sno', sno); // Persist sno for ManageProduct
+            navigate(`/admin/product/manage/${sno}`);
             setSno('');
             setDescription('');
             setSelectedFiles([]);

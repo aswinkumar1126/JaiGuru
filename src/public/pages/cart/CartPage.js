@@ -25,6 +25,7 @@ const CartPage = () => {
     const [productMap, setProductMap] = useState({});
     const [selectedItems, setSelectedItems] = useState([]);
     const navigate = useNavigate();
+    console.log(cartList)
 
     useEffect(() => {
         const handleResize = () => {
@@ -95,7 +96,7 @@ const CartPage = () => {
             const newSelected = prevSelected.includes(sno)
                 ? prevSelected.filter(id => id !== sno)
                 : [...prevSelected, sno];
-            console.log("Updated Selected Items:", newSelected);
+            // console.log("Updated Selected Items:", newSelected);
             return newSelected;
         });
     };
@@ -128,7 +129,7 @@ const CartPage = () => {
                 };
             });
 
-        console.log("orderItems", orderItems);
+        // console.log("orderItems", orderItems);
 
         if (orderItems.length === 0) {
             alert("Please select at least one item to place the order.");
@@ -205,7 +206,7 @@ const CartPage = () => {
                 cartList={cartList}
                 productMap={productMap}
                 onCheckout={(selectedItems, total) => {
-                    console.log("Selected Order Items:", selectedItems);
+                    // console.log("Selected Order Items:", selectedItems);
                     alert(`Proceeding to checkout with ₹${total.toFixed(2)}`);
                     handlePlaceOrder();
                 }}

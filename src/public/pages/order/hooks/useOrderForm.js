@@ -1,95 +1,140 @@
 import { useEffect, useState } from 'react';
 import { useCreateOrder } from '../../../hook/order/useOrderMutation';
 import { useCurrentProfile } from '../../../hook/userProfile/useUserProfileQuery';
-
+import { useCreateAddress, useUpdateAddress, useAddressesByCustomer } from '../../../hook/address/useAddress';
+import { addressService } from '../../../service/AddressService';
 export const useOrderForm = (navigate, location) => {
     const { state } = location;
-    const { mutate, isLoading } = useCreateOrder();
+    const { mutate: createOrder, isLoading: isOrderLoading } = useCreateOrder();
     const { data: user, isLoading: isUserLoading, error: userError } = useCurrentProfile();
 
-    const [address, setAddress] = useState(() => {
-        const saved = localStorage.getItem('checkoutAddress');
-        return saved ? JSON.parse(saved) : null;
+    const createAddress = useCreateAddress();
+    const updateAddress = useUpdateAddress();
+    const { data: customerAddresses } = useAddressesByCustomer(user?.id, {
+        enabled: !!user?.id
     });
 
-    const [paymentMode, setPaymentMode] = useState(() => localStorage.getItem('paymentMode') || '');
-    const [showAddressForm, setShowAddressForm] = useState(!localStorage.getItem('checkoutAddress'));
-    const [formMode, setFormMode] = useState('');
+    const [selectedAddress, setSelectedAddress] = useState(null);
+    const [showAddressForm, setShowAddressForm] = useState(false);
+    const [formMode, setFormMode] = useState('add');
+    const [paymentMode, setPaymentMode] = useState('ONLINE');
+    const [isAddressLoading, setIsAddressLoading] = useState(false);
 
     const { cartItems = [], totalAmount = 0 } = state || {};
 
+    // Set default address from customer's saved addresses
     useEffect(() => {
-        if (!state) {
-            navigate('/cart');
+        if (customerAddresses?.length > 0 && !selectedAddress) {
+            const defaultAddress = customerAddresses.find(addr => addr.isDefault) || customerAddresses[0];
+            setSelectedAddress(defaultAddress);
         }
-        if (address) {
-            setShowAddressForm(false);
-        }
-    }, [state, navigate, address]);
+    }, [customerAddresses, selectedAddress]);
+    const handleAddressSave = async (formData) => {
+        setIsAddressLoading(true);
+        try {
+            let savedAddress;
 
+            if (formMode === 'edit' && selectedAddress?.id) {
+                savedAddress = await updateAddress.mutateAsync({
+                    id: selectedAddress.id,
+                    address: formData
+                });
+            } else {
+                savedAddress = await createAddress.mutateAsync({
+                    ...formData,
+                    customerId: user.id
+                });
+            }
+
+            // ✅ Use direct API call to fetch fresh list
+            const updatedList = await addressService.getAddressesByCustomer(user.id);
+
+            // ✅ Set the updated or fallback address
+            const updated = updatedList.find(addr => addr.id === savedAddress.id);
+            setSelectedAddress(updated || updatedList[0]);
+
+            setShowAddressForm(false);
+        } catch (error) {
+            console.error('Error saving address:', error);
+        } finally {
+            setIsAddressLoading(false);
+        }
+    };
+    
+    
+    useEffect(() => {
+        console.log("🧾 user:", user);
+        console.log("📦 customerAddresses:", customerAddresses);
+        console.log("✅ selectedAddress:", selectedAddress);
+    }, [user, customerAddresses, selectedAddress]);
+    
     const handleOrderSubmit = async () => {
-        if (!address) {
-            alert('Please add a delivery address');
+        if (!selectedAddress) {
+            alert('Please select a delivery address');
             return;
         }
 
-        const fullAddress = `${address.street}, ${address.locality}, ${address.city}, ${address.state} - ${address.pincode}`;
-
         const orderPayload = {
-            customerName: user?.username || 'Test User',
-            contact: user?.contactNumber || '9999999999',
-            email: user?.email || 'test@example.com',
+            customerName: selectedAddress.name,
+            contact: selectedAddress.phone,
+            email: user?.email,
             totalAmount,
-            address: fullAddress,
+            address: formatAddress(selectedAddress),
             paymentMode,
             items: cartItems.map(item => ({
+                productId: item.id,
                 productName: item.name,
                 quantity: item.quantity,
                 price: parseFloat(item.price),
             })),
+            shippingAddressId: selectedAddress.id
         };
 
-        mutate(orderPayload, {
+        createOrder(orderPayload, {
             onSuccess: (data) => {
                 if (paymentMode === 'ONLINE') {
                     navigate(`/payment/${data.orderId}`);
                 } else {
-                    alert('✅ Order placed successfully with Cash on Delivery!');
-                    navigate('/orders');
+                    navigate('/orders', { state: { orderSuccess: true } });
                 }
-            },
+            }
         });
+    };
+
+    const formatAddress = (addr) => {
+        return [
+            addr.addressLine,
+            addr.locality,
+            addr.landmark,
+            `${addr.city}, ${addr.state} - ${addr.pincode}`
+        ].filter(Boolean).join(', ');
     };
 
     return {
         user,
-        address,
+        address: selectedAddress,
+        addresses: customerAddresses || [],
         paymentMode,
         showAddressForm,
         formMode,
         cartItems,
         totalAmount,
-        isLoading,
+        isLoading: isOrderLoading || isAddressLoading,
         isUserLoading,
         userError,
         handleOrderSubmit,
-        handleAddressEdit: () => {
-            setShowAddressForm(true);
+        handleAddressEdit: (address) => {
+            setSelectedAddress(address);
             setFormMode('edit');
+            setShowAddressForm(true);
         },
         handleAddressAdd: () => {
-            setShowAddressForm(true);
             setFormMode('add');
+            setShowAddressForm(true);
         },
-        handleAddressSave: (formData) => {
-            setAddress(formData);
-            setShowAddressForm(false);
-            localStorage.setItem('checkoutAddress', JSON.stringify(formData));
-        },
+        handleAddressSave,
         handleAddressCancel: () => setShowAddressForm(false),
-        handlePaymentChange: (e) => {
-            setPaymentMode(e.target.value);
-            localStorage.setItem('paymentMode', e.target.value);
-        }
+        handlePaymentChange: (mode) => setPaymentMode(mode),
+        handleAddressSelect: (address) => setSelectedAddress(address),
     };
 };

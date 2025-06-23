@@ -9,7 +9,7 @@ function Search() {
     };
 
     const handleSearch = () => {
-        console.log('Searching for:', search);
+        // console.log('Searching for:', search);
         setSearch('');
     };
 

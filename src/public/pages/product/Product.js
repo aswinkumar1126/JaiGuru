@@ -6,7 +6,10 @@ import Error from "../../components/error/Error";
 import ProductCard from "../../components/productCard/ProductCard";
 import { useCart } from "../../hook/cart/useCartQuery"; // ✅ Import hook
 import Button from '../../components/button/Button';
+
 function Product({ products = [], loading, error }) {
+    const user=localStorage.getItem('user');
+    //console.log("user",user);
     const navigate = useNavigate();
     const { addToCartHandler } = useCart(); // ✅ Get addToCart function
 
@@ -14,24 +17,34 @@ function Product({ products = [], loading, error }) {
         return <Error error={error} />;
     }
 
-    console.log(products);
+    // console.log(products);
     const handleAddToCart = (product) => {
-        console.log("🛒 Sending to addToCartHandler:", product);
+        if (user===null) {
+            localStorage.setItem(
+                "redirectAfterLogin",
+                JSON.stringify({
+                    path: window.location.pathname
+                })
+            );
+            navigate("/login");
+            return;
+        }
 
         addToCartHandler({
-            itemTagSno: product.SNO,             // corresponds to `SNO`
-            itemId: product.ITEMID,              // `ITEMID`
-            subItemId: product.SubItemId,        // `SubItemId` already correctly cased
-            tagNo: product.TAGNO,                // `TAGNO`
-            grsWt: parseFloat(product.GRSWT),    // convert string to number
+            itemTagSno: product.SNO,
+            itemId: product.ITEMID,
+            subItemId: product.SubItemId,
+            tagNo: product.TAGNO,
+            grsWt: parseFloat(product.GRSWT),
             netWt: parseFloat(product.NETWT),
-            stnWt: 0,                            // not present in your data, set to default
+            stnWt: 0,
             stnAmount: parseFloat(product.StoneAmount || 0),
             amount: parseFloat(product.GrandTotal || 0),
             purity: parseFloat(product.PURITY),
             quantity: 1,
         });
     };
+    
     
     return (
         <div className="product-container">

@@ -17,7 +17,7 @@
     align-items: center;
     height: 100%;
     width: 100%;
-    max-width: 280px;
+    max-width: 350px;
     /* Reduced for better fit in header */
     perspective: 1000px;
 }
@@ -34,13 +34,13 @@
 .rate-card {
     display: flex;
     align-items: center;
-    padding: 0.4rem 0.6rem;
+    padding: 0.4rem 0.7rem;
     border-radius: var(--border-radius);
     box-shadow: var(--box-shadow);
     transition: all var(--transition-speed) ease;
     cursor: pointer;
     min-width: 100px;
-    max-width: 130px;
+    max-width: 180px;
     flex: 1;
     position: relative;
     background: white;
@@ -57,9 +57,9 @@
 }
 
 .coin-image {
-    width: 24px;
-    height: 24px;
-    object-fit: contain;
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
     margin-right: 0.5rem;
     transform-style: preserve-3d;
     filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.15));
@@ -114,7 +114,7 @@
 }
 
 .rate-title {
-    font-size: 0.8rem;
+    font-size: 1rem;
     font-weight: 700;
     margin: 0;
     line-height: 1.2;
@@ -123,7 +123,7 @@
 }
 
 .rate-price {
-    font-size: 0.75rem;
+    font-size: 0.95rem;
     margin: 0;
     font-weight: 600;
     display: flex;
@@ -133,7 +133,7 @@
 }
 
 .rate-unit {
-    font-size: 0.6rem;
+    font-size: 0.8rem;
     margin-left: 0.2rem;
     font-weight: 500;
     color: var(--text-dark);
@@ -339,6 +339,7 @@
 
 @media (max-width: 576px) {
     .rates-card-container {
+        flex-direction: row;
         max-width: 100%;
     }
 

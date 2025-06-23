@@ -15,7 +15,7 @@ export const getUserById = async (id) => {
 
 // Get all users (for admin table view)
 export const getAllUsers = async () => {
-    const response = await axiosInstance.get('/auth/user/all');
+    const response = await axiosInstance.get('/auth/user/getAllUserMasterData');
     return response.data;
 };
 

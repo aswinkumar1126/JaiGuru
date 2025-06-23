@@ -12,7 +12,7 @@ const ManageRates = () => {
     const [success, setSuccess] = useState(null);
 
     const { data: rates, isLoading, error: queryError } = useRatesQuery();
-    console.log("today rate ", rates);
+    // console.log("today rate ", rates);
     const { mutate: updateRate, isLoading: isUpdating } = useUpdateRateMutation();
     const { mutate: deleteRate, isLoading: isDeleting } = useDeleteRateMutation();
 

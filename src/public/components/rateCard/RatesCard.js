@@ -8,12 +8,13 @@ import silverCoin from '../../assets/coins/silvercoin-removebg-preview.png';
 const RatesCard = ({ isMobile }) => {
     const { data: rates, isLoading, error } = useRatesQuery();
 
+    // Unified animation for both coins
     const coinAnimation = {
-        rotateY: [0, 20, 0, -20, 0],
-        y: [0, -2, 0, -2, 0],
+        rotateY: [0, 15, 0, -15, 0], // Reduced rotation for more subtle effect
+        y: [0, -3, 0, -3, 0],        // Slightly more pronounced bounce
         transition: {
             repeat: Infinity,
-            duration: 5,
+            duration: 4,             // Slightly faster animation
             ease: 'easeInOut'
         }
     };
@@ -34,7 +35,7 @@ const RatesCard = ({ isMobile }) => {
         transition: { type: 'spring', stiffness: 500 }
     };
 
-    const UNIT = '/gram';
+    const UNIT = '/gm ';
 
     const SkeletonLoader = () => (
         <div className="rates-skeleton-wrapper">
@@ -78,6 +79,7 @@ const RatesCard = ({ isMobile }) => {
                         }
                     }}
                 >
+                    {/* Gold Card */}
                     <motion.div
                         className="rate-card gold-card"
                         variants={cardAnimation}
@@ -89,7 +91,11 @@ const RatesCard = ({ isMobile }) => {
                             alt="Gold Coin"
                             className="coin-image"
                             animate={coinAnimation}
-                            style={{ transformPerspective: 1000, transformStyle: 'preserve-3d' }}
+                            style={{
+                                transformPerspective: 1000,
+                                transformStyle: 'preserve-3d',
+                                transformOrigin: 'center center' // Ensures consistent rotation
+                            }}
                         />
                         <div className="rate-info">
                             <h3 className="rate-title">Gold</h3>
@@ -99,6 +105,7 @@ const RatesCard = ({ isMobile }) => {
                         </div>
                     </motion.div>
 
+                    {/* Silver Card - identical animation */}
                     <motion.div
                         className="rate-card silver-card"
                         variants={cardAnimation}
@@ -110,7 +117,11 @@ const RatesCard = ({ isMobile }) => {
                             alt="Silver Coin"
                             className="coin-image"
                             animate={coinAnimation}
-                            style={{ transformPerspective: 1000, transformStyle: 'preserve-3d' }}
+                            style={{
+                                transformPerspective: 1000,
+                                transformStyle: 'preserve-3d',
+                                transformOrigin: 'center center' // Ensures consistent rotation
+                            }}
                         />
                         <div className="rate-info">
                             <h3 className="rate-title">Silver</h3>
