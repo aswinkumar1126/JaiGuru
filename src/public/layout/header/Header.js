@@ -157,12 +157,12 @@ const Header = () => {
     }, [location.pathname]);
 
     return (
-        <header className={`header-container ${isScrolled ? 'scrolled' : ''}`}>
-            <div className="main-header">
-                <div className="main-header-content">
-                    <div className="header-left">
+        <header className={`public-header-container ${isScrolled ? 'public-scrolled' : ''}`}>
+            <div className="public-main-header">
+                <div className="public-main-header-content">
+                    <div className="public-header-left">
                         <motion.div
-                            className="logo-container"
+                            className="public-logo-container"
                             whileHover={{ scale: isMobile ? 1 : 1.05 }}
                             transition={{ type: 'spring', stiffness: 300 }}
                         >
@@ -171,41 +171,41 @@ const Header = () => {
                                     src={Logo}
                                     alt="BMG Jewellers Logo"
                                     loading="lazy"
-                                    className="logo-img"
+                                    className="public-logo-img"
                                     whileHover={{ rotate: isMobile ? 0 : 5 }}
                                     transition={{ type: 'spring', damping: 15 }}
                                 />
                             </Link>
-                            <span className="logo-text">
-                                <pre>BMG Jewellers{'\n'}<span className="sub-logotext">Private Limited</span></pre>
+                            <span className="public-logo-text">
+                                <pre>BMG Jewellers{'\n'}<span className="public-sub-logotext">Private Limited</span></pre>
                             </span>
                         </motion.div>
                         {!isMobile && (
-                            <motion.div className="header-rates-container">
+                            <motion.div className="public-header-rates-container">
                                 <RatesCard isMobile={isMobile} />
                             </motion.div>
                         )}
                     </div>
 
                     {!isMobile && (
-                        <div className="header-middle">
-                            <div className="search-bar-wrapper">
+                        <div className="public-header-middle">
+                            <div className="public-search-bar-wrapper">
                                 <Search />
                             </div>
                         </div>
                     )}
 
-                    <div className="header-right">
+                    <div className="public-header-right">
                         {isAuthenticated && (
                             <>
                                 <motion.div
-                                    className="wishlist-container"
+                                    className="public-wishlist-container"
                                     whileHover={{ scale: isMobile ? 1 : 1.05 }}
                                     whileTap={{ scale: 0.95 }}
                                 >
                                     <Link
                                         to="/wishlist"
-                                        className="wishlist-button"
+                                        className="public-wishlist-button"
                                         aria-label="Wishlist"
                                         onClick={closeMobileMenu}
                                     >
@@ -213,12 +213,12 @@ const Header = () => {
                                             animate={isMobile ? {} : { scale: [1, 1.1, 1] }}
                                             transition={{ repeat: isMobile ? 0 : Infinity, duration: 2 }}
                                         >
-                                            <FaHeart className="wishlist-icon" />
+                                            <FaHeart className="public-wishlist-icon" />
                                         </motion.div>
-                                        <span className="wishlist-text">Wishlist</span>
+                                        <span className="public-wishlist-text">Wishlist</span>
                                         {wishlistCount > 0 && (
                                             <motion.span
-                                                className="wishlist-badge"
+                                                className="public-wishlist-badge"
                                                 animate={isMobile ? {} : { scale: [1, 1.2, 1] }}
                                                 transition={{ repeat: isMobile ? 0 : Infinity, duration: 2 }}
                                             >
@@ -229,13 +229,13 @@ const Header = () => {
                                 </motion.div>
 
                                 <motion.div
-                                    className="cart-container"
+                                    className="public-cart-container"
                                     whileHover={{ scale: isMobile ? 1 : 1.05 }}
                                     whileTap={{ scale: 0.95 }}
                                 >
                                     <NavLink
                                         to="/cart"
-                                        className="cart-button"
+                                        className="public-cart-button"
                                         aria-label="Shopping Cart"
                                         onClick={closeMobileMenu}
                                     >
@@ -243,12 +243,12 @@ const Header = () => {
                                             animate={isMobile ? {} : { rotate: [0, 10, -10, 0] }}
                                             transition={{ repeat: isMobile ? 0 : Infinity, repeatDelay: 5, duration: 2 }}
                                         >
-                                            <FaShoppingCart className="cart-icon" />
+                                            <FaShoppingCart className="public-cart-icon" />
                                         </motion.div>
-                                        <span className="cart-text">Cart</span>
+                                        <span className="public-cart-text">Cart</span>
                                         {cartCount > 0 && (
                                             <motion.span
-                                                className="cart-badge"
+                                                className="public-cart-badge"
                                                 animate={isMobile ? {} : { scale: [1, 1.2, 1] }}
                                                 transition={{ repeat: isMobile ? 0 : Infinity, duration: 2 }}
                                             >
@@ -261,26 +261,26 @@ const Header = () => {
                         )}
 
                         <motion.div
-                            className="profile-icon-wrapper"
+                            className="public-profile-icon-wrapper"
                             whileHover={{ scale: isMobile ? 1 : 1.05 }}
                             whileTap={{ scale: 0.95 }}
                             ref={profileMenuRef}
                         >
                             <button
-                                className="profile-icon-button"
+                                className="public-profile-icon-button"
                                 onClick={handleProfileClick}
                                 aria-label="User profile menu"
                                 aria-expanded={isProfileMenuOpen}
                                 aria-haspopup="true"
                             >
-                                <FaUserCircle className="profile-icon" />
+                                <FaUserCircle className="public-profile-icon" />
                                 <span>{username || 'Guest'}</span>
                             </button>
                             {isAuthenticated && (
                                 <AnimatePresence>
                                     {isProfileMenuOpen && (
                                         <motion.ul
-                                            className="profile-menu"
+                                            className="public-profile-menu"
                                             initial={{ opacity: 0, y: -10, scale: 0.95 }}
                                             animate={{ opacity: 1, y: 0, scale: 1 }}
                                             exit={{ opacity: 0, y: -10, scale: 0.95 }}
@@ -294,7 +294,7 @@ const Header = () => {
                                             >
                                                 <NavLink
                                                     to="/user/profile"
-                                                    className="dropdown-link"
+                                                    className="public-dropdown-link"
                                                     onClick={() => setIsProfileMenuOpen(false)}
                                                     role="menuitem"
                                                 >
@@ -306,11 +306,11 @@ const Header = () => {
                                                 role="none"
                                             >
                                                 <button
-                                                    className="dropdown-link"
+                                                    className="public-dropdown-link"
                                                     onClick={handleLogout}
                                                     role="menuitem"
                                                 >
-                                                    <FaSignOutAlt className="inline-icon" /> Logout
+                                                    <FaSignOutAlt className="public-inline-icon" /> Logout
                                                 </button>
                                             </motion.li>
                                         </motion.ul>
@@ -319,39 +319,39 @@ const Header = () => {
                             )}
                         </motion.div>
                         <button
-                            className="mobile-menu-toggle"
+                            className="public-mobile-menu-toggle"
                             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                             aria-label={isMobileMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
                             aria-expanded={isMobileMenuOpen}
-                            aria-controls="main-navigation"
+                            aria-controls="public-main-navigation"
                         >
-                            {isMobileMenuOpen ? <FaTimes className="menu-icon" /> : <FaBars className="menu-icon" />}
+                            {isMobileMenuOpen ? <FaTimes className="public-menu-icon" /> : <FaBars className="public-menu-icon" />}
                         </button>
                     </div>
                 </div>
             </div>
 
             <nav
-                id="main-navigation"
-                className={`nav-links ${isMobileMenuOpen ? 'active' : ''} ${isScrolled ? 'scrolled' : ''} ${showNav ? 'show' : 'hide'}`}
+                id="public-main-navigation"
+                className={`public-nav-links ${isMobileMenuOpen ? 'public-active' : ''} ${isScrolled ? 'public-scrolled' : ''} ${showNav ? 'public-show' : 'public-hide'}`}
                 ref={navRef}
                 aria-label="Main navigation"
             >
                 {isMobile && (
                     <>
-                        <div className="mobile-search-container">
+                        <div className="public-mobile-search-container">
                             <Search />
                         </div>
-                        <div className="mobile-rates-container">
+                        <div className="public-mobile-rates-container">
                             <RatesCard isMobile={isMobile} />
                         </div>
                     </>
                 )}
-                <ul className="nav-list">
+                <ul className="public-nav-list">
                     {navItems.map((item) => (
                         <li
                             key={item.name}
-                            className={`nav-item ${isActive(item.path, item.submenu) ? 'active-nav-item' : ''} ${activeDropdown === item.name ? 'active-dropdown' : ''}`}
+                            className={`public-nav-item ${isActive(item.path, item.submenu) ? 'public-active-nav-item' : ''} ${activeDropdown === item.name ? 'public-active-dropdown' : ''}`}
                             onMouseEnter={() => !isMobile && item.submenu && toggleDropdown(item.name)}
                             onMouseLeave={() => !isMobile && setActiveDropdown(null)}
                         >
@@ -366,18 +366,18 @@ const Header = () => {
                                         closeMobileMenu();
                                     }
                                 }}
-                                className={({ isActive }) => (isActive ? 'active-nav-link' : '')}
+                                className={({ isActive }) => (isActive ? 'public-active-nav-link' : '')}
                                 aria-haspopup={item.submenu ? 'true' : 'false'}
                                 aria-expanded={activeDropdown === item.name}
                             >
                                 {item.name}
-                                {item.submenu && <FaChevronDown className="dropdown-arrow" />}
-                                <span className="nav-hover-indicator"></span>
+                                {item.submenu && <FaChevronDown className="public-dropdown-arrow" />}
+                                <span className="public-nav-hover-indicator"></span>
                             </NavLink>
 
                             {item.submenu && (
                                 <div
-                                    className="dropdown-container"
+                                    className="public-dropdown-container"
                                     onMouseEnter={() => !isMobile && setActiveDropdown(item.name)}
                                     onMouseLeave={() => !isMobile && setActiveDropdown(null)}
                                     ref={dropdownRef}
@@ -385,7 +385,7 @@ const Header = () => {
                                     <AnimatePresence>
                                         {activeDropdown === item.name && (
                                             <motion.ul
-                                                className="dropdown-menu"
+                                                className="public-dropdown-menu"
                                                 initial={{ opacity: 0, height: 0 }}
                                                 animate={{ opacity: 1, height: 'auto' }}
                                                 exit={{ opacity: 0, height: 0 }}
@@ -403,7 +403,7 @@ const Header = () => {
                                                         <NavLink
                                                             to={`${item.path}/${subItem.toLowerCase()}`}
                                                             className={({ isActive }) =>
-                                                                `dropdown-link ${isActive ? 'active-subnav-link' : ''}`
+                                                                `public-dropdown-link ${isActive ? 'public-active-subnav-link' : ''}`
                                                             }
                                                             role="menuitem"
                                                         >

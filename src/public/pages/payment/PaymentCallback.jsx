@@ -42,13 +42,13 @@ const PaymentCallback = () => {
                     setTimeout(() => navigate('/payment-success'), 2000);
                 } else {
                     setStatus(data.message || 'Payment failed or not completed. Redirecting...');
-                    setTimeout(() => navigate('/payment-failure'), 2000);
+                    setTimeout(() => navigate('/order'), 2000);
                 }
             })
             .catch((err) => {
                 console.error('❌ Verify error:', err);
                 setStatus('Verification failed: ' + (err.message || 'Unknown error'));
-                setTimeout(() => navigate('/payment-failure'), 2000);
+                setTimeout(() => navigate('/order'), 2000);
             });
     }, [orderId, searchParams, navigate]);
 

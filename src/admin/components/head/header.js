@@ -71,13 +71,16 @@ const NewAdminHeader = ({ toggleSidebar, isSidebarOpen }) => {
   useEffect(() => {
     const updateDateTime = () => {
       const date = new Date();
-      const formattedDate = date.toLocaleDateString('en-GB');
+      const day = String(date.getDate()).padStart(2, '0');
+      const month = String(date.getMonth() + 1).padStart(2, '0'); // January is 0
+      const year = date.getFullYear();
+      const formattedDate = `${day}/${month}/${year}`;
       const formattedTime = date.toLocaleTimeString('en-US', {
         hour: '2-digit',
         minute: '2-digit',
         hour12: true,
       });
-      setCurrentDateTime(`D:${formattedDate}-T:${formattedTime}`);
+      setCurrentDateTime(`DATE:${formattedDate}-TIME:${formattedTime}`);
     };
     updateDateTime();
     const interval = setInterval(updateDateTime, 1000);

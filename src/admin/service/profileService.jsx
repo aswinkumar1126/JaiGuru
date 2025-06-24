@@ -27,6 +27,6 @@ export const updateUserById = async ({ id, updatedData }) => {
 
 // Delete user by ID
 export const deleteUserById = async (id) => {
-    const response = await axiosInstance.delete(`/auth/user/delete/${id}`);
+    const response = await axiosInstance.delete(`/auth/user/deleteUserById/${id}`);
     return response.data;
 };

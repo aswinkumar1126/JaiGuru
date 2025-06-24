@@ -3,7 +3,7 @@ import { useSingleProductQuery } from "../../../hook/product/useSingleProductQue
 import SkeletonLoader from "../../../components/loader/SkeletonLoader";
 
 
-const CartItem = ({ item, onIncrease, isSelected, onSelectToggle, onDecrease, onRemove, onProductDataReady }) => {
+const CartItem = ({ item,  isSelected, onSelectToggle,  onRemove, onProductDataReady }) => {
     const { data: product, isLoading } = useSingleProductQuery(item.itemTagSno);
     const baseUrl = "https://app.bmgjewellers.com";
     const [hasSentProductData, setHasSentProductData] = useState(false);
@@ -58,7 +58,7 @@ const CartItem = ({ item, onIncrease, isSelected, onSelectToggle, onDecrease, on
                         ? Number(product.GrandTotal).toFixed(2)
                         : (item.amount || 0).toFixed(2)}
                 </p>
-                <div className="cart-item-actions">
+                {/* <div className="cart-item-actions">
                     <button
                         className="quantity-btn"
                         onClick={() => onDecrease(item)}
@@ -75,7 +75,7 @@ const CartItem = ({ item, onIncrease, isSelected, onSelectToggle, onDecrease, on
                     >
                         +
                     </button>
-                </div>
+                </div> */}
                 <div className="cart-item-options">
                     <button
                         className="remove-btn"

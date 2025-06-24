@@ -34,40 +34,41 @@ import DeliveryShippingPolicy from '../../public/pages/DeliveryShippingPolicy/De
 const PublicRoutes = () => {
     return (
         // Wraps all public routes with common layout (e.g., header, footer)
-        <LayoutWrapper>
+       
             <Routes>
                 {/* Publicly accessible routes */}
-                <Route path='/' element={<Home />} />
-                <Route path='/home' element={<Home />} />
-                <Route path='/login' element={<Login /> } />
-                <Route path='/products' element={<AllProducts />} />
-                <Route path='/about' element={<About />} />
-                <Route path='/why-us' element={<WhyUs />} />
-                <Route path='/gallery' element={<Gallery />} />
-                <Route path='/videos' element={<AllVideos />} />
-                <Route path='/contact' element={<Contact />} />
-                <Route path='/forgot-password' element={<ForgotPasswordPage />} />
-                <Route path='/reset-password' element={<ResetPasswordPage />} />
+                <Route path="/" element={<LayoutWrapper />}>
+                    <Route index element={<Home />} />
+                    <Route path="home" element={<Home />} />
+                    <Route path="login" element={<Login />} />
+                    <Route path="products" element={<AllProducts />} />
+                    <Route path="about" element={<About />} />
+                    <Route path="why-us" element={<WhyUs />} />
+                    <Route path="gallery" element={<Gallery />} />
+                    <Route path="videos" element={<AllVideos />} />
+                    <Route path="contact" element={<Contact />} />
+                    <Route path="forgot-password" element={<ForgotPasswordPage />} />
+                    <Route path="reset-password" element={<ResetPasswordPage />} />
 
-                {/* Protected routes (login required) */}
-                <Route path="/product/:sno" element={<UserPrivateRoute><ProductDetails /></UserPrivateRoute>} />
-                <Route path='/cart' element={<UserPrivateRoute><CartPage /></UserPrivateRoute>} />
-                <Route path='/wishlist' element={<UserPrivateRoute><WishlistItem /></UserPrivateRoute>} />
-                <Route path='/user/profile' element={<UserPrivateRoute><UserProfile /></UserPrivateRoute>} />
-                <Route path='/order' element={<UserPrivateRoute><OrderPage /></UserPrivateRoute>} />
-                <Route path="/payment/:orderId" element={<UserPrivateRoute><PaymentPage /></UserPrivateRoute>} />
-                <Route path="/payment/callback/:orderId" element={<PaymentCallback />} />
+                    {/* Protected */}
+                    <Route path="product/:sno" element={<UserPrivateRoute><ProductDetails /></UserPrivateRoute>} />
+                    <Route path="cart" element={<UserPrivateRoute><CartPage /></UserPrivateRoute>} />
+                    <Route path="wishlist" element={<UserPrivateRoute><WishlistItem /></UserPrivateRoute>} />
+                    <Route path="user/profile" element={<UserPrivateRoute><UserProfile /></UserPrivateRoute>} />
+                    <Route path="order" element={<UserPrivateRoute><OrderPage /></UserPrivateRoute>} />
+                    <Route path="payment/:orderId" element={<UserPrivateRoute><PaymentPage /></UserPrivateRoute>} />
+                    <Route path="payment/callback/:orderId" element={<PaymentCallback />} />
 
-                {/* Useful links */}
-                <Route path='/privacy-policy' element={<PrivacyPolicy />} />
-                <Route path='/delivery-shipping' element={<DeliveryShippingPolicy />} />
-                <Route path='/cancel-return' element={<CancellationReturnPolicy />} />
-                <Route path='/refund' element={<RefundPolicy />} />
-                <Route path='/terms-condition' element={<TermsConditions />} />
-           
+                    {/* Policies */}
+                    <Route path="privacy-policy" element={<PrivacyPolicy />} />
+                    <Route path="delivery-shipping" element={<DeliveryShippingPolicy />} />
+                    <Route path="cancel-return" element={<CancellationReturnPolicy />} />
+                    <Route path="refund" element={<RefundPolicy />} />
+                    <Route path="terms-condition" element={<TermsConditions />} />
+                </Route>
 
             </Routes>
-        </LayoutWrapper>
+      
     );
 };
 

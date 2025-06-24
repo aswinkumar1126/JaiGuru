@@ -43,6 +43,7 @@
     box-shadow: var(--shadow-md);
     background-color: var(--bg-color);
     transition: var(--transition-base);
+    margin-top: 66px;
 }
 
 /* Slide Styles */

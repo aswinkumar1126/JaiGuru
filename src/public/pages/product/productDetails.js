@@ -9,6 +9,7 @@ import { FiChevronLeft, FiChevronRight, FiZoomIn } from "react-icons/fi";
 import { useCart } from "../../hook/cart/useCartQuery";
 import { useRecentlyViewed } from "../../hook/recentlyViewed/useRecentlyViewedQuery";
 import RecentlyViewedPage from "../recentlyViewed/RecentlyViewed";
+import { useRatesQuery } from "../../hook/rate/useRatesQuery";
 
 const ProductDetails = () => {
     const { sno } = useParams();
@@ -26,7 +27,7 @@ const ProductDetails = () => {
     const [zoomStyle, setZoomStyle] = useState({});
     const [showZoom, setShowZoom] = useState(false);
     const [activeImageIndex, setActiveImageIndex] = useState(0);
-    const [expandedSpecs, setExpandedSpecs] = useState(false);
+    const [expandedSpecs, setExpandedSpecs] = useState(true);
     const [showFullImage, setShowFullImage] = useState(false);
     const imgRef = useRef(null);
     const zoomRef = useRef(null);
@@ -106,6 +107,7 @@ const ProductDetails = () => {
 
     const toggleSpecs = () => {
         setExpandedSpecs(!expandedSpecs);
+        
     };
 
     const toggleFullImage = () => {

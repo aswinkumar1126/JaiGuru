@@ -9,18 +9,31 @@
     transition: transform 0.3s ease-in-out;
     
 }
-
+@media (max-width: 992px) {
+    .searchContainer {
+        flex-direction: row;
+        gap: 0.4rem;
+        width: 60%;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+    }
+}
 @media (max-width: 768px) {
     .searchContainer {
         flex-direction: row;
         gap: 0.4rem;
+        width: 60%;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
     }
 }
 
 .searchInput {
     padding: 0.6rem 1rem;
     border: 1px solid #D1D5DB;
-    border-radius: 1.5rem;
+    border-radius:1rem;
     width: 100%;
     max-width: 100rem;
     font-size: 1rem;
