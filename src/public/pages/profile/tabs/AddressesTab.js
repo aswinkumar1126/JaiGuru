@@ -77,17 +77,6 @@ const AddressesTab = () => {
         }
     };
 
-    const handleSetDefault = (id) => {
-        // This is now a frontend-only operation
-        const updatedAddresses = addresses.map(address => ({
-            ...address,
-            isDefault: address.id === id
-        }));
-        // Note: This change won't persist without backend support
-        // You would need to call an API to actually save this change
-        refetch(); // This will reset to server state
-    };
-
     const resetForm = () => {
         setIsEditing(false);
         setCurrentAddress(null);
@@ -147,44 +136,43 @@ const AddressesTab = () => {
                 </div>
             ) : isEditing ? (
                 <form className="address-form" onSubmit={handleSubmit}>
-                    {currentAddress && (
-                        <div className="form-header">
-                            <h3>{currentAddress ? 'Edit Address' : 'Add New Address'}</h3>
-                            <button type="button" onClick={resetForm} className="close-btn">
-                                <FiX />
-                            </button>
-                        </div>
-                    )}
-
-                    <div className="form-row">
-                        <div className="form-group">
-                            <label>Full Name *</label>
-                            <input
-                                name="name"
-                                value={formData.name}
-                                onChange={handleInputChange}
-                                required
-                                placeholder="Enter Your Name"
-                            />
-                        </div>
-
-                        <div className="form-group">
-                            <label>Phone Number *</label>
-                            <input
-                                name="phone"
-                                type="tel"
-                                value={formData.phone}
-                                onChange={handleInputChange}
-                                pattern="[0-9]{10}"
-                                required
-                                placeholder="Enter Your Mobile Number"
-                            />
-                        </div>
+                    <div className="form-header">
+                        <h3>{currentAddress ? 'Edit Address' : 'Add New Address'}</h3>
+                        <button type="button" onClick={resetForm} className="close-btn">
+                            <FiX />
+                        </button>
                     </div>
 
                     <div className="form-group">
-                        <label>Address Line *</label>
+                        <label htmlFor="name">Full Name *</label>
+                        <input
+                            id="name"
+                            name="name"
+                            value={formData.name}
+                            onChange={handleInputChange}
+                            required
+                            placeholder="Enter Your Name"
+                        />
+                    </div>
+
+                    <div className="form-group">
+                        <label htmlFor="phone">Phone Number *</label>
+                        <input
+                            id="phone"
+                            name="phone"
+                            type="tel"
+                            value={formData.phone}
+                            onChange={handleInputChange}
+                            pattern="[0-9]{10}"
+                            required
+                            placeholder="Enter Your Mobile Number"
+                        />
+                    </div>
+
+                    <div className="form-group">
+                        <label htmlFor="addressLine">Address Line *</label>
                         <textarea
+                            id="addressLine"
                             name="addressLine"
                             value={formData.addressLine}
                             onChange={handleInputChange}
@@ -193,121 +181,121 @@ const AddressesTab = () => {
                         />
                     </div>
 
-                    <div className="form-row">
-                        <div className="form-group">
-                            <label>Locality *</label>
-                            <input
-                                name="locality"
-                                value={formData.locality}
-                                onChange={handleInputChange}
-                                required
-                                placeholder="Enter Your Locality"
-                            />
-                        </div>
-
-                        <div className="form-group">
-                            <label>Landmark *</label>
-                            <input
-                                name="landmark"
-                                value={formData.landmark}
-                                onChange={handleInputChange}
-                                required
-                                placeholder="Landmark"
-                            />
-                        </div>
+                    <div className="form-group">
+                        <label htmlFor="locality">Locality *</label>
+                        <input
+                            id="locality"
+                            name="locality"
+                            value={formData.locality}
+                            onChange={handleInputChange}
+                            required
+                            placeholder="Enter Your Locality"
+                        />
                     </div>
 
-                    <div className="form-row">
-                        <div className="form-group">
-                            <label>City *</label>
-                            <input
-                                name="city"
-                                value={formData.city}
-                                onChange={handleInputChange}
-                                required
-                                placeholder="Enter Your City"
-                            />
-                        </div>
-
-                        <div className="form-group">
-                            <label>State *</label>
-                            <input
-                                name="state"
-                                value={formData.state}
-                                onChange={handleInputChange}
-                                required
-                                placeholder="Enter Your State"
-                            />
-                        </div>
-
-                        <div className="form-group">
-                            <label>Pincode *</label>
-                            <input
-                                name="pincode"
-                                type="text"
-                                value={formData.pincode}
-                                onChange={handleInputChange}
-                                pattern="[0-9]{6}"
-                                required
-                                placeholder="Enter Your Pincode"
-                            />
-                        </div>
+                    <div className="form-group">
+                        <label htmlFor="landmark">Landmark *</label>
+                        <input
+                            id="landmark"
+                            name="landmark"
+                            value={formData.landmark}
+                            onChange={handleInputChange}
+                            required
+                            placeholder="Landmark"
+                        />
                     </div>
 
-                    <div className="form-row">
-                        <div className="form-group">
-                            <label>Alternate Phone</label>
-                            <input
-                                name="alternatePhone"
-                                type="tel"
-                                value={formData.alternatePhone}
-                                onChange={handleInputChange}
-                                pattern="[0-9]{10}"
-                                placeholder="Optional alternate number"
-                            />
-                        </div>
-
-                        <div className="form-group checkbox-group">
-                            <input
-                                type="checkbox"
-                                name="isDefault"
-                                id="isDefault"
-                                checked={formData.isDefault}
-                                onChange={handleInputChange}
-                            />
-                            <label htmlFor="isDefault">Set as default address</label>
-                        </div>
+                    <div className="form-group">
+                        <label htmlFor="city">City *</label>
+                        <input
+                            id="city"
+                            name="city"
+                            value={formData.city}
+                            onChange={handleInputChange}
+                            required
+                            placeholder="Enter Your City"
+                        />
                     </div>
 
-                    <div className="form-row">
-                        <div className="form-group">
-                            <label>Company Name</label>
-                            <input
-                                name="companyName"
-                                value={formData.companyName}
-                                onChange={handleInputChange}
-                                placeholder="Enter Your CompanyName"
-                            />
-                        </div>
+                    <div className="form-group">
+                        <label htmlFor="state">State *</label>
+                        <input
+                            id="state"
+                            name="state"
+                            value={formData.state}
+                            onChange={handleInputChange}
+                            required
+                            placeholder="Enter Your State"
+                        />
+                    </div>
 
-                        <div className="form-group">
-                            <label>GST Number</label>
-                            <input
-                                name="gstNumber"
-                                value={formData.gstNumber}
-                                onChange={handleInputChange}
-                                placeholder="Enter Your GST Number"
-                                pattern="^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$"
-                            />
-                        </div>
+                    <div className="form-group">
+                        <label htmlFor="pincode">Pincode *</label>
+                        <input
+                            id="pincode"
+                            name="pincode"
+                            type="text"
+                            value={formData.pincode}
+                            onChange={handleInputChange}
+                            pattern="[0-9]{6}"
+                            required
+                            placeholder="Enter Your Pincode"
+                        />
+                    </div>
+
+                    <div className="form-group">
+                        <label htmlFor="alternatePhone">Alternate Phone</label>
+                        <input
+                            id="alternatePhone"
+                            name="alternatePhone"
+                            type="tel"
+                            value={formData.alternatePhone}
+                            onChange={handleInputChange}
+                            pattern="[0-9]{10}"
+                            placeholder="Optional alternate number"
+                        />
+                    </div>
+
+                    <div className="form-group checkbox-group">
+                        <input
+                            type="checkbox"
+                            name="isDefault"
+                            id="isDefault"
+                            checked={formData.isDefault}
+                            onChange={handleInputChange}
+                        />
+                        <label htmlFor="isDefault">Set as default address</label>
+                    </div>
+
+                    <div className="form-group">
+                        <label htmlFor="companyName">Company Name</label>
+                        <input
+                            id="companyName"
+                            name="companyName"
+                            value={formData.companyName}
+                            onChange={handleInputChange}
+                            placeholder="Enter Your Company Name"
+                        />
+                    </div>
+
+                    <div className="form-group">
+                        <label htmlFor="gstNumber">GST Number</label>
+                        <input
+                            id="gstNumber"
+                            name="gstNumber"
+                            value={formData.gstNumber}
+                            onChange={handleInputChange}
+                            placeholder="Enter Your GST Number"
+                            pattern="^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$"
+                        />
                     </div>
 
                     <div className="form-actions">
-                        <button type="button" onClick={resetForm} className="cancel-btn">
+                        <button type="button" className="cancel-btn" onClick={resetForm}>
                             Cancel
                         </button>
                         <button type="submit" className="save-btn">
-                            {currentAddress ? 'Update Address' : 'Save Address'}
+                            {currentAddress ? 'Update' : 'Save'}
                         </button>
                     </div>
                 </form>

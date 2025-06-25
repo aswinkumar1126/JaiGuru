@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import './address.css';
+import React, { useState } from 'react';
+import './AddressForm.css';
+
 const AddressForm = ({
     customerId,
     addressId,
@@ -43,36 +44,37 @@ const AddressForm = ({
 
     return (
         <form className="address-form" onSubmit={handleSubmit}>
-            <div className="form-row">
-                <div className="form-group">
-                    <label>Full Name *</label>
-                    <input
-                        name="name"
-                        value={formData.name}
-                        onChange={handleChange}
-                        placeholder="Enter full name"
-                        required
-                    />
-                </div>
-
-                <div className="form-group">
-                    <label>Phone Number *</label>
-                    <input
-                        name="phone"
-                        type="tel"
-                        value={formData.phone}
-                        onChange={handleChange}
-                        placeholder="Enter 10-digit number"
-                        pattern="[0-9]{10}"
-                        title="Please enter exactly 10 digits"
-                        required
-                    />
-                </div>
+            <div className="form-group">
+                <label htmlFor="name">Full Name *</label>
+                <input
+                    id="name"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleChange}
+                    placeholder="Enter full name"
+                    required
+                />
             </div>
 
             <div className="form-group">
-                <label>Address Line *</label>
+                <label htmlFor="phone">Phone Number *</label>
+                <input
+                    id="phone"
+                    name="phone"
+                    type="tel"
+                    value={formData.phone}
+                    onChange={handleChange}
+                    placeholder="Enter 10-digit number"
+                    pattern="[0-9]{10}"
+                    title="Please enter exactly 10 digits"
+                    required
+                />
+            </div>
+
+            <div className="form-group">
+                <label htmlFor="addressLine">Address Line *</label>
                 <textarea
+                    id="addressLine"
                     name="addressLine"
                     value={formData.addressLine}
                     onChange={handleChange}
@@ -82,83 +84,85 @@ const AddressForm = ({
                 />
             </div>
 
-            <div className="form-row">
-                <div className="form-group">
-                    <label>Locality *</label>
-                    <input
-                        name="locality"
-                        value={formData.locality}
-                        onChange={handleChange}
-                        placeholder="Area/Locality"
-                        required
-                    />
-                </div>
-
-                <div className="form-group">
-                    <label>Landmark *</label>
-                    <input
-                        name="landmark"
-                        value={formData.landmark}
-                        onChange={handleChange}
-                        placeholder="Nearby landmark"
-                        required
-                    />
-                </div>
+            <div className="form-group">
+                <label htmlFor="locality">Locality *</label>
+                <input
+                    id="locality"
+                    name="locality"
+                    value={formData.locality}
+                    onChange={handleChange}
+                    placeholder="Area/Locality"
+                    required
+                />
             </div>
 
-            <div className="form-row">
-                <div className="form-group">
-                    <label>City *</label>
-                    <input
-                        name="city"
-                        value={formData.city}
-                        onChange={handleChange}
-                        placeholder="City"
-                        required
-                    />
-                </div>
-
-                <div className="form-group">
-                    <label>State *</label>
-                    <input
-                        name="state"
-                        value={formData.state}
-                        onChange={handleChange}
-                        placeholder="State"
-                        required
-                    />
-                </div>
-
-                <div className="form-group">
-                    <label>Pincode *</label>
-                    <input
-                        name="pincode"
-                        type="text"
-                        value={formData.pincode}
-                        onChange={handleChange}
-                        placeholder="6-digit pincode"
-                        pattern="[0-9]{6}"
-                        title="Please enter exactly 6 digits"
-                        required
-                    />
-                </div>
+            <div className="form-group">
+                <label htmlFor="landmark">Landmark *</label>
+                <input
+                    id="landmark"
+                    name="landmark"
+                    value={formData.landmark}
+                    onChange={handleChange}
+                    placeholder="Nearby landmark"
+                    required
+                />
             </div>
 
-            <div className="form-row">
-                <div className="form-group">
-                    <label>Alternate Phone</label>
-                    <input
-                        name="alternatePhone"
-                        type="tel"
-                        value={formData.alternatePhone}
-                        onChange={handleChange}
-                        placeholder="Optional alternate number"
-                        pattern="[0-9]{10}"
-                        title="Please enter exactly 10 digits"
-                    />
-                </div>
+            <div className="form-group">
+                <label htmlFor="city">City *</label>
+                <input
+                    id="city"
+                    name="city"
+                    value={formData.city}
+                    onChange={handleChange}
+                    placeholder="City"
+                    required
+                />
+            </div>
 
-                <div className="form-group checkbox-group">
+            <div className="form-group">
+                <label htmlFor="state">State *</label>
+                <input
+                    id="state"
+                    name="state"
+                    value={formData.state}
+                    onChange={handleChange}
+                    placeholder="State"
+                    required
+                />
+            </div>
+
+            <div className="form-group">
+                <label htmlFor="pincode">Pincode *</label>
+                <input
+                    id="pincode"
+                    name="pincode"
+                    type="text"
+                    value={formData.pincode}
+                    onChange={handleChange}
+                    placeholder="6-digit pincode"
+                    pattern="[0-9]{6}"
+                    title="Please enter exactly 6 digits"
+                    required
+                />
+            </div>
+
+            <div className="form-group">
+                <label htmlFor="alternatePhone">Alternate Phone</label>
+                <input
+                    id="alternatePhone"
+                    name="alternatePhone"
+                    type="tel"
+                    value={formData.alternatePhone}
+                    onChange={handleChange}
+                    placeholder="Optional alternate number"
+                    pattern="[0-9]{10}"
+                    title="Please enter exactly 10 digits"
+                />
+            </div>
+
+            <div className="form-group">
+                <label htmlFor="isDefault" className="checkbox-label">
                     <input
                         type="checkbox"
                         name="isDefault"
@@ -166,25 +170,28 @@ const AddressForm = ({
                         checked={formData.isDefault}
                         onChange={handleChange}
                     />
-                    <label htmlFor="isDefault">Set as default address</label>
-                </div>
+                    Set as default address
+                </label>
             </div>
 
-            <div className="form-group checkbox-group">
-                <input
-                    type="checkbox"
-                    id="showBusinessFields"
-                    checked={showBusinessFields}
-                    onChange={() => setShowBusinessFields(!showBusinessFields)}
-                />
-                <label htmlFor="showBusinessFields">Add business details (optional)</label>
+            <div className="form-group">
+                <label htmlFor="showBusinessFields" className="checkbox-label">
+                    <input
+                        type="checkbox"
+                        id="showBusinessFields"
+                        checked={showBusinessFields}
+                        onChange={() => setShowBusinessFields(!showBusinessFields)}
+                    />
+                    Add business details (optional)
+                </label>
             </div>
 
             {showBusinessFields && (
-                <div className="form-row">
+                <>
                     <div className="form-group">
-                        <label>Company Name</label>
+                        <label htmlFor="companyName">Company Name</label>
                         <input
+                            id="companyName"
                             name="companyName"
                             value={formData.companyName}
                             onChange={handleChange}
@@ -193,20 +200,21 @@ const AddressForm = ({
                     </div>
 
                     <div className="form-group">
-                        <label>GST Number</label>
+                        <label htmlFor="gstNumber">GST Number</label>
                         <input
+                            id="gstNumber"
                             name="gstNumber"
                             value={formData.gstNumber}
                             onChange={handleChange}
-                            placeholder="22AAAAA0000A1Z5"
+                            placeholder="Enter GST Number"
                             pattern="^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$"
-                            title="Enter valid GST number (e.g. 22AAAAA0000A1Z5)"
+                            title="Enter valid GST number (e.g., 22AAAAA0000A1Z5)"
                         />
                     </div>
-                </div>
+                </>
             )}
 
-            <div className="form-actions">
+            <div className="form-actions-container">
                 <button type="button" onClick={onCancel}>
                     Cancel
                 </button>

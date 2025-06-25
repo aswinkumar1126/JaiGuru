@@ -6,7 +6,7 @@
     /* Very light background for professional look */
     --sidebar-dark-bg: #1a2238;
     /* Dark blue for dark mode */
-    --primary-color: #2563eb;
+    --primary-color: #eb9525;
     /* Primary blue */
     --active-color: #f97316;
     /* Orange for active states */
@@ -45,7 +45,7 @@
     overflow: hidden;
     will-change: transform, width;
     box-shadow: var(--sidebar-shadow);
-    transition: width var(--transition);
+    transition: none;
 }
 
 .sidebar.dark {
@@ -59,7 +59,7 @@
 }
 
 .sidebar.closed {
-    width: var(--sidebar-collapsed-width);
+    width: 0 !important;
 }
 
 @media (max-width: 768px) {
@@ -383,8 +383,8 @@
     width: 100%;
     height: 100%;
     background: rgba(0, 0, 0, 0.5);
-    z-index: 900;
-    cursor: pointer;
+    z-index: 998;
+    pointer-events: auto;
     backdrop-filter: blur(3px);
     transition: opacity var(--transition);
 }
@@ -433,6 +433,10 @@
     }
 }
 
+@media (min-width: 769px) and (max-width : 1024px) {
+
+
+}
 @media (min-width: 769px) {
 
     .sidebar.closed .menu-text,

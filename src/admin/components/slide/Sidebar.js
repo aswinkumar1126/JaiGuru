@@ -9,6 +9,7 @@ import {
     FaDollarSign,
     FaUserCircle,
     FaSignOutAlt,
+    FaClipboardList
 } from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MyContext } from '../../context/themeContext/themeContext';
@@ -25,6 +26,14 @@ const menuItems = [
         title: 'Dashboard',
         icon: <FaTachometerAlt className="section-icon" />,
         path: '/admin/dashboard',
+    },
+    {
+        title: 'Orders',
+        icon: <FaClipboardList arSign className="section-icon" />,
+        submenu: [
+            { title: 'Today Orders', path: '/admin/order/today' },
+            { title: 'Order Status', path: '/admin/order/status' },
+        ],
     },
     {
         title: 'Product',

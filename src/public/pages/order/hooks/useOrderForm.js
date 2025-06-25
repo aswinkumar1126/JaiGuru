@@ -3,6 +3,7 @@ import { useCreateOrder } from '../../../hook/order/useOrderMutation';
 import { useCurrentProfile } from '../../../hook/userProfile/useUserProfileQuery';
 import { useCreateAddress, useUpdateAddress, useAddressesByCustomer } from '../../../hook/address/useAddress';
 import { addressService } from '../../../service/AddressService';
+
 export const useOrderForm = (navigate, location) => {
     const { state } = location;
     const { mutate: createOrder, isLoading: isOrderLoading } = useCreateOrder();
@@ -21,6 +22,8 @@ export const useOrderForm = (navigate, location) => {
     const [isAddressLoading, setIsAddressLoading] = useState(false);
 
     const { cartItems = [], totalAmount = 0 } = state || {};
+
+    // console.log('cartitems',cartItems)
 
     // Set default address from customer's saved addresses
     useEffect(() => {
@@ -61,13 +64,9 @@ export const useOrderForm = (navigate, location) => {
         }
     };
     
+ 
     
-    useEffect(() => {
-        console.log("🧾 user:", user);
-        console.log("📦 customerAddresses:", customerAddresses);
-        console.log("✅ selectedAddress:", selectedAddress);
-    }, [user, customerAddresses, selectedAddress]);
-    
+
     const handleOrderSubmit = async () => {
         if (!selectedAddress) {
             alert('Please select a delivery address');
@@ -81,14 +80,22 @@ export const useOrderForm = (navigate, location) => {
             totalAmount,
             address: formatAddress(selectedAddress),
             paymentMode,
+            
             items: cartItems.map(item => ({
                 productId: item.id,
                 productName: item.name,
-                quantity: item.quantity,
                 price: parseFloat(item.price),
+                itemId: item.itemId,
+                tagNo: item.tagNo,
+                sno:item.sno
+
             })),
             shippingAddressId: selectedAddress.id
         };
+        console.log(orderPayload,'pay');
+        localStorage.setItem('orderpay', JSON.stringify(orderPayload));
+        const savedOrder = JSON.parse(localStorage.getItem('orderpay'));
+        console.log(savedOrder);
 
         createOrder(orderPayload, {
             onSuccess: (data) => {

@@ -1,5 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { useCart } from "../../hook/cart/useCartQuery";
+
 import Button from "../../components/button/Button";
 import Error from "../../components/error/Error";
 import SkeletonLoader from "../../components/loader/SkeletonLoader";
@@ -8,25 +10,29 @@ import CartSummaryModal from "../../pages/cart/CartSummaryModal/CartSummaryModal
 import CartActions from "../../pages/cart/CartActions/CartActions";
 import CartEmptyState from "../../pages/cart/CartEmptyState/CartEmptyState";
 import PriceDetails from "../../pages/cart/PriceDetails/PriceDetails";
-import "./CartPage.css";
-
-import { useNavigate } from "react-router-dom";
 import RecentlyViewedPage from "../recentlyViewed/RecentlyViewed";
 
+import "./CartPage.css";
 
 const CartPage = () => {
-    const { cartItems, isLoading, updateCart, deleteCart, error } = useCart();
-    const [isSticky, setIsSticky] = useState(false);
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
-    const priceDetailsRef = useRef(null);
-    const cartContainerRef = useRef(null);
+    const navigate = useNavigate();
+    const { cartItems, isLoading,  deleteCart, error } = useCart();
+
+    console.log('cartitems',cartItems.data);
+
     const cartList = Array.isArray(cartItems?.data) ? cartItems.data : [];
     const [productMap, setProductMap] = useState({});
     const [selectedItems, setSelectedItems] = useState([]);
-    const navigate = useNavigate();
-    console.log(cartList)
+    const [isSticky, setIsSticky] = useState(false);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
+    const priceDetailsRef = useRef(null);
+    const cartContainerRef = useRef(null);
+
+    const baseUrl = "https://app.bmgjewellers.com";
+
+    // 🔁 Handle responsive layout
     useEffect(() => {
         const handleResize = () => {
             setIsMobile(window.innerWidth <= 768);
@@ -36,49 +42,41 @@ const CartPage = () => {
         return () => window.removeEventListener('resize', handleResize);
     }, []);
 
+    // 📌 Sticky right price panel (desktop)
     useEffect(() => {
         const handleScroll = () => {
             if (!priceDetailsRef.current || !cartContainerRef.current) return;
+
             const priceDetailsTop = priceDetailsRef.current.getBoundingClientRect().top;
             const cartContainerBottom = cartContainerRef.current.getBoundingClientRect().bottom;
             const viewportHeight = window.innerHeight;
+
             setIsSticky(priceDetailsTop <= 80 && cartContainerBottom > viewportHeight);
         };
         window.addEventListener('scroll', handleScroll, { passive: true });
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
+    // 📱 Show mobile cart actions only if applicable
     useEffect(() => {
-        if (isMobile && cartList.length > 0) {
-            const mobileActions = document.querySelector('.cart-actions-mobile');
-            if (mobileActions) {
-                mobileActions.style.display = 'flex';
-            }
+        const mobileActions = document.querySelector('.cart-actions-mobile');
+        if (isMobile && cartList.length > 0 && mobileActions) {
+            mobileActions.style.display = 'flex';
         }
     }, [isMobile, cartList.length]);
 
+    // ✅ Sync selected items from cartList (avoid unnecessary re-renders)
     useEffect(() => {
-        // Initialize selectedItems with all itemTagSno values from cartList
-        setSelectedItems(cartList.map(item => item.itemTagSno).filter(sno => sno));
+        const newSelected = cartList.map(item => item.itemTagSno).filter(Boolean);
+        setSelectedItems(prev => {
+            if (JSON.stringify(prev) !== JSON.stringify(newSelected)) {
+                return newSelected;
+            }
+            return prev;
+        });
     }, [cartList]);
 
-  
-
-    if (isLoading) return <SkeletonLoader />;
-    if (error && !cartList.length) {
-        return <Error message={error.message || "Something went wrong"} />;
-    }
-
-    const handleIncrease = (item) => {
-        updateCart({ ...item, quantity: item.quantity + 1 });
-    };
-
-    const handleDecrease = (item) => {
-        if (item.quantity > 1) {
-            updateCart({ ...item, quantity: item.quantity - 1 });
-        }
-    };
-
+    // 💰 Total price based on selected items
     const getTotalPrice = () => {
         return cartList.reduce((total, item) => {
             if (selectedItems.includes(item.itemTagSno)) {
@@ -90,26 +88,21 @@ const CartPage = () => {
         }, 0);
     };
 
+    // 🖱️ Toggle selection of item
     const handleItemSelect = (sno) => {
-        if (!sno) return; // Prevent invalid selections
-        setSelectedItems((prevSelected) => {
-            const newSelected = prevSelected.includes(sno)
-                ? prevSelected.filter(id => id !== sno)
-                : [...prevSelected, sno];
-            // console.log("Updated Selected Items:", newSelected);
-            return newSelected;
-        });
+        if (!sno) return;
+        setSelectedItems(prev =>
+            prev.includes(sno) ? prev.filter(id => id !== sno) : [...prev, sno]
+        );
     };
 
-
-
-    const baseUrl = "https://app.bmgjewellers.com";
-
+    // 🛒 Place Order
     const handlePlaceOrder = () => {
         const orderItems = cartList
             .filter(item => selectedItems.includes(item.itemTagSno))
-            .map((item) => {
+            .map(item => {
                 const product = productMap[item.itemTagSno] || {};
+                console.log("product",product);
                 let imageUrls = [];
 
                 try {
@@ -126,10 +119,11 @@ const CartPage = () => {
                     quantity: item.quantity,
                     price: product.GrandTotal || item.amount || 0,
                     image: firstImage,
+                    tagNo: product.TAGNO,
+                    itemId: product.ITEMID,
+                    sno: item.itemTagSno,
                 };
             });
-
-        // console.log("orderItems", orderItems);
 
         if (orderItems.length === 0) {
             alert("Please select at least one item to place the order.");
@@ -143,8 +137,13 @@ const CartPage = () => {
 
         navigate('/order', { state: orderData });
     };
-    
-    
+
+    // ⏳ Loading & Error states
+    if (isLoading) return <SkeletonLoader />;
+    if (error && !cartList.length) {
+        return <Error message={error.message || "Something went wrong"} />;
+    }
+
     return (
         <div className="cart-page" role="main">
             <div className="cart-header">
@@ -163,22 +162,21 @@ const CartPage = () => {
                     ) : (
                         <>
                             <div className="cart-items-list" role="list">
-                                {cartList.map((item) => (
+                                {cartList.map(item => (
                                     <CartItem
                                         key={item.sno}
                                         item={item}
-                                        onIncrease={handleIncrease}
-                                        onDecrease={handleDecrease}
                                         onRemove={deleteCart}
-                                        onProductDataReady={(sno, product) => {
-                                            setProductMap((prev) => ({ ...prev, [sno]: product }));
-                                        }}
+                                        onProductDataReady={(sno, product) =>
+                                            setProductMap(prev => ({ ...prev, [sno]: product }))
+                                        }
                                         isSelected={selectedItems.includes(item.itemTagSno)}
                                         onSelectToggle={handleItemSelect}
                                     />
                                 ))}
                             </div>
-                            {isMobile && cartList.length > 0 && (
+
+                            {isMobile && (
                                 <CartActions
                                     totalPrice={getTotalPrice()}
                                     onViewSummary={() => setIsModalOpen(true)}
@@ -189,7 +187,10 @@ const CartPage = () => {
                 </div>
 
                 {cartList.length > 0 && !isMobile && (
-                    <div className={`cart-right ${isSticky ? 'sticky' : ''}`} ref={priceDetailsRef}>
+                    <div
+                        className={`cart-right ${isSticky ? 'sticky' : ''}`}
+                        ref={priceDetailsRef}
+                    >
                         <PriceDetails
                             totalPrice={getTotalPrice()}
                             itemCount={selectedItems.length}
@@ -206,11 +207,11 @@ const CartPage = () => {
                 cartList={cartList}
                 productMap={productMap}
                 onCheckout={(selectedItems, total) => {
-                    // console.log("Selected Order Items:", selectedItems);
                     alert(`Proceeding to checkout with ₹${total.toFixed(2)}`);
                     handlePlaceOrder();
                 }}
             />
+
             <RecentlyViewedPage />
         </div>
     );

@@ -26,6 +26,8 @@ import UserDetails from '../../admin/pages/dashboard/userDetails';
 import NewAdminHeader from '../../admin/components/head/header';
 
 import './AdminRoutes.css';
+import OrderManagement from '../../admin/pages/order/AllOrderPage';
+import OrderStatusManagement from '../../admin/pages/order/orderStatus';
 
 const AdminRoutes = () => {
     const { isSidebarOpen, setIsSidebarOpen, themeMode } = useContext(MyContext);
@@ -71,6 +73,7 @@ const AdminRoutes = () => {
             {/* Sidebar and page content layout */}
             <div className="layout-body">
                 <Sidebar
+                    className={`sidebar ${isSidebarOpen ? 'sidebar-open' : 'sidebar-collapsed'}`}
                     isOpen={isSidebarOpen}
                     toggleSidebar={() => setIsSidebarOpen((prev) => !prev)}
                 />
@@ -93,6 +96,8 @@ const AdminRoutes = () => {
 
                         {/* Open admin routes */}
                         <Route path="userDetails" element={<UserDetails />} />
+                        <Route path="AllOrderPage" element={<OrderStatusManagement />} />
+                        <Route path="order/status" element={<OrderStatusManagement />} />
                         <Route path="unauthorized" element={<Unauthorized />} />
                         <Route path="*" element={<Navigate to="/admin" replace />} />
                     </Routes>

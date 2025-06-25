@@ -3,7 +3,7 @@ import { useSingleProductQuery } from "../../../hook/product/useSingleProductQue
 import SkeletonLoader from "../../../components/loader/SkeletonLoader";
 
 
-const CartItem = ({ item, onIncrease, isSelected, onSelectToggle, onDecrease, onRemove, onProductDataReady }) => {
+const CartItem = ({ item,  isSelected, onSelectToggle,  onRemove, onProductDataReady }) => {
     const { data: product, isLoading } = useSingleProductQuery(item.itemTagSno);
     const baseUrl = "https://app.bmgjewellers.com";
     const [hasSentProductData, setHasSentProductData] = useState(false);
@@ -58,24 +58,7 @@ const CartItem = ({ item, onIncrease, isSelected, onSelectToggle, onDecrease, on
                         ? Number(product.GrandTotal).toFixed(2)
                         : (item.amount || 0).toFixed(2)}
                 </p>
-                <div className="cart-item-actions">
-                    <button
-                        className="quantity-btn"
-                        onClick={() => onDecrease(item)}
-                        aria-label={`Decrease quantity of ${product?.ITEMNAME || "item"}`}
-                        disabled={item.quantity <= 1}
-                    >
-                        −
-                    </button>
-                    <span className="quantity-value" aria-live="polite">{item.quantity}</span>
-                    <button
-                        className="quantity-btn"
-                        onClick={() => onIncrease(item)}
-                        aria-label={`Increase quantity of ${product?.ITEMNAME || "item"}`}
-                    >
-                        +
-                    </button>
-                </div>
+             
                 <div className="cart-item-options">
                     <button
                         className="remove-btn"

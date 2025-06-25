@@ -1,20 +1,16 @@
-// src/layouts/LayoutWrapper.js
 import React from 'react';
 import Header from '../header/Header';
 import Footer from '../footer/Footer';
+import { Outlet } from 'react-router-dom'; // ✅ import this
 import './LayoutWrapper.css';
 
-// Common layout component used to wrap all public pages with header and footer
-const LayoutWrapper = ({ children }) => {
+const LayoutWrapper = () => {
     return (
         <div className="app-wrapper">
-            {/* Top navigation/header */}
-            <Header />
-
-            {/* Main content of the page */}
-            <main className="content-area">{children}</main>
-
-            {/* Bottom footer */}
+            <Header/>
+            <main className="content-area">
+                <Outlet /> {/* ✅ This renders the routed page */}
+            </main>
             <Footer />
         </div>
     );

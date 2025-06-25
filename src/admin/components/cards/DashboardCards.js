@@ -168,7 +168,8 @@ const DashboardCards = () => {
             value: dashboardData.totalOrders,
             icon: <FaShoppingCart />,
             detail: 'All orders placed in the system',
-            color: '#2ecc71'
+            color: '#2ecc71',
+            link: 'AllOrderPage'
         },
         {
             id: 'pendingOrders',

@@ -271,7 +271,7 @@
 }
 @media (max-width: 992px) {
     .rates-card-container {
-        max-width: 560px;
+        max-width: 50%;
     }
 
     .rates-card-wrapper {
@@ -305,7 +305,10 @@
 
 @media (max-width: 768px) {
     .rates-card-container {
-        max-width: 100%;
+        display: flex;
+        flex-direction: row;
+        max-width: 30%;
+        
     }
 
     .rates-card-wrapper {
@@ -317,6 +320,8 @@
         min-width: 100%;
         max-width: none;
         padding: 0.5rem;
+        align-items: center;
+        justify-content: center;
     }
 
     .coin-image {
@@ -340,7 +345,7 @@
 @media (max-width: 576px) {
     .rates-card-container {
         flex-direction: row;
-        max-width: 100%;
+        max-width: 35%;
     }
 
     .rate-card {
