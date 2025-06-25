@@ -30,6 +30,7 @@ import TermsConditions from '../../public/pages/TermsConditions/TermsConditions'
 import RefundPolicy from '../../public/pages/RefundPolicy/RefundPolicy';
 import CancellationReturnPolicy from '../../public/pages/CancellationReturnPolicy/CancellationReturnPolicy';
 import DeliveryShippingPolicy from '../../public/pages/DeliveryShippingPolicy/DeliveryShippingPolicy';
+import SearchResultsPage from '../../public/pages/search/SearchResultsPage';
 
 const PublicRoutes = () => {
     return (
@@ -49,6 +50,7 @@ const PublicRoutes = () => {
                     <Route path="contact" element={<Contact />} />
                     <Route path="forgot-password" element={<ForgotPasswordPage />} />
                     <Route path="reset-password" element={<ResetPasswordPage />} />
+                    <Route path="/search" element={<SearchResultsPage />} />
 
                     {/* Protected */}
                     <Route path="product/:sno" element={<UserPrivateRoute><ProductDetails /></UserPrivateRoute>} />

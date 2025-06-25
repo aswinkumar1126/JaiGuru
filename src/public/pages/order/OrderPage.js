@@ -32,10 +32,16 @@ const OrderPage = () => {
         handleAddressSelect
     } = useOrderForm(navigate, location);
 
+    
     const [showAddressList, setShowAddressList] = useState(false);
 
     if (isUserLoading) return <div className="loading">Loading...</div>;
     if (userError) return <div className="error">Error loading user data</div>;
+    if (cartItems.length === 0) {
+        navigate(location?.state?.from || '/cart', { replace: true });
+        return null;
+    }
+    
 
     return (
         <div className="order-container">

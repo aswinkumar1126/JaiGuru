@@ -27,6 +27,7 @@ import NewAdminHeader from '../../admin/components/head/header';
 
 import './AdminRoutes.css';
 import OrderManagement from '../../admin/pages/order/AllOrderPage';
+import OrderStatusManagement from '../../admin/pages/order/orderStatus';
 
 const AdminRoutes = () => {
     const { isSidebarOpen, setIsSidebarOpen, themeMode } = useContext(MyContext);
@@ -95,7 +96,8 @@ const AdminRoutes = () => {
 
                         {/* Open admin routes */}
                         <Route path="userDetails" element={<UserDetails />} />
-                        <Route path="AllOrderPage" element={<OrderManagement />} />
+                        <Route path="AllOrderPage" element={<OrderStatusManagement />} />
+                        <Route path="order/status" element={<OrderStatusManagement />} />
                         <Route path="unauthorized" element={<Unauthorized />} />
                         <Route path="*" element={<Navigate to="/admin" replace />} />
                     </Routes>

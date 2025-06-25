@@ -7,7 +7,7 @@ import './LayoutWrapper.css';
 const LayoutWrapper = () => {
     return (
         <div className="app-wrapper">
-            <Header />
+            <Header/>
             <main className="content-area">
                 <Outlet /> {/* ✅ This renders the routed page */}
             </main>

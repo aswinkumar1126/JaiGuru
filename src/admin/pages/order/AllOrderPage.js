@@ -354,10 +354,9 @@ const OrderManagement = () => {
                             filteredOrders.map((order) => (
                                 <TableRow key={order.id}>
                                     <TableCell>{order.order_id}</TableCell>
-                                    <TableCell>{order.user_name}</TableCell>
-                                    <TableCell>{order.contact}</TableCell>
+                                    <TableCell>{order.user_name}</TableCell>                                    <TableCell>{order.contact}</TableCell>
                                     <TableCell>{order.email}</TableCell>
-                                    <TableCell>₹{order.total_amount.toFixed(2)}</TableCell>
+                                    <TableCell align="right">₹{order.total_amount.toFixed(2)}</TableCell>
                                     <TableCell>
                                         <Button
                                             variant="contained"

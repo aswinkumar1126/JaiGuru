@@ -340,7 +340,7 @@ const Header = () => {
                 {isMobile && (
                     <>
                         <div className="public-mobile-search-container">
-                            <Search />
+                            <Search onSearchComplete={() => setIsMobileMenuOpen(false)} />
                         </div>
                         <div className="public-mobile-rates-container">
                             <RatesCard isMobile={isMobile} />

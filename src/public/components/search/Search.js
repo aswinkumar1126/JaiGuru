@@ -1,16 +1,20 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom'; // ✅ import navigate
 import styles from './Search.module.css';
 
-function Search() {
+function Search({ onSearchComplete }) {
     const [search, setSearch] = useState('');
+    const navigate = useNavigate();
 
     const handleChange = (e) => {
         setSearch(e.target.value);
     };
 
     const handleSearch = () => {
-        // console.log('Searching for:', search);
-        setSearch('');
+        if (search.trim()) {
+            navigate(`/search?itemName=${encodeURIComponent(search.trim().toLowerCase())}`);
+            if (onSearchComplete) onSearchComplete();
+        }
     };
 
     return (
@@ -21,6 +25,7 @@ function Search() {
                 className={styles.searchInput}
                 value={search}
                 onChange={handleChange}
+                onKeyDown={(e) => e.key === 'Enter' && handleSearch()} // enter support
             />
             <button className={styles.searchButton} onClick={handleSearch}>
                 🔍

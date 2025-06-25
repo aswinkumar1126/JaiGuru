@@ -16,7 +16,9 @@ import "./CartPage.css";
 
 const CartPage = () => {
     const navigate = useNavigate();
-    const { cartItems, isLoading, updateCart, deleteCart, error } = useCart();
+    const { cartItems, isLoading,  deleteCart, error } = useCart();
+
+    console.log('cartitems',cartItems.data);
 
     const cartList = Array.isArray(cartItems?.data) ? cartItems.data : [];
     const [productMap, setProductMap] = useState({});
@@ -100,6 +102,7 @@ const CartPage = () => {
             .filter(item => selectedItems.includes(item.itemTagSno))
             .map(item => {
                 const product = productMap[item.itemTagSno] || {};
+                console.log("product",product);
                 let imageUrls = [];
 
                 try {
@@ -116,6 +119,9 @@ const CartPage = () => {
                     quantity: item.quantity,
                     price: product.GrandTotal || item.amount || 0,
                     image: firstImage,
+                    tagNo: product.TAGNO,
+                    itemId: product.ITEMID,
+                    sno: item.itemTagSno,
                 };
             });
 
