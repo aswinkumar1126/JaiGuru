@@ -24,10 +24,10 @@ import ManageEmployees from '../../admin/pages/employee/manage/ManageEmployees';
 import Unauthorized from '../../admin/pages/unauthorized/Unauthorized';
 import UserDetails from '../../admin/pages/dashboard/userDetails';
 import NewAdminHeader from '../../admin/components/head/header';
+import OrderStatusManagement from '../../admin/pages/order/orderStatus';
+import { PendingOrdersPage, ShippedOrdersPage, DeliveredOrdersPage, CancelledOrdersPage, TotalRevenuePage, TodayRevenuePage, MonthlySalesPage } from '../../admin/pages/order/OrderPages';
 
 import './AdminRoutes.css';
-import OrderManagement from '../../admin/pages/order/AllOrderPage';
-import OrderStatusManagement from '../../admin/pages/order/orderStatus';
 
 const AdminRoutes = () => {
     const { isSidebarOpen, setIsSidebarOpen, themeMode } = useContext(MyContext);
@@ -96,8 +96,15 @@ const AdminRoutes = () => {
 
                         {/* Open admin routes */}
                         <Route path="userDetails" element={<UserDetails />} />
-                        <Route path="AllOrderPage" element={<OrderStatusManagement />} />
                         <Route path="order/status" element={<OrderStatusManagement />} />
+                        <Route path="AllOrderPage" element={<OrderStatusManagement />} />
+                        <Route path="pendingOrders" element={<PendingOrdersPage />} />
+                        <Route path="deliveredOrders" element={<DeliveredOrdersPage />} />
+                        <Route path="shippedOrders" element={<ShippedOrdersPage />} />
+                        <Route path="cancelledOrders" element={<CancelledOrdersPage />} />
+                        <Route path="totalRevenue" element={<TotalRevenuePage />} />
+                        <Route path="todayRevenue" element={<TodayRevenuePage />} />
+                        <Route path="monthlySales" element={<MonthlySalesPage />} />
                         <Route path="unauthorized" element={<Unauthorized />} />
                         <Route path="*" element={<Navigate to="/admin" replace />} />
                     </Routes>

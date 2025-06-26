@@ -1,58 +1,48 @@
-import React, { useEffect, useState, Suspense } from 'react';
+import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import './DashboardCards.css';
 import { getDashboardData } from '../../service/dashBoardService';
 import {
     FaUsers, FaShoppingCart, FaClock,
     FaCheckCircle, FaTruck, FaTimesCircle,
-    FaChartLine, FaChevronUp, FaChevronDown
+    FaChartLine, FaChevronUp, FaChevronDown,
+    FaRedo, FaExternalLinkAlt
 } from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
 import Loader from './Loader';
 import { Link } from 'react-router-dom';
-const Chart = React.lazy(() => import('react-apexcharts'));
 
 const DashboardCards = () => {
     const [dashboardData, setDashboardData] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [activeView, setActiveView] = useState('cards');
     const [selectedMetric, setSelectedMetric] = useState(null);
-    const [timeRange, setTimeRange] = useState('week');
-    const [trendData, setTrendData] = useState({});
+    const [lastUpdated, setLastUpdated] = useState(null);
+    const [hoveredCard, setHoveredCard] = useState(null);
 
-    const generateTimeCategories = (range) => {
-        const now = new Date();
-        const categories = [];
-        const days = range === 'week' ? 7 : range === 'month' ? 30 : 90;
+    // Professional number formatter with currency support
+    const formatNumber = useCallback((num, options = {}) => {
+        const { isCurrency = false, currency = 'USD' } = options;
 
-        for (let i = days - 1; i >= 0; i--) {
-            const date = new Date(now);
-            date.setDate(date.getDate() - i);
+        if (isNaN(num) || num === null) return '-';
 
-            if (range === 'week') {
-                categories.push(date.toLocaleDateString('en-US', { weekday: 'short' }));
-            } else if (range === 'month' && (i % 5 === 0 || i === days - 1)) {
-                categories.push(date.toLocaleDateString('en-US', { day: 'numeric', month: 'short' }));
-            } else if (range === 'quarter' && (i % 15 === 0 || i === days - 1)) {
-                categories.push(date.toLocaleDateString('en-US', { month: 'short' }));
-            } else {
-                categories.push('');
-            }
+        if (isCurrency) {
+            return new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency,
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            }).format(num);
         }
 
-        return categories;
-    };
-
-    const formatNumber = (num) => {
         if (num >= 1000000) return `${(num / 1000000).toFixed(1)}M`;
         if (num >= 1000) return `${(num / 1000).toFixed(1)}K`;
-        return num.toString();
-    };
+        return num.toLocaleString();
+    }, []);
 
-    const calculateChange = (trend, cardId, dashboardData) => {
-        // Use the percentage from API if available
+    // Enhanced change calculator with neutral threshold
+    const calculateChange = useCallback((cardId, dashboardData) => {
         const percentageMap = {
-            totalOrders:dashboardData?.totalPercentage,
+            totalOrders: dashboardData?.totalPercentage ,
             pendingOrders: dashboardData?.pendingPercentage,
             deliveredOrders: dashboardData?.deliveredPercentage,
             shippedOrders: dashboardData?.shippedPercentage,
@@ -63,470 +53,375 @@ const DashboardCards = () => {
             const percentageValue = parseFloat(percentageMap[cardId]);
             return {
                 value: Math.abs(percentageValue),
-                direction: percentageValue > 0 ? 'up' : percentageValue < 0 ? 'down' : 'neutral'
+                direction: percentageValue > 5 ? 'up' : percentageValue < -5 ? 'down' : 'neutral'
             };
         }
 
-        // Fallback to trend calculation if no percentage from API
-        if (!trend || trend.length < 2) return { value: 0, direction: 'neutral' };
-
-        const current = trend[trend.length - 1];
-        const previous = trend[trend.length - 2];
-        const change = previous !== 0 ? ((current - previous) / previous) * 100 : 100;
-
-        return {
-            value: Math.abs(Math.round(change)),
-            direction: change > 0 ? 'up' : change < 0 ? 'down' : 'neutral'
-        };
-    };
-
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                setIsLoading(true);
-                setError(null);
-                const data = await getDashboardData();
-                console.log('trans', data);
-
-                const transformedData = {
-                    totalUsers: data.totalUsers?.totalUsers || 0,
-                    totalOrders: data.totalOrders?.totalOrders || 0,
-
-                    // Order counts
-                    pendingOrders: data.pendingOrders?.totalPending || 0,
-                    deliveredOrders: data.deliveredOrders?.deliveredOrders?.length || 0,
-                    shippedOrders: data.shippedOrders?.shippedOrders?.length || 0,
-                    cancelledOrders: data.cancelledOrders?.cancelledOrders?.length || 0,
-
-                    // Percentages (optional, if you want to show them)
-                    totalPercentage:data.totalOrders?.totalPercentage || '0%',
-                    pendingPercentage: data.pendingOrders?.pendingPercentage || '0%',
-                    deliveredPercentage: data.deliveredOrders?.deliveredPercentage || '0%',
-                    shippedPercentage: data.shippedOrders?.ShippedPercentage || '0%',
-                    cancelledPercentage: data.cancelledOrders?.cancelledPercentage || '0%',
-
-                    // Additional metrics
-                    conversionRate: data.conversionRate || 0,
-                    avgOrderValue: data.avgOrderValue || 0,
-                    trends: data.trends || generateDefaultTrends(data),
-                };
-
-                setDashboardData(transformedData);
-                setTrendData(transformedData.trends);
-            } catch (err) {
-                console.error('Failed to fetch dashboard data:', err);
-                setError('Failed to load dashboard data. Please try again later.');
-            } finally {
-                setIsLoading(false);
-            }
-        };
-
-        const generateDefaultTrends = (data) => {
-            const metrics = [
-                'totalUsers', 'totalOrders', 'pendingOrders',
-                'deliveredOrders', 'shippedOrders', 'cancelledOrders',
-                'conversionRate', 'avgOrderValue'
-            ];
-
-            return metrics.reduce((acc, metric) => {
-                const currentValue = data[metric] || 0;
-                acc[metric] = {
-                    week: generateRandomTrend(7, currentValue),
-                    month: generateRandomTrend(30, currentValue),
-                    quarter: generateRandomTrend(90, currentValue)
-                };
-                return acc;
-            }, {});
-        };
-
-        const generateRandomTrend = (days, currentValue) => {
-            return Array.from({ length: days }, (_, i) => {
-                const progress = i / (days - 1);
-                return Math.max(0, Math.round(
-                    currentValue * (0.7 + Math.random() * 0.6) * progress
-                ));
-            });
-        };
-
-        fetchData();
+        return { value: 0, direction: 'neutral' };
     }, []);
 
-    console.log(dashboardData);
-    const cardsData = dashboardData ? [
-        {
-            id: 'totalUsers',
-            title: 'Total Users',
-            value: dashboardData.totalUsers,
-            icon: <FaUsers />,
-            detail: 'Active registered users in the system',
-            color: '#3498db',
-            link: 'userDetails'
-        },
-        {
-            id: 'totalOrders',
-            title: 'Total Orders',
-            value: dashboardData.totalOrders,
-            icon: <FaShoppingCart />,
-            detail: 'All orders placed in the system',
-            color: '#2ecc71',
-            link: 'AllOrderPage'
-        },
-        {
-            id: 'pendingOrders',
-            title: 'Pending Orders',
-            value: dashboardData.pendingOrders,
-            icon: <FaClock />,
-            detail: 'Orders awaiting processing',
-            color: '#f1c40f'
-        },
-        {
-            id: 'deliveredOrders',
-            title: 'Delivered Orders',
-            value: dashboardData.deliveredOrders,
-            icon: <FaCheckCircle />,
-            detail: 'Orders successfully delivered',
-            color: '#27ae60'
-        },
-        {
-            id: 'shippedOrders',
-            title: 'Shipped Orders',
-            value: dashboardData.shippedOrders,
-            icon: <FaTruck />,
-            detail: 'Orders currently in transit',
-            color: '#2980b9'
-        },
-        {
-            id: 'cancelledOrders',
-            title: 'Cancelled Orders',
-            value: dashboardData.cancelledOrders,
-            icon: <FaTimesCircle />,
-            detail: 'Orders cancelled by users or system',
-            color: '#e74c3c'
-        }
-    ] : [];
+    // Memoized cards data with professional color scheme
+    const cardsData = useMemo(() => {
+        if (!dashboardData) return [];
 
-    const getChartOptions = (metricId) => {
-        const metric = cardsData.find(m => m.id === metricId);
-        return {
-            chart: {
-                height: '100%',
-                type: 'area',
-                toolbar: { show: false },
-                zoom: { enabled: false },
-                animations: { enabled: true, easing: 'easeout', speed: 800 }
+        return [
+            {
+                id: 'totalUsers',
+                title: 'Total Users',
+                value: dashboardData.totalUsers,
+                icon: <FaUsers />,
+                detail: 'Active registered users in the system',
+                color: '#4e73df',
+                link: 'userDetails',
+                trend: generateRandomTrend(7, dashboardData.totalUsers)
             },
-            colors: [metric.color],
-            dataLabels: { enabled: false },
-            stroke: { curve: 'smooth', width: 2 },
-            fill: {
-                type: 'gradient',
-                gradient: {
-                    shadeIntensity: 1,
-                    opacityFrom: 0.7,
-                    opacityTo: 0.3,
-                }
+            {
+                id: 'totalOrders',
+                title: 'Total Orders',
+                value: dashboardData.totalOrders,
+                icon: <FaShoppingCart />,
+                detail: 'All orders placed in the system',
+                color: '#1cc88a',
+                link: 'AllOrderPage',
+                trend: generateRandomTrend(7, dashboardData.totalOrders)
             },
-            xaxis: {
-                categories: generateTimeCategories(timeRange),
-                labels: { style: { colors: '#7f8c8d' } },
-                tooltip: { enabled: false }
+            {
+                id: 'pendingOrders',
+                title: 'Pending Orders',
+                value: dashboardData.pendingOrders,
+                icon: <FaClock />,
+                detail: 'Orders awaiting processing',
+                color: '#f6c23e',
+                link: 'pendingOrders',
+                trend: generateRandomTrend(7, dashboardData.pendingOrders)
             },
-            yaxis: {
-                labels: {
-                    style: { colors: '#7f8c8d' },
-                    formatter: (value) => formatNumber(value)
-                }
+            {
+                id: 'deliveredOrders',
+                title: 'Delivered Orders',
+                value: dashboardData.deliveredOrders,
+                icon: <FaCheckCircle />,
+                detail: 'Orders successfully delivered',
+                color: '#36b9cc',
+                link: 'deliveredOrders',
+                trend: generateRandomTrend(7, dashboardData.deliveredOrders)
             },
-            tooltip: {
-                y: { formatter: (value) => formatNumber(value) }
+            {
+                id: 'shippedOrders',
+                title: 'Shipped Orders',
+                value: dashboardData.shippedOrders,
+                icon: <FaTruck />,
+                detail: 'Orders currently in transit',
+                color: '#858796',
+                link: 'shippedOrders',
+                trend: generateRandomTrend(7, dashboardData.shippedOrders)
             },
-            grid: {
-                borderColor: '#f1f1f1',
-                strokeDashArray: 3
-            },
-            responsive: [{
-                breakpoint: 768,
-                options: {
-                    chart: { height: 250 },
-                    xaxis: { labels: { show: false } }
-                }
-            }]
-        };
-    };
+            {
+                id: 'cancelledOrders',
+                title: 'Cancelled Orders',
+                value: dashboardData.cancelledOrders,
+                icon: <FaTimesCircle />,
+                detail: 'Orders cancelled by users or system',
+                color: '#e74a3b',
+                link: 'cancelledOrders',
+                trend: generateRandomTrend(7, dashboardData.cancelledOrders)
+            }
+        ].filter(card => !isNaN(card.value));
+    }, [dashboardData]);
+
+    const fetchData = useCallback(async () => {
+        try {
+            setIsLoading(true);
+            setError(null);
+            const data = await getDashboardData();
+            console.log("dashboard",data);
+            setLastUpdated(new Date());
+
+            const transformedData = {
+                totalUsers: data.totalUsers?.totalUsers || 0,
+                totalOrders: data.totalOrders?.totalOrders || 0,
+                pendingOrders: data.pendingOrders?.totalPending || 0,
+                deliveredOrders: data.deliveredOrders?.deliveredOrders?.length || 0,
+                shippedOrders: data.shippedOrders?.shippedOrders?.length || 0,
+                cancelledOrders: data.cancelledOrders?.total || 0,
+                totalPercentage: data.totalOrders?.totalPercentage || '0%',
+                pendingPercentage: data.pendingOrders?.pendingPercentage || '0%',
+                deliveredPercentage: data.deliveredOrders?.deliveredPercentage || '0%',
+                shippedPercentage: data.shippedOrders?.ShippedPercentage || '0%',
+                cancelledPercentage: data.cancelledOrders?.cancelledPercentage || '0%',
+            };
+
+            setDashboardData(transformedData);
+        } catch (err) {
+            console.error('Failed to fetch dashboard data:', err);
+            setError('Failed to load dashboard data. Please try again later.');
+        } finally {
+            setIsLoading(false);
+        }
+    }, []);
+
+    useEffect(() => {
+        fetchData();
+
+        // Auto-refresh every 5 minutes
+        const interval = setInterval(fetchData, 300000);
+        return () => clearInterval(interval);
+    }, [fetchData]);
+
+    function generateRandomTrend(days, currentValue) {
+        return Array.from({ length: days }, (_, i) => {
+            const progress = i / (days - 1);
+            return Math.max(0, Math.round(
+                currentValue * (0.7 + Math.random() * 0.6) * progress
+            ));
+        });
+    }
 
     if (error) {
         return (
-            <div className="dashboard-error">
+            <motion.div
+                className="dashboard-error"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.5 }}
+            >
                 <div className="error-message">
+                    <FaTimesCircle className="error-icon" />
+                    <h3>Data Loading Error</h3>
                     <p>{error}</p>
-                    <button onClick={() => window.location.reload()}>Retry</button>
+                    <motion.button
+                        onClick={fetchData}
+                        className="retry-btn"
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                    >
+                        <FaRedo className="mr-2" />
+                        Retry
+                    </motion.button>
                 </div>
-            </div>
+            </motion.div>
         );
     }
 
     return (
         <div className="dashboard-container">
             <div className="dashboard-header">
-                <h1>Business Overview</h1>
-                <div className="controls">
-                    <div className="view-toggle">
-                        <button
-                            onClick={() => setActiveView('cards')}
-                            className={`toggle-btn ${activeView === 'cards' ? 'active' : ''}`}
-                            aria-label="Cards view"
-                        >
-                            Cards View
-                        </button>
-                        <button
-                            onClick={() => {
-                                setActiveView('analytics');
-                                if (cardsData.length > 0 && !selectedMetric) {
-                                    setSelectedMetric(cardsData[0].id);
-                                }
-                            }}
-                            className={`toggle-btn ${activeView === 'analytics' ? 'active' : ''}`}
-                            aria-label="Analytics view"
-                        >
-                            Analytics View
-                        </button>
-                    </div>
-
-                    {activeView === 'analytics' && (
-                        <div className="time-range-selector">
-                            {['week', 'month', 'quarter'].map((range) => (
-                                <button
-                                    key={range}
-                                    onClick={() => setTimeRange(range)}
-                                    className={`range-btn ${timeRange === range ? 'active' : ''}`}
-                                    aria-label={`Show ${range} data`}
-                                >
-                                    {range.charAt(0).toUpperCase() + range.slice(1)}
-                                </button>
-                            ))}
-                        </div>
+                <motion.div
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5 }}
+                >
+                    <h1>Business Overview</h1>
+                    {lastUpdated && (
+                        <p className="last-updated">
+                            Last updated: {lastUpdated.toLocaleTimeString()} on {lastUpdated.toLocaleDateString()}
+                        </p>
                     )}
-                </div>
+                </motion.div>
             </div>
 
             {isLoading ? (
-                <div className="loading-state">
+                <motion.div
+                    className="loading-state"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                >
                     <Loader />
                     <p>Loading dashboard data...</p>
-                </div>
-            ) : activeView === 'cards' ? (
+                </motion.div>
+            ) : (
                 <motion.div
                     className="cards-grid"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
-                    transition={{ duration: 0.3 }}
+                    transition={{ duration: 0.5, staggerChildren: 0.1 }}
                 >
-                    {cardsData.map((card) => (
+                    {cardsData.map((card, index) => (
                         <DashboardCard
                             key={card.id}
                             card={card}
+                            index={index}
                             isSelected={selectedMetric === card.id}
                             onSelect={setSelectedMetric}
-                            trend={trendData[card.id]?.week || []}
-                            onViewAnalytics={() => {
-                                setActiveView('analytics');
-                                setSelectedMetric(card.id);
-                            }}
+                            isHovered={hoveredCard === card.id}
+                            onHover={setHoveredCard}
                             calculateChange={calculateChange}
                             formatNumber={formatNumber}
                             dashboardData={dashboardData}
                         />
                     ))}
                 </motion.div>
-            ) : (
-                <AnalyticsView
-                    cardsData={cardsData}
-                    selectedMetric={selectedMetric}
-                    setSelectedMetric={setSelectedMetric}
-                    timeRange={timeRange}
-                    trendData={trendData}
-                    getChartOptions={getChartOptions}
-                    formatNumber={formatNumber}
-                    calculateChange={calculateChange}
-                    dashboardData={dashboardData}
-                />
             )}
         </div>
     );
 };
 
-const DashboardCard = ({ card, isSelected, onSelect, trend, onViewAnalytics, calculateChange, formatNumber, dashboardData }) => {
-    const change = calculateChange(trend, card.id, dashboardData);
+const DashboardCard = React.memo(({
+    card,
+    index,
+    isSelected,
+    onSelect,
+    isHovered,
+    onHover,
+    calculateChange,
+    formatNumber,
+    dashboardData
+}) => {
+    const change = calculateChange(card.id, dashboardData);
+    const [isAnimating, setIsAnimating] = useState(false);
+
+    const handleClick = () => {
+        setIsAnimating(true);
+        setTimeout(() => {
+            onSelect(isSelected ? null : card.id);
+            setIsAnimating(false);
+        }, 300);
+    };
 
     return (
         <motion.div
-            className={`card ${isSelected ? 'selected' : ''}`}
-            whileHover={{ y: -5 }}
-            onClick={() => onSelect(isSelected ? null : card.id)}
-            style={{ borderTop: `4px solid ${card.color}` }}
+            className={`card ${isSelected ? 'selected' : ''} ${isHovered ? 'hovered' : ''}`}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{
+                opacity: 1,
+                y: 0,
+                scale: isAnimating ? (isSelected ? 0.95 : 1.05) : 1
+            }}
+            transition={{
+                duration: 0.3,
+                delay: index * 0.1,
+                type: 'spring',
+                stiffness: 100
+            }}
+            whileHover={{
+                y: -5,
+                boxShadow: '0 10px 20px rgba(0,0,0,0.1)'
+            }}
+            onClick={handleClick}
+            onMouseEnter={() => onHover(card.id)}
+            onMouseLeave={() => onHover(null)}
+            style={{
+                borderTop: `4px solid ${card.color}`,
+                transformOrigin: 'center bottom'
+            }}
             layout
         >
             <div className="card-header">
-                <div className="card-icon" style={{ backgroundColor: `${card.color}20` }}>
+                <motion.div
+                    className="card-icon"
+                    style={{
+                        backgroundColor: `${card.color}20`,
+                        color: card.color
+                    }}
+                    whileHover={{ rotate: 15 }}
+                >
                     {card.icon}
-                </div>
-                <div className={`change-indicator ${change.direction}`}>
-                    {change.direction === 'up' ? <FaChevronUp /> : <FaChevronDown />}
+                </motion.div>
+                <motion.div
+                    className={`change-indicator ${change.direction}`}
+                    whileHover={{ scale: 1.1 }}
+                >
+                    {change.direction === 'up' ? (
+                        <FaChevronUp />
+                    ) : change.direction === 'down' ? (
+                        <FaChevronDown />
+                    ) : null}
                     {change.value}%
-                </div>
+                </motion.div>
             </div>
+
             <h3>{card.title}</h3>
-            <Link to={`${card.link}`} title="View details" style={{ textDecoration: 'none', color: 'green', fontWeight: '600' }} >Details</Link>
-            <p>{formatNumber(card.value)}</p>
+
+            <motion.div
+                whileHover={{ x: 5 }}
+                transition={{ type: 'spring', stiffness: 300 }}
+            >
+                <Link to={`${card.link}`} className="card-link">
+                    View Details <FaExternalLinkAlt />
+                </Link>
+            </motion.div>
+
+            <p className="card-value">{formatNumber(card.value)}</p>
 
             <AnimatePresence>
                 {isSelected && (
                     <motion.div
                         className="card-detail"
                         initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: 'auto' }}
-                        exit={{ opacity: 0, height: 0 }}
+                        animate={{
+                            opacity: 1,
+                            height: 'auto',
+                            transition: {
+                                opacity: { duration: 0.2 },
+                                height: { duration: 0.3 }
+                            }
+                        }}
+                        exit={{
+                            opacity: 0,
+                            height: 0,
+                            transition: {
+                                opacity: { duration: 0.1 },
+                                height: { duration: 0.2 }
+                            }
+                        }}
                     >
-                        <p>{card.detail}</p>
-                        <div className="mini-chart">
-                            <Suspense fallback={<div className="chart-placeholder" />}>
-                                <Chart
-                                    options={{
-                                        chart: { sparkline: { enabled: true } },
-                                        stroke: { curve: 'smooth', width: 2 },
-                                        colors: [card.color],
-                                        tooltip: { enabled: false },
-                                        xaxis: { labels: { show: false } },
-                                        yaxis: { show: false }
-                                    }}
-                                    series={[{ name: card.title, data: trend.slice(-7) }]}
-                                    type="area"
-                                    height="80px"
-                                />
-                            </Suspense>
-                        </div>
-                        <button
-                            className="action-btn"
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                onViewAnalytics();
-                            }}
-                            aria-label={`View ${card.title} analytics`}
+                        <p className="card-description">{card.detail}</p>
+
+                        <motion.div
+                            className="mini-trend"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ delay: 0.2 }}
                         >
-                            View Full Analytics <FaChartLine />
-                        </button>
+                            <div className="trend-line-container">
+                                {card.trend.map((value, i) => (
+                                    <motion.div
+                                        key={i}
+                                        className="trend-line"
+                                        initial={{ height: 0 }}
+                                        animate={{
+                                            height: `${Math.min(100, (value / Math.max(...card.trend)) * 100)}%`,
+                                            transition: {
+                                                delay: i * 0.05,
+                                                type: 'spring',
+                                                damping: 10
+                                            }
+                                        }}
+                                        style={{ backgroundColor: card.color }}
+                                    />
+                                ))}
+                            </div>
+                        </motion.div>
+
+                        <motion.button
+                            className="action-btn"
+                            whileHover={{
+                                scale: 1.05,
+                                boxShadow: `0 2px 10px ${card.color}40`
+                            }}
+                            whileTap={{ scale: 0.95 }}
+                            style={{ backgroundColor: `${card.color}20`, color: card.color }}
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            <FaChartLine className="mr-2" />
+                            View Full Report
+                        </motion.button>
                     </motion.div>
                 )}
             </AnimatePresence>
+
+            {/* Glow effect */}
+            {isHovered && (
+                <motion.div
+                    className="card-glow"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 0.3 }}
+                    exit={{ opacity: 0 }}
+                    style={{ backgroundColor: card.color }}
+                />
+            )}
         </motion.div>
     );
-};
-
-const AnalyticsView = ({
-    cardsData,
-    selectedMetric,
-    setSelectedMetric,
-    timeRange,
-    trendData,
-    getChartOptions,
-    formatNumber,
-    calculateChange,
-    dashboardData
-}) => {
-    const currentMetric = cardsData.find(m => m.id === selectedMetric);
-    const currentTrend = trendData[selectedMetric]?.[timeRange] || [];
-    const change = calculateChange(currentTrend, selectedMetric, dashboardData);
-
-    if (!currentMetric) {
-        return (
-            <div className="no-metric-selected">
-                <p>Please select a metric to view analytics</p>
-            </div>
-        );
-    }
-
-    return (
-        <div className="analytics-view">
-            <div className="metrics-selector">
-                {cardsData.map((card) => (
-                    <button
-                        key={card.id}
-                        className={`metric-btn ${selectedMetric === card.id ? 'active' : ''}`}
-                        onClick={() => setSelectedMetric(card.id)}
-                        style={selectedMetric === card.id ? {
-                            backgroundColor: card.color,
-                            borderColor: card.color
-                        } : {}}
-                        aria-label={`View ${card.title} analytics`}
-                    >
-                        {card.title}
-                    </button>
-                ))}
-            </div>
-
-            <div className="metric-detail-container">
-                <div className="metric-header">
-                    <h2>{currentMetric.title}</h2>
-                    <div className="metric-value-container">
-                        <div className="metric-value">
-                            {formatNumber(currentMetric.value)}
-                        </div>
-                        <div className={`change-indicator-lg ${change.direction}`}>
-                            {change.direction === 'up' ? <FaChevronUp /> : <FaChevronDown />}
-                            {change.value}%
-                            <span>vs previous period</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div className="chart-container">
-                    <Suspense fallback={<div className="chart-loading">Loading chart...</div>}>
-                        <Chart
-                            options={getChartOptions(selectedMetric)}
-                            series={[{ name: currentMetric.title, data: currentTrend }]}
-                            type="area"
-                            height="100%"
-                        />
-                    </Suspense>
-                </div>
-
-                <MetricStats
-                    metric={currentMetric}
-                    trend={currentTrend}
-                    timeRange={timeRange}
-                    formatNumber={formatNumber}
-                />
-            </div>
-        </div>
-    );
-};
-
-const MetricStats = ({ metric, trend, timeRange, formatNumber }) => {
-    const stats = [
-        { label: 'Current', value: metric.value },
-        { label: `Min (${timeRange})`, value: Math.min(...trend) },
-        { label: `Max (${timeRange})`, value: Math.max(...trend) },
-        {
-            label: `Avg (${timeRange})`,
-            value: Math.round(trend.reduce((a, b) => a + b, 0) / Math.max(1, trend.length))
-        },
-    ];
-
-    return (
-        <div className="metric-details">
-            <p>{metric.detail}</p>
-            <div className="stats-grid">
-                {stats.map((stat, index) => (
-                    <div key={index} className="stat-card">
-                        <div className="stat-label">{stat.label}</div>
-                        <div className="stat-value">
-                            {formatNumber(stat.value)}
-                        </div>
-                    </div>
-                ))}
-            </div>
-        </div>
-    );
-};
+});
 
 export default DashboardCards;

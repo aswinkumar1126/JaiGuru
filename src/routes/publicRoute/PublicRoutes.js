@@ -31,6 +31,7 @@ import RefundPolicy from '../../public/pages/RefundPolicy/RefundPolicy';
 import CancellationReturnPolicy from '../../public/pages/CancellationReturnPolicy/CancellationReturnPolicy';
 import DeliveryShippingPolicy from '../../public/pages/DeliveryShippingPolicy/DeliveryShippingPolicy';
 import SearchResultsPage from '../../public/pages/search/SearchResultsPage';
+import NotFound from '../../public/pages/notFound/NotFound';
 
 const PublicRoutes = () => {
     return (
@@ -67,6 +68,8 @@ const PublicRoutes = () => {
                     <Route path="cancel-return" element={<CancellationReturnPolicy />} />
                     <Route path="refund" element={<RefundPolicy />} />
                     <Route path="terms-condition" element={<TermsConditions />} />
+                    {/* 404 Not Found */}
+                    <Route path="*" element={<NotFound />} />
                 </Route>
 
             </Routes>

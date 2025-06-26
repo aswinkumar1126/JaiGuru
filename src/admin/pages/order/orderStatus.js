@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { useAllOrders, useUpdateOrderStatus } from '../../hooks/order/useAllOrder';
 import { jsPDF } from 'jspdf';
-import 'jspdf-autotable';
+import autoTable from 'jspdf-autotable';
 import * as XLSX from 'xlsx-js-style';
 import {
     Table,
@@ -133,6 +133,32 @@ const OrderStatusManagement = () => {
     const { data, isLoading, isError, error, refetch } = useAllOrders(page, rowsPerPage);
     const updateOrderStatus = useUpdateOrderStatus();
 
+    // Normalize order data with fallback values
+    const normalizeOrder = (order = {}) => ({
+        id: order.id || 'N/A',
+        order_id: order.order_id || order.orderId || 'N/A',
+        user_name: order.user_name || order.customerName || 'N/A',
+        contact: order.contact || 'N/A',
+        email: order.email || 'N/A',
+        total_amount: parseFloat(order.total_amount || order.totalAmount || order.amount || 0),
+        status: order.status || 'PENDING',
+        order_time: order.order_time || order.orderTime || order.date || 'N/A',
+        payment_mode: order.payment_mode || 'N/A',
+        address: order.address || 'N/A',
+        orderItems: (order.orderItems || []).map(item => ({
+            product_name: item.product_name || item.productName || 'N/A',
+            quantity: item.quantity || 0,
+            price: parseFloat(item.price || 0),
+            sno: item.sno || 'N/A',
+            tagno: item.tagno || 'N/A',
+            item_id: item.item_id || item.itemid || 'N/A',
+            image_path: item.image_path || null
+        }))
+    });
+
+    // Get normalized orders from API data
+    const orders = (data?.data?.orders || []).map(normalizeOrder);
+
     // Event handlers
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
@@ -156,26 +182,33 @@ const OrderStatusManagement = () => {
     };
 
     // Filter orders based on search term and status filter
-    const filteredOrders = data?.data?.orders?.filter(order => {
-        const matchesSearch =
-            order.order_id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            order.user_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            order.contact.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            order.email.toLowerCase().includes(searchTerm.toLowerCase());
+    const filteredOrders = orders.filter(order => {
+        const searchTermLower = (searchTerm || '').toLowerCase();
+        const orderId = (order.order_id || '').toLowerCase();
+        const userName = (order.user_name || '').toLowerCase();
+        const contact = (order.contact || '').toLowerCase();
+        const email = (order.email || '').toLowerCase();
+        const status = order.status || '';
 
-        const matchesStatus = statusFilter === 'ALL' || order.status === statusFilter;
+        const matchesSearch =
+            orderId.includes(searchTermLower) ||
+            userName.includes(searchTermLower) ||
+            contact.includes(searchTermLower) ||
+            email.includes(searchTermLower);
+
+        const matchesStatus = statusFilter === 'ALL' || status === statusFilter;
 
         return matchesSearch && matchesStatus;
-    }) || [];
+    });
 
     // Modal handlers
     const handleViewOrder = (order) => {
-        setSelectedOrder(order);
+        setSelectedOrder(normalizeOrder(order));
         setOpenViewModal(true);
     };
 
     const handleEditOrder = (order) => {
-        setSelectedOrder(order);
+        setSelectedOrder(normalizeOrder(order));
         setEditForm({
             status: order.status,
             remarks: '',
@@ -240,7 +273,7 @@ const OrderStatusManagement = () => {
         setIsFetchingFullList(true);
         try {
             const response = await orderService.getAllOrders(0, data?.data?.totalOrders || 10000);
-            setFullOrderList(response.data.orders || []);
+            setFullOrderList((response.data.orders || []).map(normalizeOrder));
         } catch (err) {
             console.error('Error fetching full order list:', err);
         } finally {
@@ -295,31 +328,32 @@ const OrderStatusManagement = () => {
         doc.text(`Generated: ${timestamp} ${date}`, 14, 22);
         doc.text(`Total Orders: ${orders.length}`, 14, 28);
 
+        // Main order table headers
         const headers = [
             "S.No",
             "Order ID",
             "Customer",
             "Phone",
-            "Address",
             "Amount",
             "Status",
             "Order Time",
             "Payment"
         ];
 
+        // Main order table data
         const data = orders.map((order, index) => [
             index + 1,
             order.order_id || "N/A",
             order.user_name || "N/A",
             order.contact || "N/A",
-            order.address?.replace(/\n/g, ", ") || "N/A",
             parseFloat(order.total_amount)?.toFixed(2) || "0.00",
             order.status || "N/A",
             order.order_time ? new Date(order.order_time).toLocaleString() : "N/A",
             order.payment_mode || "N/A"
         ]);
 
-        doc.autoTable({
+        // Add main order table
+        autoTable(doc, {
             startY: 34,
             head: [headers],
             body: data,
@@ -342,61 +376,166 @@ const OrderStatusManagement = () => {
                 1: { cellWidth: 32 },   // Order ID
                 2: { cellWidth: 30 },   // Customer
                 3: { cellWidth: 25 },   // Phone
-                4: { cellWidth: 55 },   // Address
-                5: {
-                    cellWidth: 25,      // Amount
-                    halign: "right",
-                    font: "courier",    // Optional for number alignment
-                    fontStyle: "normal"
-                },
-                6: { cellWidth: 25 },   // Status
-                7: { cellWidth: 35 },   // Order Time
-                8: { cellWidth: 25 },   // Payment
+                4: { cellWidth: 25 },   // Amount
+                5: { cellWidth: 25 },   // Status
+                6: { cellWidth: 35 },   // Order Time
+                7: { cellWidth: 25 },   // Payment
             },
             margin: { top: 34, left: 10, right: 10 },
+            didDrawPage: function (data) {
+                // Store the finalY position after drawing the table
+                this.finalY = data.cursor.y;
+            }
+        });
+
+        // Add product details for each order
+        orders.forEach((order, orderIndex) => {
+            if (order.orderItems && order.orderItems.length > 0) {
+                // Get the current y position
+                let currentY = doc.lastAutoTable.finalY || 34;
+
+                // Add a page break if needed
+                if (currentY > 250 || (orderIndex > 0 && orderIndex % 2 === 0)) {
+                    doc.addPage();
+                    currentY = 20; // Reset y position after page break
+                }
+
+                // Product table headers
+                const productHeaders = [
+                    "Product",
+                    "Tag No",
+                    "S.No",
+                    "Quantity",
+                    "Price",
+                    "Total"
+                ];
+
+                // Product table data
+                const productData = order.orderItems.map(item => [
+                    item.product_name || "N/A",
+                    item.tagno || "N/A",
+                    item.sno || "N/A",
+                    item.quantity || 0,
+                    parseFloat(item.price)?.toFixed(2) || "0.00",
+                    (item.quantity * parseFloat(item.price))?.toFixed(2) || "0.00"
+                ]);
+
+                // Add order ID header
+                doc.setFontSize(10);
+                doc.setTextColor(40);
+                doc.text(`Order ID: ${order.order_id} - Products (${order.orderItems.length})`, 14, currentY + 5);
+
+                // Add product table for this order
+                autoTable(doc, {
+                    startY: currentY + 10,
+                    head: [productHeaders],
+                    body: productData,
+                    styles: {
+                        fontSize: 8,
+                        cellPadding: 2,
+                        valign: "middle",
+                    },
+                    headStyles: {
+                        fillColor: [67, 97, 238],
+                        textColor: [255, 255, 255],
+                        fontStyle: "bold",
+                    },
+                    columnStyles: {
+                        0: { cellWidth: 60 },   // Product
+                        1: { cellWidth: 25 },   // Tag No
+                        2: { cellWidth: 25 },   // S.No
+                        3: { cellWidth: 20 },   // Quantity
+                        4: { cellWidth: 20 },   // Price
+                        5: { cellWidth: 20 },   // Total
+                    },
+                    margin: { left: 10, right: 10 }
+                });
+            }
         });
 
         doc.save(`orders_${date}.pdf`);
     };
 
     const exportToExcel = (orders) => {
-        const header = [
+        const workbook = XLSX.utils.book_new();
+
+        // Create main orders sheet
+        const orderHeader = [
             'S.No',
             'Order ID',
             'Customer Name',
             'Phone',
-            'Address',
             'Email',
+            'Address',
             'Amount (₹)',
             'Status',
             'Order Time',
-            'Payment Mode'
+            'Payment Mode',
+            'Product Count'
         ];
 
-        const data = orders.map((order, index) => [
+        const orderData = orders.map((order, index) => [
             index + 1,
             order.order_id || 'N/A',
             order.user_name || 'N/A',
             order.contact || 'N/A',
-            order.address || 'N/A',
             order.email || 'N/A',
-            parseFloat(order.total_amount)?.toFixed(2) || '0.00', // Amount as number, no ₹ prefix
+            order.address || 'N/A',
+            parseFloat(order.total_amount)?.toFixed(2) || '0.00',
             order.status || 'N/A',
             order.order_time ? new Date(order.order_time).toLocaleString() : 'N/A',
-            order.payment_mode || 'N/A'
+            order.payment_mode || 'N/A',
+            order.orderItems?.length || 0
         ]);
 
-        const worksheetData = [header, ...data];
-        const worksheet = XLSX.utils.aoa_to_sheet(worksheetData);
+        const orderSheet = XLSX.utils.aoa_to_sheet([orderHeader, ...orderData]);
+        XLSX.utils.book_append_sheet(workbook, orderSheet, 'Orders');
+
+        // Create products sheet if there are any products
+        const hasProducts = orders.some(order => order.orderItems && order.orderItems.length > 0);
+        if (hasProducts) {
+            const productHeader = [
+                'Order ID',
+                'Product Name',
+                'Tag No',
+                'S.No',
+                'Quantity',
+                'Price',
+                'Total'
+            ];
+
+            const productData = [];
+            orders.forEach(order => {
+                if (order.orderItems && order.orderItems.length > 0) {
+                    order.orderItems.forEach(item => {
+                        productData.push([
+                            order.order_id || 'N/A',
+                            item.product_name || 'N/A',
+                            item.tagno || 'N/A',
+                            item.sno || 'N/A',
+                            item.quantity || 0,
+                            parseFloat(item.price)?.toFixed(2) || '0.00',
+                            (item.quantity * parseFloat(item.price))?.toFixed(2) || '0.00'
+                        ]);
+                    });
+                }
+            });
+
+            const productSheet = XLSX.utils.aoa_to_sheet([productHeader, ...productData]);
+            XLSX.utils.book_append_sheet(workbook, productSheet, 'Products');
+        }
+
+        // Apply styles
+        const ws = workbook.Sheets['Orders'];
 
         // Style header
-        header.forEach((_, colIndex) => {
-            const cellAddress = XLSX.utils.encode_cell({ r: 0, c: colIndex });
-            worksheet[cellAddress] = worksheet[cellAddress] || { v: header[colIndex] };
-            worksheet[cellAddress].s = {
+        const headerRange = XLSX.utils.decode_range(ws['!ref']);
+        for (let C = headerRange.s.c; C <= headerRange.e.c; ++C) {
+            const cellAddress = XLSX.utils.encode_cell({ r: 0, c: C });
+            ws[cellAddress].s = {
                 fill: { fgColor: { rgb: '1976D2' } },
                 font: { bold: true, color: { rgb: 'FFFFFF' }, sz: 11 },
-                alignment: { horizontal: 'center', vertical: 'center', wrapText: true },
+                alignment: { horizontal: 'center', vertical: 'center' },
                 border: {
                     top: { style: 'thin', color: { rgb: '000000' } },
                     bottom: { style: 'thin', color: { rgb: '000000' } },
@@ -404,53 +543,24 @@ const OrderStatusManagement = () => {
                     right: { style: 'thin', color: { rgb: '000000' } },
                 },
             };
-        });
-
-        // Style body cells
-        data.forEach((row, rowIndex) => {
-            row.forEach((cell, colIndex) => {
-                const cellAddress = XLSX.utils.encode_cell({ r: rowIndex + 1, c: colIndex });
-                worksheet[cellAddress] = worksheet[cellAddress] || { v: cell };
-                worksheet[cellAddress].s = {
-                    alignment: {
-                        wrapText: colIndex === 4, // Only wrap address
-                        vertical: 'top',
-                        horizontal: colIndex === 6 ? 'right' : 'left', // Right-align Amount
-                    },
-                    border: {
-                        top: { style: 'thin', color: { rgb: '000000' } },
-                        bottom: { style: 'thin', color: { rgb: '000000' } },
-                        left: { style: 'thin', color: { rgb: '000000' } },
-                        right: { style: 'thin', color: { rgb: '000000' } },
-                    },
-                };
-            });
-        });
+        }
 
         // Set column widths
-        worksheet['!cols'] = [
+        ws['!cols'] = [
             { wch: 8 },   // S.No
-            { wch: 22 },  // Order ID
-            { wch: 28 },  // Customer Name
-            { wch: 22 },  // Phone
-            { wch: 60 },  // Address (wider)
-            { wch: 35 },  // Email
-            { wch: 18 },  // Amount
-            { wch: 18 },  // Status
-            { wch: 28 },  // Order Time
-            { wch: 22 },  // Payment Mode
+            { wch: 22 },   // Order ID
+            { wch: 28 },   // Customer Name
+            { wch: 22 },   // Phone
+            { wch: 35 },   // Email
+            { wch: 60 },   // Address
+            { wch: 18 },   // Amount
+            { wch: 18 },   // Status
+            { wch: 28 },   // Order Time
+            { wch: 22 },   // Payment Mode
+            { wch: 15 }    // Product Count
         ];
 
-        // Adjust row heights for long addresses
-        worksheet['!rows'] = [
-            { hpt: 30 }, // Header
-            ...data.map(row => ({
-                hpt: row[4]?.length > 55 ? 40 : 25  // Row height based on address length
-            }))
-        ];
-
-        const workbook = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(workbook, worksheet, 'Orders');
+        // Save the file
         XLSX.writeFile(workbook, `orders_${new Date().toISOString().slice(0, 10)}.xlsx`);
     };
 
@@ -517,6 +627,14 @@ const OrderStatusManagement = () => {
                 td.order-id {
                     word-break: break-word;
                 }
+                .product-table {
+                    margin-top: 10px;
+                    margin-bottom: 20px;
+                }
+                .product-header {
+                    font-weight: bold;
+                    margin-top: 10px;
+                }
                 @media print {
                     .no-print { display: none; }
                 }
@@ -571,16 +689,53 @@ const OrderStatusManagement = () => {
                             <td>${order.order_time ? new Date(order.order_time).toLocaleString() : 'N/A'}</td>
                             <td>${order.payment_mode || 'N/A'}</td>
                         </tr>
+                        ${order.orderItems && order.orderItems.length > 0 ? `
+                        <tr>
+                            <td colspan="8" style="padding: 0;">
+                                <div class="product-header">Products (${order.orderItems.length})</div>
+                                <table class="product-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Product Name</th>
+                                            <th>Tag No</th>
+                                            <th>S.No</th>
+                                            <th>Quantity</th>
+                                            <th>Price</th>
+                                            <th>Total</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        ${order.orderItems.map(item => `
+                                            <tr>
+                                                <td>${item.product_name || 'N/A'}</td>
+                                                <td>${item.tagno || 'N/A'}</td>
+                                                <td>${item.sno || 'N/A'}</td>
+                                                <td>${item.quantity || 0}</td>
+                                                <td>₹${parseFloat(item.price)?.toFixed(2) || '0.00'}</td>
+                                                <td>₹${(item.quantity * parseFloat(item.price))?.toFixed(2) || '0.00'}</td>
+                                            </tr>
+                                        `).join('')}
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+                        ` : ''}
                     `).join('')}
                 </tbody>
             </table>
+            <script>
+                window.onload = function() {
+                    setTimeout(function() {
+                        window.print();
+                        window.close();
+                    }, 200);
+                };
+            </script>
         </body>
         </html>
         `);
 
         printWindow.document.close();
-        printWindow.focus();
-        printWindow.print();
     };
 
     // Loading and error states
@@ -601,7 +756,7 @@ const OrderStatusManagement = () => {
     }
 
     return (
-        <Box sx={{ width: '100%', overflow: 'hidden', p: 2 }} className="order-management-container">
+        <Box sx={{ width: '100%', overflow: 'hidden', p: 2 }}>
             {/* Header Section */}
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: "center", mb: 2 }}>
                 <Typography variant="h5" component="h2">
@@ -677,7 +832,7 @@ const OrderStatusManagement = () => {
                         <TableRow>
                             <TableCell>Order ID</TableCell>
                             <TableCell>Customer</TableCell>
-                            <TableCell align="center">Amount</TableCell>
+                            <TableCell align="right">Amount</TableCell>
                             <TableCell>Status</TableCell>
                             <TableCell>Order Date</TableCell>
                             <TableCell>Payment Mode</TableCell>
@@ -701,7 +856,7 @@ const OrderStatusManagement = () => {
                                         />
                                     </TableCell>
                                     <TableCell>{new Date(order.order_time).toLocaleString()}</TableCell>
-                                    <TableCell>{order.payment_mode || 'N/A'}</TableCell>
+                                    <TableCell>{order.payment_mode}</TableCell>
                                     <TableCell align="center">
                                         <Stack direction="row" spacing={1} justifyContent="center">
                                             <Tooltip title="View Order">
@@ -792,178 +947,172 @@ const OrderStatusManagement = () => {
             </Dialog>
 
             {/* View Order Modal */}
-            <OrderViewModal
-                open={openViewModal}
-                onClose={handleCloseViewModal}
-                order={selectedOrder}
-            />
+            {selectedOrder && (
+                <Dialog open={openViewModal} onClose={handleCloseViewModal} maxWidth="md" fullWidth>
+                    <DialogTitle>
+                        <Box display="flex" justifyContent="space-between" alignItems="center">
+                            <Typography variant="h6">Order Details - {selectedOrder.order_id}</Typography>
+                            <IconButton onClick={handleCloseViewModal}>
+                                <CloseIcon />
+                            </IconButton>
+                        </Box>
+                    </DialogTitle>
+                    <DialogContent dividers>
+                        <Grid container spacing={3}>
+                            <Grid item xs={12} md={6}>
+                                <Typography variant="subtitle1" gutterBottom>Customer Information</Typography>
+                                <Divider />
+                                <Box mt={1}>
+                                    <Typography><strong>Name:</strong> {selectedOrder.user_name}</Typography>
+                                    <Typography><strong>Contact:</strong> {selectedOrder.contact}</Typography>
+                                    <Typography><strong>Email:</strong> {selectedOrder.email}</Typography>
+                                    <Typography><strong>Address:</strong> {selectedOrder.address || 'N/A'}</Typography>
+                                </Box>
+                            </Grid>
+                            <Grid item xs={12} md={6}>
+                                <Typography variant="subtitle1" gutterBottom>Order Details</Typography>
+                                <Divider />
+                                <Box mt={1}>
+                                    <Typography>
+                                        <strong>Order Date:</strong> {new Date(selectedOrder.order_time).toLocaleString()}
+                                    </Typography>
+                                    <Typography sx={{ mt: 1 }}>
+                                        <strong>Status:</strong>
+                                        <Chip
+                                            label={selectedOrder.status}
+                                            color={getStatusColor(selectedOrder.status)}
+                                            size="small"
+                                            sx={{ ml: 1 }}
+                                        />
+                                    </Typography>
+                                    <Typography><strong>Payment Mode:</strong> {selectedOrder.payment_mode}</Typography>
+                                    <Typography><strong>Amount:</strong> ₹{selectedOrder.total_amount.toFixed(2)}</Typography>
+                                </Box>
+                            </Grid>
+                            <Grid item xs={12}>
+                                <Typography variant="subtitle1" gutterBottom>Products ({selectedOrder.orderItems?.length || 0})</Typography>
+                                <Divider />
+                                <Box mt={1}>
+                                    <TableContainer component={Paper}>
+                                        <Table size="small">
+                                            <TableHead>
+                                                <TableRow>
+                                                    <TableCell>Product</TableCell>
+                                                    <TableCell>Tag No</TableCell>
+                                                    <TableCell>S.No</TableCell>
+                                                    <TableCell align="right">Quantity</TableCell>
+                                                    <TableCell align="right">Price</TableCell>
+                                                    <TableCell align="right">Total</TableCell>
+                                                </TableRow>
+                                            </TableHead>
+                                            <TableBody>
+                                                {selectedOrder.orderItems?.map((item, index) => (
+                                                    <TableRow key={index}>
+                                                        <TableCell>{item.product_name}</TableCell>
+                                                        <TableCell>{item.tagno}</TableCell>
+                                                        <TableCell>{item.sno}</TableCell>
+                                                        <TableCell align="right">{item.quantity}</TableCell>
+                                                        <TableCell align="right">₹{item.price.toFixed(2)}</TableCell>
+                                                        <TableCell align="right">₹{(item.quantity * item.price).toFixed(2)}</TableCell>
+                                                    </TableRow>
+                                                ))}
+                                            </TableBody>
+                                        </Table>
+                                    </TableContainer>
+                                </Box>
+                            </Grid>
+                        </Grid>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={handleCloseViewModal} color="primary">Close</Button>
+                    </DialogActions>
+                </Dialog>
+            )}
 
             {/* Edit Order Modal */}
-            <OrderEditModal
-                open={openEditModal}
-                onClose={handleCloseEditModal}
-                order={selectedOrder}
-                formData={editForm}
-                formError={formError}
-                onChange={handleEditFormChange}
-                onSubmit={handleEditSubmit}
-                isSubmitting={updateOrderStatus.isLoading}
-            />
-        </Box>
-    );
-};
-
-// View Order Modal Component
-const OrderViewModal = ({ open, onClose, order }) => {
-    if (!order) return null;
-
-    return (
-        <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
-            <DialogTitle>
-                <Box display="flex" justifyContent="space-between" alignItems="center">
-                    <Typography variant="h6">Order Details - {order.order_id}</Typography>
-                    <IconButton onClick={onClose}>
-                        <CloseIcon />
-                    </IconButton>
-                </Box>
-            </DialogTitle>
-            <DialogContent dividers>
-                <Grid container spacing={3}>
-                    {/* Customer Information */}
-                    <Grid item xs={12} md={6}>
-                        <Typography variant="subtitle1" gutterBottom>Customer Information</Typography>
-                        <Divider />
-                        <Box mt={1}>
-                            <Typography><strong>Name:</strong> {order.user_name || 'N/A'}</Typography>
-                            <Typography><strong>Contact:</strong> {order.contact || 'N/A'}</Typography>
-                            <Typography><strong>Email:</strong> {order.email || 'N/A'}</Typography>
-                            <Typography><strong>Address:</strong> {order.address || 'N/A'}</Typography>
+            {selectedOrder && (
+                <Dialog open={openEditModal} onClose={handleCloseEditModal} maxWidth="sm" fullWidth>
+                    <DialogTitle>
+                        <Box display="flex" justifyContent="space-between" alignItems="center">
+                            <Typography variant="h6">Edit Order - {selectedOrder.order_id}</Typography>
+                            <IconButton onClick={handleCloseEditModal}>
+                                <CloseIcon />
+                            </IconButton>
                         </Box>
-                    </Grid>
-                    {/* Order Details */}
-                    <Grid item xs={12} md={6}>
-                        <Typography variant="subtitle1" gutterBottom>Order Details</Typography>
-                        <Divider />
-                        <Box mt={1}>
-                            <Typography>
-                                <strong>Order Date:</strong> {order.order_time ? new Date(order.order_time).toLocaleString() : 'N/A'}
-                            </Typography>
-                            <Typography sx={{ mt: 1 }}>
-                                <strong>Status:</strong>
-                                <Chip
-                                    label={order.status || 'N/A'}
-                                    color={order.status ? getStatusColor(order.status) : 'default'}
+                    </DialogTitle>
+                    <DialogContent dividers>
+                        <Grid container spacing={2}>
+                            {formError && (
+                                <Grid item xs={12}>
+                                    <Alert severity="error">{formError}</Alert>
+                                </Grid>
+                            )}
+                            <Grid item xs={12}>
+                                <FormControl fullWidth size="small">
+                                    <InputLabel>Status</InputLabel>
+                                    <Select
+                                        name="status"
+                                        value={editForm.status}
+                                        onChange={handleEditFormChange}
+                                        label="Status"
+                                        disabled={updateOrderStatus.isLoading}
+                                    >
+                                        <MenuItem value="PENDING">Pending</MenuItem>
+                                        <MenuItem value="PROCESSING">Placed</MenuItem>
+                                        <MenuItem value="SHIPPED">Shipped</MenuItem>
+                                        <MenuItem value="DELIVERED">Delivered</MenuItem>
+                                        <MenuItem value="CANCELLED">Cancelled</MenuItem>
+                                    </Select>
+                                </FormControl>
+                            </Grid>
+                            <Grid item xs={12}>
+                                <TextField
+                                    fullWidth
                                     size="small"
-                                    sx={{ ml: 1 }}
+                                    label="Remarks"
+                                    name="remarks"
+                                    value={editForm.remarks}
+                                    onChange={handleEditFormChange}
+                                    multiline
+                                    rows={3}
+                                    placeholder="Enter any remarks about this status change"
+                                    disabled={updateOrderStatus.isLoading}
                                 />
-                            </Typography>
-                            <Typography><strong>Payment Mode:</strong> {order.payment_mode || 'N/A'}</Typography>
-                            <Typography><strong>Amount:</strong> ₹{order.total_amount?.toFixed(2) || '0.00'}</Typography>
-                        </Box>
-                    </Grid>
-                </Grid>
-            </DialogContent>
-            <DialogActions>
-                <Button onClick={onClose} color="primary">Close</Button>
-            </DialogActions>
-        </Dialog>
-    );
-};
-
-// Edit Order Modal Component
-const OrderEditModal = ({
-    open,
-    onClose,
-    order,
-    formData,
-    formError,
-    onChange,
-    onSubmit,
-    isSubmitting
-}) => {
-    if (!order) return null;
-
-    return (
-        <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
-            <DialogTitle>
-                <Box display="flex" justifyContent="space-between" alignItems="center">
-                    <Typography variant="h6">Edit Order - {order.order_id || 'N/A'}</Typography>
-                    <IconButton onClick={onClose}>
-                        <CloseIcon />
-                    </IconButton>
-                </Box>
-            </DialogTitle>
-            <DialogContent dividers>
-                <Grid container spacing={2}>
-                    {formError && (
-                        <Grid item xs={12}>
-                            <Alert severity="error">{formError}</Alert>
+                            </Grid>
+                            <Grid item xs={12}>
+                                <FormControl fullWidth size="small">
+                                    <InputLabel>Payment Mode</InputLabel>
+                                    <Select
+                                        name="paymentMode"
+                                        value={editForm.paymentMode}
+                                        onChange={handleEditFormChange}
+                                        label="Payment Mode"
+                                        disabled={updateOrderStatus.isLoading}
+                                    >
+                                        <MenuItem value="ONLINE">Online</MenuItem>
+                                        <MenuItem value="CASH_ON_DELIVERY">Cash on Delivery</MenuItem>
+                                    </Select>
+                                </FormControl>
+                            </Grid>
                         </Grid>
-                    )}
-                    <Grid item xs={12}>
-                        <FormControl fullWidth size="small">
-                            <InputLabel>Status</InputLabel>
-                            <Select
-                                name="status"
-                                value={formData.status}
-                                onChange={onChange}
-                                label="Status"
-                                disabled={isSubmitting}
-                            >
-                                <MenuItem value="PENDING">Pending</MenuItem>
-                                <MenuItem value="PROCESSING">Placed</MenuItem>
-                                <MenuItem value="SHIPPED">Shipped</MenuItem>
-                                <MenuItem value="DELIVERED">Delivered</MenuItem>
-                                <MenuItem value="CANCELLED">Cancelled</MenuItem>
-                            </Select>
-                        </FormControl>
-                    </Grid>
-                    <Grid item xs={12}>
-                        <TextField
-                            fullWidth
-                            size="small"
-                            label="Remarks"
-                            name="remarks"
-                            value={formData.remarks || ''}
-                            onChange={onChange}
-                            multiline
-                            rows={3}
-                            placeholder="Enter any remarks about this status change"
-                            disabled={isSubmitting}
-                        />
-                    </Grid>
-                    <Grid item xs={12}>
-                        <FormControl fullWidth size="small">
-                            <InputLabel>Payment Mode</InputLabel>
-                            <Select
-                                name="paymentMode"
-                                value={formData.paymentMode}
-                                onChange={onChange}
-                                label="Payment Mode"
-                                disabled={isSubmitting}
-                            >
-                                <MenuItem value="ONLINE">Online</MenuItem>
-                                <MenuItem value="CASH_ON_DELIVERY">Cash on Delivery</MenuItem>
-                            </Select>
-                        </FormControl>
-                    </Grid>
-                </Grid>
-            </DialogContent>
-            <DialogActions>
-                <Button onClick={onClose} disabled={isSubmitting}>
-                    Cancel
-                </Button>
-                <Button
-                    onClick={onSubmit}
-                    color="primary"
-                    variant="contained"
-                    disabled={isSubmitting}
-                    startIcon={isSubmitting ? <CircularProgress size={20} /> : null}
-                >
-                    {isSubmitting ? 'Saving...' : 'Save Changes'}
-                </Button>
-            </DialogActions>
-        </Dialog>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={handleCloseEditModal} disabled={updateOrderStatus.isLoading}>
+                            Cancel
+                        </Button>
+                        <Button
+                            onClick={handleEditSubmit}
+                            color="primary"
+                            variant="contained"
+                            disabled={updateOrderStatus.isLoading}
+                            startIcon={updateOrderStatus.isLoading ? <CircularProgress size={20} /> : null}
+                        >
+                            {updateOrderStatus.isLoading ? 'Saving...' : 'Save Changes'}
+                        </Button>
+                    </DialogActions>
+                </Dialog>
+            )}
+        </Box>
     );
 };
 

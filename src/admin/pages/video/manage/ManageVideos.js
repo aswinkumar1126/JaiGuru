@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useMediaQuery } from 'react-responsive';
 import TablePagination from '@mui/material/TablePagination';
 import {
     useVideosQuery,
@@ -8,12 +9,8 @@ import {
 } from "../../../hooks/video/useVideoQuery";
 import { FaEdit, FaTrash, FaSave, FaTimes, FaPlus, FaSync, FaSearch } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
-import * as XLSX from 'xlsx';
-import { jsPDF } from 'jspdf';
-import 'jspdf-autotable';
 import "./ManageVideos.css";
-import pdfSvg from '../../../assets/svg/pdf-icon-01.svg';
-import xlsSvg from '../../../assets/svg/pdf-icon-04.svg';
+
 const BASE_VIDEO_URL = "https://app.bmgjewellers.com";
 
 const ManageVideos = () => {
@@ -26,6 +23,11 @@ const ManageVideos = () => {
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [searchQuery, setSearchQuery] = useState('');
     const [filteredVideos, setFilteredVideos] = useState([]);
+
+    // Responsive breakpoints
+    const isMobile = useMediaQuery({ maxWidth: 767 });
+    const isTablet = useMediaQuery({ minWidth: 768, maxWidth: 1023 });
+    const isDesktop = useMediaQuery({ minWidth: 1024 });
 
     const { data: videosData, isLoading, error, refetch } = useVideosQuery();
     const { mutate: updateVideo, isLoading: isUpdating } = useUpdateVideoMutation();
@@ -137,89 +139,6 @@ const ManageVideos = () => {
         setPage(0);
     };
 
-    const exportToPDF = () => {
-        try {
-            // Define the table headers
-            const headers = [
-                'ID',
-                'Video title',
-                'Video',
-                'CreatedAt ',
-                
-            ];
-
-            // Prepare the data rows
-            const dataRows = filteredVideos.map(video => [
-                 video.id,
-                 video.title || "Untitled",
-                `${BASE_VIDEO_URL}${video.video_path}`,
-                 new Date(video.created_at).toLocaleString()
-              
-            ]);
-
-            // Create a new PDF document
-            const doc = new jsPDF();
-
-            // Add title
-            doc.setFontSize(18);
-            doc.setTextColor(40);
-            doc.text('Video Management Report', 14, 15);
-
-            // Add the table using autoTable
-            doc.autoTable({
-                head: [headers],
-                body: dataRows,
-                startY: 25,
-                theme: 'grid',
-                headStyles: {
-                    fillColor: [59, 93, 231],
-                    textColor: 255,
-                    fontStyle: 'bold'
-                },
-                alternateRowStyles: {
-                    fillColor: [240, 240, 240]
-                },
-                margin: { top: 30 },
-            });
-
-            // Save the PDF
-            doc.save(`rates_report_${new Date().toISOString().slice(0, 10)}.pdf`);
-
-            // Show success message
-            setSuccessMessage("PDF exported successfully!");
-            setTimeout(() => setSuccessMessage(""), 3000);
-
-        } catch (error) {
-            console.error('Error exporting PDF:', error);
-            setErrorMessage("Failed to export PDF. Please try again.");
-        }
-      };
-    const exportToExcel = () => {
-        const worksheet = XLSX.utils.json_to_sheet(
-            filteredVideos.map(video => ({
-                ID: video.id,
-                Title: video.title || "Untitled",
-                "Video Path": `${BASE_VIDEO_URL}${video.video_path}`,
-                "Created At": new Date(video.created_at).toLocaleString()
-            }))
-        );
-
-        const workbook = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(workbook, worksheet, "Videos");
-
-        const wscols = [
-            { wch: 10 },
-            { wch: 30 },
-            { wch: 50 },
-            { wch: 20 }
-        ];
-        worksheet["!cols"] = wscols;
-
-        XLSX.writeFile(workbook, `videos_${new Date().toISOString().slice(0, 10)}.xlsx`);
-        setSuccessMessage("Excel file exported successfully!");
-        setTimeout(() => setSuccessMessage(""), 3000);
-    };
-
     const paginatedVideos = filteredVideos.slice(
         page * rowsPerPage,
         page * rowsPerPage + rowsPerPage
@@ -274,34 +193,29 @@ const ManageVideos = () => {
                                                 </div>
 
                                                 <div className="add-group">
-                                                    <p
+                                                    <motion.button
+                                                        whileHover={{ scale: 1.05 }}
+                                                        whileTap={{ scale: 0.95 }}
                                                         onClick={() => navigate('/video/add')}
                                                         className="btn btn-primary add-pluss ms-2"
+                                                        aria-label="Add new video"
                                                     >
                                                         <FaPlus />
-                                                    </p>
-                                                    <p
-                                                        href="#"
-                                                        className="btn btn-primary doctor-refresh ms-2"
+                                                        {isDesktop && <span className="ms-1">Add Video</span>}
+                                                    </motion.button>
+                                                    <motion.button
+                                                        whileHover={{ scale: 1.05 }}
+                                                        whileTap={{ scale: 0.95 }}
                                                         onClick={handleRefreshClick}
+                                                        className="btn btn-primary doctor-refresh ms-2"
+                                                        aria-label="Refresh videos"
                                                     >
                                                         <FaSync />
-                                                    </p>
+                                                        {isDesktop && <span className="ms-1">Refresh</span>}
+                                                    </motion.button>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div className="col-auto text-end float-end ms-auto download-grp">
-                                        <img src={pdfSvg} alt="" onClick={exportToPDF}
-                                            className="btn btn-light me-2 export-btn" />
-                                            
-                                        
-                                            
-                                        <img src={xlsSvg} alt=""
-                                            onClick={exportToExcel}
-                                            className="btn btn-light export-btn"
-                                        />
-                                            
                                     </div>
                                 </div>
                             </div>
@@ -338,6 +252,7 @@ const ManageVideos = () => {
                                     <div className="spinner-border text-primary" role="status">
                                         <span className="visually-hidden">Loading...</span>
                                     </div>
+                                    <p className="mt-2">Loading videos...</p>
                                 </div>
                             ) : error ? (
                                 <div className="alert alert-danger">
@@ -352,16 +267,16 @@ const ManageVideos = () => {
                                     <table className="table border-0 custom-table comman-table datatable mb-0">
                                         <thead>
                                             <tr>
-                                                <th>ID</th>
+                                                {!isMobile && <th>ID</th>}
                                                 <th>Video Preview</th>
-                                                <th>Title</th>
+                                                {!isMobile && <th>Title</th>}
                                                 <th>Actions</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             {paginatedVideos.map((video) => (
                                                 <tr key={video.id}>
-                                                    <td>{video.id}</td>
+                                                    {!isMobile && <td>{video.id}</td>}
                                                     <td>
                                                         {selectedId === video.id ? (
                                                             <div className="video-edit-container">
@@ -383,63 +298,80 @@ const ManageVideos = () => {
                                                             <div className="video-preview-container">
                                                                 <video
                                                                     src={`${BASE_VIDEO_URL}${video.video_path}`}
-                                                                    width="120"
-                                                                    height="80"
+                                                                    width={isMobile ? "80" : "120"}
+                                                                    height={isMobile ? "60" : "80"}
                                                                     muted
                                                                     controls={false}
                                                                     className="video-thumbnail"
                                                                     onError={(e) => (e.target.poster = "/fallback-video.jpg")}
                                                                 />
+                                                                {isMobile && (
+                                                                    <div className="mobile-video-title">
+                                                                        {video.title || 'Untitled Video'}
+                                                                    </div>
+                                                                )}
                                                             </div>
                                                         )}
                                                     </td>
-                                                    <td>{video.title || 'Untitled Video'}</td>
+                                                    {!isMobile && <td>{video.title || 'Untitled Video'}</td>}
                                                     <td>
                                                         {selectedId === video.id ? (
                                                             <div className="btn-group">
-                                                                <button
+                                                                <motion.button
+                                                                    whileHover={{ scale: 1.05 }}
+                                                                    whileTap={{ scale: 0.95 }}
                                                                     onClick={() => handleSaveEdit(video.id)}
                                                                     disabled={!editFile || isUpdating}
                                                                     className="btn btn-sm btn-success me-2"
+                                                                    aria-label="Save changes"
                                                                 >
                                                                     {isUpdating ? (
                                                                         <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
                                                                     ) : (
                                                                         <>
-                                                                            <FaSave /> Save
+                                                                            <FaSave /> {!isMobile && "Save"}
                                                                         </>
                                                                     )}
-                                                                </button>
-                                                                <button
+                                                                </motion.button>
+                                                                <motion.button
+                                                                    whileHover={{ scale: 1.05 }}
+                                                                    whileTap={{ scale: 0.95 }}
                                                                     onClick={handleCancelEdit}
                                                                     disabled={isUpdating}
                                                                     className="btn btn-sm btn-secondary"
+                                                                    aria-label="Cancel editing"
                                                                 >
-                                                                    <FaTimes /> Cancel
-                                                                </button>
+                                                                    <FaTimes /> {!isMobile && "Cancel"}
+                                                                </motion.button>
                                                             </div>
                                                         ) : (
                                                             <div className="btn-group">
-                                                                <button
+                                                                <motion.button
+                                                                    whileHover={{ scale: 1.05 }}
+                                                                    whileTap={{ scale: 0.95 }}
                                                                     onClick={() => handleEditClick(video)}
                                                                     disabled={isDeleting}
                                                                     className="btn btn-sm btn-primary me-2"
+                                                                    aria-label="Edit video"
                                                                 >
-                                                                    <FaEdit /> Edit
-                                                                </button>
-                                                                <button
+                                                                    <FaEdit /> {!isMobile && "Edit"}
+                                                                </motion.button>
+                                                                <motion.button
+                                                                    whileHover={{ scale: 1.05 }}
+                                                                    whileTap={{ scale: 0.95 }}
                                                                     onClick={() => handleDelete(video.id)}
                                                                     disabled={isDeleting}
                                                                     className="btn btn-sm btn-danger"
+                                                                    aria-label="Delete video"
                                                                 >
                                                                     {isDeleting ? (
                                                                         <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
                                                                     ) : (
                                                                         <>
-                                                                            <FaTrash /> Delete
+                                                                            <FaTrash /> {!isMobile && "Delete"}
                                                                         </>
                                                                     )}
-                                                                </button>
+                                                                </motion.button>
                                                             </div>
                                                         )}
                                                     </td>
@@ -458,6 +390,7 @@ const ManageVideos = () => {
                                 onPageChange={handleChangePage}
                                 onRowsPerPageChange={handleChangeRowsPerPage}
                                 className="pagination-bar"
+                                labelRowsPerPage={isMobile ? "Rows:" : "Rows per page:"}
                             />
                         </div>
                     </motion.div>
