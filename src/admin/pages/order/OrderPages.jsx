@@ -247,7 +247,7 @@ const OrderPage = ({ orderType, title }) => {
                 parseFloat(order.total_amount)?.toFixed(2) || '0.00',
                 order.status,
                 order.order_time ? new Date(order.order_time).toLocaleString() : 'N/A',
-                order.orderItems.map(item => `${item.product_name} ( ${parseFloat(item.price)?.toFixed(2)})`).join('; ')
+                order.orderItems.map(item => `${item.product_name} (SKU: ${item.item_id}-${item.tagno} )${parseFloat(item.price)?.toFixed(2)}`).join('; ')
             ]);
 
         autoTable(doc, {
@@ -259,7 +259,7 @@ const OrderPage = ({ orderType, title }) => {
             columnStyles: orderType === 'monthlySales'
                 ? { 0: { cellWidth: 20 }, 1: { cellWidth: 60 }, 2: { cellWidth: 60, halign: "right" }, 3: { cellWidth: 60 } }
                 : {
-                    0: { cellWidth: 15 }, 1: { cellWidth: 30 }, 2: { cellWidth: 30 }, 3: { cellWidth: 25 }, 4: { cellWidth: 40 }, 5: { cellWidth: 25, halign: "right" }, 6: { cellWidth: 25 }, 7: { cellWidth: 40 }, 8: { cellWidth: 60 },
+                    0: { cellWidth: 15 }, 1: { cellWidth: 30 }, 2: { cellWidth: 30 }, 3: { cellWidth: 25 }, 4: { cellWidth: 30, halign: "right" }, 5: { cellWidth: 30}, 6: { cellWidth: 25 }, 7: { cellWidth: 60 },
                     margin: { top: 34, left: 10, right: 10 }
                 }});
 
@@ -294,28 +294,37 @@ const OrderPage = ({ orderType, title }) => {
         const worksheetData = [header, ...tableData];
         const worksheet = XLSX.utils.aoa_to_sheet(worksheetData);
 
-        // Style header
+        // Header styling with smaller font for better fit
         header.forEach((_, colIndex) => {
             const cellAddress = XLSX.utils.encode_cell({ r: 0, c: colIndex });
             worksheet[cellAddress] = {
-                v: header[colIndex], s: {
+                v: header[colIndex],
+                s: {
                     fill: { fgColor: { rgb: '1976D2' } },
-                    font: { bold: true, color: { rgb: 'FFFFFF' }, sz: 11 },
-                    alignment: { horizontal: 'center', vertical: 'center' },
-                    border: { top: { style: 'thin' }, bottom: { style: 'thin' }, left: { style: 'thin' }, right: { style: 'thin' } }
+                    font: { bold: true, color: { rgb: 'FFFFFF' }, sz: 10 },  // reduced size
+                    alignment: { horizontal: 'center', vertical: 'center', wrapText: true },
+                    border: {
+                        top: { style: 'thin' },
+                        bottom: { style: 'thin' },
+                        left: { style: 'thin' },
+                        right: { style: 'thin' }
+                    }
                 }
             };
         });
 
-        // Style body
+        // Body styling
         tableData.forEach((row, rowIndex) => {
             row.forEach((cell, colIndex) => {
                 const cellAddress = XLSX.utils.encode_cell({ r: rowIndex + 1, c: colIndex });
                 worksheet[cellAddress] = {
-                    v: cell, s: {
+                    v: cell,
+                    s: {
+                        font: { sz: 9 }, // smaller font size
                         alignment: {
                             horizontal: orderType !== 'monthlySales' && colIndex === 5 ? 'right' : 'left',
-                            vertical: 'top'
+                            vertical: 'top',
+                            wrapText: colIndex === 8 // Only wrap text for 'Items' column
                         },
                         border: {
                             top: { style: 'thin' },
@@ -328,23 +337,37 @@ const OrderPage = ({ orderType, title }) => {
             });
         });
 
-        // Set column widths
+        // Adjust column widths for better layout in landscape mode
         worksheet['!cols'] = orderType === 'monthlySales'
-            ? [{ wch: 8 }, { wch: 30 }, { wch: 20 }, { wch: 20 }]
-            : [
+            ? [
                 { wch: 8 },   // S.No
-                { wch: 30 },  // Order ID
-                { wch: 30 },  // Customer Name
-                { wch: 20 },  // Phone
-                { wch: 30 },  // Email
-                { wch: 20 },  // Amount
-                { wch: 20 },  // Status
-                { wch: 30 },  // Order Time
-                { wch: 60 }   // Items
+                { wch: 25 },  // Month
+                { wch: 15 },  // Sales
+                { wch: 15 }   // Order Count
+            ]
+            : [
+                { wch: 6 },    // S.No
+                { wch: 20 },   // Order ID
+                { wch: 22 },   // Customer Name
+                { wch: 15 },   // Phone
+                { wch: 25 },   // Email
+                { wch: 12 },   // Amount
+                { wch: 12 },   // Status
+                { wch: 22 },   // Order Time
+                { wch: 80 }    // Items (longest, allow wrapping)
             ];
 
+        // Create workbook and save
         const workbook = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(workbook, worksheet, title);
+
+        // Set landscape printing (metadata only; Excel uses it when opening the file)
+        worksheet['!pageSetup'] = {
+            orientation: 'landscape',
+            fitToPage: true,
+            paperSize: 9 // A4
+        };
+
         XLSX.writeFile(workbook, `${orderType}_${new Date().toISOString().slice(0, 10)}.xlsx`);
     };
     
@@ -367,12 +390,12 @@ const OrderPage = ({ orderType, title }) => {
                     .print-meta { font-size: 10px; color: #555; margin: 2px 0; }
                     table { width: 100%; border-collapse: collapse; table-layout: fixed; word-break: break-word; }
                     th, td { border: 1px solid #ccc; padding: 6px 8px; vertical-align: top; }
-                    th { background-color: #1976D2; color: white; font-weight: bold; text-align: center; font-size: 10px; }
+                    th { background-color:rgb(210, 99, 25); color: white; font-weight: bold; text-align: center; font-size: 10px; }
                     td.amount { text-align: right; }
                     @media print { .no-print { display: none; } }
                     ${orderType === 'monthlySales'
                 ? 'col.month { width: 40%; } col.sales { width: 30%; } col.count { width: 30%; }'
-                : 'col.order-id { width: 15%; } col.customer { width: 15%; } col.phone { width: 10%; } col.email { width: 20%; } col.amount { width: 10%; } col.status { width: 10%; } col.time { width: 15%; } col.items { width: 25%; }'}
+                : 'col.order-id { width: 18%; } col.customer { width: 18%; } col.phone { width: 15%; }  col.amount { width: 12%; } col.status { width: 15%; } col.time { width: 15%; } col.items { width: 35%; }'}
                 </style>
             </head>
             <body>
@@ -385,13 +408,13 @@ const OrderPage = ({ orderType, title }) => {
                     <colgroup>
                         ${orderType === 'monthlySales'
                 ? '<col class="month" /><col class="sales" /><col class="count" />'
-                : '<col class="order-id" /><col class="customer" /><col class="phone" /><col class="email" /><col class="amount" /><col class="status" /><col class="time" /><col class="items" />'}
+                : '<col class="order-id" /><col class="customer" /><col class="phone" /><col class="amount" /><col class="status" /><col class="time" /><col class="items" />'}
                     </colgroup>
                     <thead>
                         <tr>
                             ${orderType === 'monthlySales'
                 ? '<th>Month</th><th>Sales (₹)</th><th>Order Count</th>'
-                : '<th>Order ID</th><th>Customer</th><th>Phone</th><th>Email</th><th>Amount (₹)</th><th>Status</th><th>Order Time</th><th>Items</th>'}
+                : '<th>Order ID</th><th>Customer</th><th>Phone</th><th>Amount (₹)</th><th>Status</th><th>Order Time</th><th>Items</th>'}
                         </tr>
                     </thead>
                     <tbody>
@@ -408,11 +431,10 @@ const OrderPage = ({ orderType, title }) => {
                                     <td>${order.order_id}</td>
                                     <td>${order.user_name}</td>
                                     <td>${order.contact}</td>
-                                    <td>${order.email}</td>
                                     <td class="amount">₹${parseFloat(order.total_amount)?.toFixed(2) || '0.00'}</td>
                                     <td>${order.status}</td>
                                     <td>${order.order_time ? new Date(order.order_time).toLocaleString() : 'N/A'}</td>
-                                    <td>${order.orderItems.map(item => `${item.product_name} (Qty: ${item.quantity}, ₹${parseFloat(item.price)?.toFixed(2)})`).join('; ')}</td>
+                                    <td>${order.orderItems.map(item => `${item.product_name} (SKU: ${item.item_id}-${item.tagno}, ₹${parseFloat(item.price)?.toFixed(2)})`).join('; ')}</td>
                                 </tr>
                             `).join('')}
                     </tbody>

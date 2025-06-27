@@ -1,5 +1,5 @@
-// src/pages/WishlistPage.js
 import React from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { useFavorites, useRemoveFavorite } from "../../hook/favorites/useFavoritesQuery";
 import { useSingleProductQuery } from "../../hook/product/useSingleProductQuery";
 import Loading from "../../components/loader/SkeletonLoader";
@@ -11,41 +11,83 @@ import "./WishlistPage.css";
 
 const WishlistPage = () => {
     const { data, isLoading, isError } = useFavorites();
-    
+
     if (isLoading) return <Loading />;
     if (isError) return <Error message="Failed to fetch wishlist" />;
 
     const wishlistItems = data?.data || [];
 
     return (
-        <div className="wishlist-container">
+        <motion.div
+            className="wishlist-container"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5 }}
+        >
             <div className="wishlist-header">
-                <h1 className="wishlist-title">My Wishlist</h1>
-                <div className="wishlist-count">{wishlistItems.length} items</div>
+                <motion.h1
+                    className="wishlist-title"
+                    initial={{ y: -20 }}
+                    animate={{ y: 0 }}
+                    transition={{ delay: 0.1 }}
+                >
+                    My Wishlist
+                </motion.h1>
+                <motion.div
+                    className="wishlist-count"
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ delay: 0.2, type: "spring" }}
+                >
+                    {wishlistItems.length} {wishlistItems.length === 1 ? 'item' : 'items'}
+                </motion.div>
             </div>
-            
+
             {wishlistItems.length === 0 ? (
-                <div className="wishlist-empty-state">
-                    <div className="empty-heart-icon">
+                <motion.div
+                    className="wishlist-empty-state"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.3 }}
+                >
+                    <motion.div
+                        className="empty-heart-icon"
+                        animate={{
+                            scale: [1, 1.1, 1],
+                            rotate: [0, 5, -5, 0]
+                        }}
+                        transition={{
+                            repeat: Infinity,
+                            duration: 2,
+                            repeatDelay: 3
+                        }}
+                    >
                         <FiHeart size={48} />
-                    </div>
+                    </motion.div>
                     <h3>Your Wishlist is Empty</h3>
                     <p>Start saving your favorite items to revisit them later</p>
-                    <Button 
-                        label="Browse Collections" 
-                        variant="primary" 
+                    <Button
+                        label="Browse Collections"
+                        variant="primary"
                         icon={<FiArrowRight />}
-                        onClick={() => window.location.href = "/products"} 
+                        onClick={() => window.location.href = "/products"}
                     />
-                </div>
+                </motion.div>
             ) : (
-                <div className="wishlist-grid">
-                    {wishlistItems.map((sno) => (
-                        <WishlistItem key={sno} sno={sno} />
-                    ))}
-                </div>
+                <motion.div
+                    className="wishlist-grid"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.4 }}
+                >
+                    <AnimatePresence>
+                        {wishlistItems.map((sno) => (
+                            <WishlistItem key={sno} sno={sno} />
+                        ))}
+                    </AnimatePresence>
+                </motion.div>
             )}
-        </div>
+        </motion.div>
     );
 };
 
@@ -56,7 +98,6 @@ const WishlistItem = ({ sno }) => {
     const { mutate: removeFavorite, isLoading: isRemoving } = useRemoveFavorite();
 
     const handleAddToCart = (product) => {
-        // console.log("🛒 Sending to addToCartHandler:", product);
         addToCartHandler({
             itemTagSno: product.SNO,
             itemId: product.ITEMID,
@@ -84,13 +125,29 @@ const WishlistItem = ({ sno }) => {
 
     const firstImage = imageUrls.length > 0 ? baseUrl + imageUrls[0] : "/images/placeholder.png";
 
-    const handleRemove = () => {
+    const handleRemove = (e) => {
+        e.stopPropagation();
         removeFavorite(sno);
     };
 
     return (
-        <div className="wishlist-card">
-            <div className="card-image-container">
+        <motion.div
+            className="wishlist-card"
+            layout
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.9 }}
+            transition={{ duration: 0.3 }}
+            whileHover={{
+                y: -5,
+                boxShadow: "0 10px 25px rgba(0,0,0,0.1)"
+            }}
+        >
+            <motion.div
+                className="card-image-container"
+                whileHover={{ scale: 1.02 }}
+                transition={{ duration: 0.3 }}
+            >
                 <img
                     src={firstImage}
                     alt={product.ITEMNAME}
@@ -99,36 +156,54 @@ const WishlistItem = ({ sno }) => {
                         e.target.src = "/fallback.jpg";
                     }}
                 />
-                <button 
-                    className="remove-button" 
+                <motion.button
+                    className="remove-button"
                     onClick={handleRemove}
                     disabled={isRemoving}
                     aria-label="Remove from wishlist"
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
                 >
                     <FiTrash2 size={18} />
-                    
-                </button>
-            </div>
-            
+                </motion.button>
+            </motion.div>
+
             <div className="card-details">
-                <h3 className="product-title">{product.ITEMNAME}</h3>
+                <motion.h3
+                    className="product-title"
+                    whileHover={{ color: '#d4af37' }}
+                    transition={{ duration: 0.3 }}
+                >
+                    {product.ITEMNAME}
+                </motion.h3>
                 <div className="product-meta">
-                    <span className="tag-no">Tag: {product.SNO}</span>
                     <span className="weight">{product.NETWT}g</span>
                 </div>
                 <div className="price-container">
-                    <span className="price">₹{Number(product.GrandTotal).toFixed(2)}</span>
+                    <motion.span
+                        className="price"
+                        initial={{ scale: 0.9 }}
+                        animate={{ scale: 1 }}
+                        transition={{ delay: 0.2 }}
+                    >
+                        ₹{Number(product.GrandTotal).toFixed(2)}
+                    </motion.span>
                 </div>
-                
-                <Button 
-                    variant="secondary"
-                    label="Add to Bag"
-                    icon={<FiShoppingBag size={16} />}
-                    onClick={() => handleAddToCart(product)}
-                    fullWidth
-                />
+
+                <motion.div
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                >
+                    <Button
+                        variant="secondary"
+                        label="Add to Bag"
+                        icon={<FiShoppingBag size={16} />}
+                        onClick={() => handleAddToCart(product)}
+                        fullWidth
+                    />
+                </motion.div>
             </div>
-        </div>
+        </motion.div>
     );
 };
 

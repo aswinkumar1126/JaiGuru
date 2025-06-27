@@ -30,7 +30,7 @@
 }
 
 .subtitle {
-    color: var(--secondary-color) !important;
+    color:black !important;
     font-size: 1.1rem;
     max-width: 600px;
     margin: 0 auto;
@@ -44,6 +44,7 @@
 }
 
 .subtitle animate-subtitle {
+   
     animation: fadeIn 1.5s ease-out;
 }
 

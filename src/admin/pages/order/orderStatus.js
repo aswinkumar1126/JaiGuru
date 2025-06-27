@@ -1,5 +1,6 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useAllOrders, useUpdateOrderStatus } from '../../hooks/order/useAllOrder';
+import { orderService } from '../../service/orderService';
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import * as XLSX from 'xlsx-js-style';
@@ -37,6 +38,8 @@ import {
     Radio,
     RadioGroup,
     FormControlLabel,
+    Collapse,
+    Avatar
 } from '@mui/material';
 import {
     Print as PrintIcon,
@@ -51,9 +54,10 @@ import {
     LastPage,
     Edit as EditIcon,
     Visibility as ViewIcon,
+    ExpandMore,
+    ExpandLess
 } from '@mui/icons-material';
 import { useTheme } from '@mui/material/styles';
-import { orderService } from '../../service/orderService';
 import './OrderManagement.css';
 
 // Custom pagination actions component
@@ -127,6 +131,7 @@ const OrderStatusManagement = () => {
         paymentMode: '',
     });
     const [formError, setFormError] = useState('');
+    const [expandedRows, setExpandedRows] = useState({});
     const tableRef = useRef();
 
     // API hooks
@@ -152,12 +157,39 @@ const OrderStatusManagement = () => {
             sno: item.sno || 'N/A',
             tagno: item.tagno || 'N/A',
             item_id: item.item_id || item.itemid || 'N/A',
-            image_path: item.image_path || null
+            image_path: item.image_path || item.imagePath || null
         }))
     });
 
     // Get normalized orders from API data
-    const orders = (data?.data?.orders || []).map(normalizeOrder);
+    const orders = React.useMemo(() => {
+        return (data?.data?.orders || []).map(normalizeOrder);
+    }, [data]);
+
+    // Toggle row expansion
+    const toggleRowExpansion = (orderId) => {
+        setExpandedRows(prev => ({
+            ...prev,
+            [orderId]: !prev[orderId]
+        }));
+    };
+
+    // Fetch full order list using the hook
+    const fetchFullOrderList = async () => {
+        setIsFetchingFullList(true);
+        try {
+            const totalOrders = data?.data?.totalOrders || 1000;
+            const response = await orderService.getAllOrders(0, totalOrders);
+            const normalizedOrders = (response?.data?.orders || []).map(normalizeOrder);
+            setFullOrderList(normalizedOrders);
+            return normalizedOrders;
+        } catch (err) {
+            console.error("Error fetching full order list:", err);
+            return [];
+        } finally {
+            setIsFetchingFullList(false);
+        }
+    };
 
     // Event handlers
     const handleChangePage = (event, newPage) => {
@@ -177,29 +209,27 @@ const OrderStatusManagement = () => {
         setStatusFilter(event.target.value);
     };
 
-    const handleRefresh = () => {
-        refetch();
-    };
-
     // Filter orders based on search term and status filter
-    const filteredOrders = orders.filter(order => {
-        const searchTermLower = (searchTerm || '').toLowerCase();
-        const orderId = (order.order_id || '').toLowerCase();
-        const userName = (order.user_name || '').toLowerCase();
-        const contact = (order.contact || '').toLowerCase();
-        const email = (order.email || '').toLowerCase();
-        const status = order.status || '';
+    const filteredOrders = React.useMemo(() => {
+        return orders.filter(order => {
+            const searchTermLower = (searchTerm || '').toLowerCase();
+            const orderId = (order.order_id || '').toLowerCase();
+            const userName = (order.user_name || '').toLowerCase();
+            const contact = (order.contact || '').toLowerCase();
+            const email = (order.email || '').toLowerCase();
+            const status = order.status || '';
 
-        const matchesSearch =
-            orderId.includes(searchTermLower) ||
-            userName.includes(searchTermLower) ||
-            contact.includes(searchTermLower) ||
-            email.includes(searchTermLower);
+            const matchesSearch =
+                orderId.includes(searchTermLower) ||
+                userName.includes(searchTermLower) ||
+                contact.includes(searchTermLower) ||
+                email.includes(searchTermLower);
 
-        const matchesStatus = statusFilter === 'ALL' || status === statusFilter;
+            const matchesStatus = statusFilter === 'ALL' || status === statusFilter;
 
-        return matchesSearch && matchesStatus;
-    });
+            return matchesSearch && matchesStatus;
+        });
+    }, [orders, searchTerm, statusFilter]);
 
     // Modal handlers
     const handleViewOrder = (order) => {
@@ -269,24 +299,16 @@ const OrderStatusManagement = () => {
         setExportMode('current');
     };
 
-    const fetchFullOrderList = async () => {
-        setIsFetchingFullList(true);
-        try {
-            const response = await orderService.getAllOrders(0, data?.data?.totalOrders || 10000);
-            setFullOrderList((response.data.orders || []).map(normalizeOrder));
-        } catch (err) {
-            console.error('Error fetching full order list:', err);
-        } finally {
-            setIsFetchingFullList(false);
-        }
-    };
-
     const handleExportConfirm = async () => {
         let ordersToExport = filteredOrders;
 
         if (exportMode === 'full') {
-            await fetchFullOrderList();
-            ordersToExport = fullOrderList;
+            const fullData = await fetchFullOrderList();
+            if (!fullData || fullData.length === 0) {
+                alert("Failed to fetch full order list");
+                return;
+            }
+            ordersToExport = fullData;
         }
 
         switch (exportType) {
@@ -307,7 +329,7 @@ const OrderStatusManagement = () => {
     };
 
     const exportToPDF = (orders) => {
-        const doc = new jsPDF({ orientation: "landscape" });
+        const doc = new jsPDF({ orientation: "landscape", unit: "mm", format: "a4" });
 
         const timestamp = new Date().toLocaleTimeString("en-US", {
             hour12: false,
@@ -322,134 +344,71 @@ const OrderStatusManagement = () => {
             year: "numeric",
         }).split("/").join("-");
 
+        // Header
         doc.setFontSize(14);
+        doc.setTextColor(40);
         doc.text("Order Management Report", 14, 14);
         doc.setFontSize(10);
         doc.text(`Generated: ${timestamp} ${date}`, 14, 22);
         doc.text(`Total Orders: ${orders.length}`, 14, 28);
 
-        // Main order table headers
-        const headers = [
-            "S.No",
-            "Order ID",
-            "Customer",
-            "Phone",
-            "Amount",
-            "Status",
-            "Order Time",
-            "Payment"
+        const mainHeaders = [
+            "S.No", "Order ID", "Customer", "Phone", "Amount", "Status", "Order Time", "Payment", "Items"
         ];
 
-        // Main order table data
-        const data = orders.map((order, index) => [
-            index + 1,
-            order.order_id || "N/A",
-            order.user_name || "N/A",
-            order.contact || "N/A",
-            parseFloat(order.total_amount)?.toFixed(2) || "0.00",
-            order.status || "N/A",
-            order.order_time ? new Date(order.order_time).toLocaleString() : "N/A",
-            order.payment_mode || "N/A"
-        ]);
+        const mainData = orders.map((order, index) => {
+            const itemsFormatted = (order.orderItems || []).map(item =>
+                `• ${item.product_name}\n  SKU: ${item.item_id}-${item.tagno}, ₹${parseFloat(item.price).toFixed(2)}`
+            ).join('\n\n');
 
-        // Add main order table
+            return [
+                index + 1,
+                order.order_id || "N/A",
+                order.user_name || "N/A",
+                order.contact || "N/A",
+                parseFloat(order.total_amount)?.toFixed(2) || "0.00",
+                order.status || "N/A",
+                order.order_time ? new Date(order.order_time).toLocaleString() : "N/A",
+                order.payment_mode || "N/A",
+                itemsFormatted?.trim().length ? itemsFormatted : "No items available"
+            ];
+        });
+
         autoTable(doc, {
             startY: 34,
-            head: [headers],
-            body: data,
+            head: [mainHeaders],
+            body: mainData,
             styles: {
-                fontSize: 9,
-                cellPadding: 3,
+                fontSize: 8,
+                cellPadding: 1.5,
                 overflow: "linebreak",
-                valign: "middle",
+                valign: "top",
                 halign: "left",
-                minCellHeight: 8,
+                minCellHeight: 10
             },
             headStyles: {
                 fillColor: [25, 118, 210],
                 textColor: [255, 255, 255],
                 fontStyle: "bold",
-                halign: "center",
+                halign: "center"
             },
             columnStyles: {
-                0: { cellWidth: 15 },   // S.No
-                1: { cellWidth: 32 },   // Order ID
-                2: { cellWidth: 30 },   // Customer
-                3: { cellWidth: 25 },   // Phone
-                4: { cellWidth: 25 },   // Amount
-                5: { cellWidth: 25 },   // Status
-                6: { cellWidth: 35 },   // Order Time
-                7: { cellWidth: 25 },   // Payment
+                0: { cellWidth: 12 },
+                1: { cellWidth: 30 },
+                2: { cellWidth: 28 },
+                3: { cellWidth: 26 },
+                4: { cellWidth: 20 },
+                5: { cellWidth: 24 },
+                6: { cellWidth: 36 },
+                7: { cellWidth: 25 },
+                8: { cellWidth: 75 }, // Items
             },
+            pageBreak: 'auto',
             margin: { top: 34, left: 10, right: 10 },
-            didDrawPage: function (data) {
-                // Store the finalY position after drawing the table
-                this.finalY = data.cursor.y;
-            }
-        });
-
-        // Add product details for each order
-        orders.forEach((order, orderIndex) => {
-            if (order.orderItems && order.orderItems.length > 0) {
-                // Get the current y position
-                let currentY = doc.lastAutoTable.finalY || 34;
-
-                // Add a page break if needed
-                if (currentY > 250 || (orderIndex > 0 && orderIndex % 2 === 0)) {
-                    doc.addPage();
-                    currentY = 20; // Reset y position after page break
-                }
-
-                // Product table headers
-                const productHeaders = [
-                    "Product",
-                    "Tag No",
-                    "S.No",
-                    "Quantity",
-                    "Price",
-                    "Total"
-                ];
-
-                // Product table data
-                const productData = order.orderItems.map(item => [
-                    item.product_name || "N/A",
-                    item.tagno || "N/A",
-                    item.sno || "N/A",
-                    item.quantity || 0,
-                    parseFloat(item.price)?.toFixed(2) || "0.00",
-                    (item.quantity * parseFloat(item.price))?.toFixed(2) || "0.00"
-                ]);
-
-                // Add order ID header
-                doc.setFontSize(10);
-                doc.setTextColor(40);
-                doc.text(`Order ID: ${order.order_id} - Products (${order.orderItems.length})`, 14, currentY + 5);
-
-                // Add product table for this order
-                autoTable(doc, {
-                    startY: currentY + 10,
-                    head: [productHeaders],
-                    body: productData,
-                    styles: {
-                        fontSize: 8,
-                        cellPadding: 2,
-                        valign: "middle",
-                    },
-                    headStyles: {
-                        fillColor: [67, 97, 238],
-                        textColor: [255, 255, 255],
-                        fontStyle: "bold",
-                    },
-                    columnStyles: {
-                        0: { cellWidth: 60 },   // Product
-                        1: { cellWidth: 25 },   // Tag No
-                        2: { cellWidth: 25 },   // S.No
-                        3: { cellWidth: 20 },   // Quantity
-                        4: { cellWidth: 20 },   // Price
-                        5: { cellWidth: 20 },   // Total
-                    },
-                    margin: { left: 10, right: 10 }
-                });
+            didDrawPage: (data) => {
+                doc.setFontSize(8);
+                const pageHeight = doc.internal.pageSize.height;
+                doc.text(`Page ${doc.internal.getNumberOfPages()}`, data.settings.margin.left, pageHeight - 5);
             }
         });
 
@@ -764,7 +723,7 @@ const OrderStatusManagement = () => {
                 </Typography>
                 <Stack direction="row" spacing={1}>
                     <Tooltip title="Refresh">
-                        <IconButton onClick={handleRefresh} color="primary">
+                        <IconButton onClick={() => refetch()} color="primary">
                             <RefreshIcon />
                         </IconButton>
                     </Tooltip>
@@ -817,7 +776,7 @@ const OrderStatusManagement = () => {
                     >
                         <MenuItem value="ALL">All Statuses</MenuItem>
                         <MenuItem value="PENDING">Pending</MenuItem>
-                        <MenuItem value="PROCESSING">Placed</MenuItem>
+                        <MenuItem value="PROCESSING">Processing</MenuItem>
                         <MenuItem value="SHIPPED">Shipped</MenuItem>
                         <MenuItem value="DELIVERED">Delivered</MenuItem>
                         <MenuItem value="CANCELLED">Cancelled</MenuItem>
@@ -842,44 +801,98 @@ const OrderStatusManagement = () => {
                     <TableBody>
                         {filteredOrders.length > 0 ? (
                             filteredOrders.map((order) => (
-                                <TableRow key={order.id} hover>
-                                    <TableCell>{order.order_id}</TableCell>
-                                    <TableCell>{order.user_name}</TableCell>
-                                    <TableCell align="right">₹{order.total_amount.toFixed(2)}</TableCell>
-                                    <TableCell>
-                                        <Chip
-                                            label={order.status}
-                                            color={getStatusColor(order.status)}
-                                            size="small"
-                                            onClick={() => handleEditOrder(order)}
-                                            sx={{ minWidth: 100 }}
-                                        />
-                                    </TableCell>
-                                    <TableCell>{new Date(order.order_time).toLocaleString()}</TableCell>
-                                    <TableCell>{order.payment_mode}</TableCell>
-                                    <TableCell align="center">
-                                        <Stack direction="row" spacing={1} justifyContent="center">
-                                            <Tooltip title="View Order">
-                                                <IconButton
-                                                    size="small"
-                                                    onClick={() => handleViewOrder(order)}
-                                                    color="primary"
-                                                >
-                                                    <ViewIcon fontSize="small" />
-                                                </IconButton>
-                                            </Tooltip>
-                                            <Tooltip title="Edit Status">
-                                                <IconButton
-                                                    size="small"
-                                                    onClick={() => handleEditOrder(order)}
-                                                    color="secondary"
-                                                >
-                                                    <EditIcon fontSize="small" />
-                                                </IconButton>
-                                            </Tooltip>
-                                        </Stack>
-                                    </TableCell>
-                                </TableRow>
+                                <React.Fragment key={order.id}>
+                                    <TableRow hover>
+                                        <TableCell>{order.order_id}</TableCell>
+                                        <TableCell>{order.user_name}</TableCell>
+                                        <TableCell align="right">₹{order.total_amount.toFixed(2)}</TableCell>
+                                        <TableCell>
+                                            <Chip
+                                                label={order.status}
+                                                color={getStatusColor(order.status)}
+                                                size="small"
+                                                onClick={() => handleEditOrder(order)}
+                                                sx={{ minWidth: 100 }}
+                                            />
+                                        </TableCell>
+                                        <TableCell>{new Date(order.order_time).toLocaleString()}</TableCell>
+                                        <TableCell>{order.payment_mode}</TableCell>
+                                        <TableCell align="center">
+                                            <Stack direction="row" spacing={1} justifyContent="center">
+                                                <Tooltip title="View Order">
+                                                    <IconButton
+                                                        size="small"
+                                                        onClick={() => handleViewOrder(order)}
+                                                        color="primary"
+                                                    >
+                                                        <ViewIcon fontSize="small" />
+                                                    </IconButton>
+                                                </Tooltip>
+                                                <Tooltip title="Edit Status">
+                                                    <IconButton
+                                                        size="small"
+                                                        onClick={() => handleEditOrder(order)}
+                                                        color="secondary"
+                                                    >
+                                                        <EditIcon fontSize="small" />
+                                                    </IconButton>
+                                                </Tooltip>
+                                                <Tooltip title="View Products">
+                                                    <IconButton
+                                                        size="small"
+                                                        onClick={() => toggleRowExpansion(order.id)}
+                                                    >
+                                                        {expandedRows[order.id] ? <ExpandLess /> : <ExpandMore />}
+                                                    </IconButton>
+                                                </Tooltip>
+                                            </Stack>
+                                        </TableCell>
+                                    </TableRow>
+                                    <TableRow>
+                                        <TableCell colSpan={7} style={{ paddingBottom: 0, paddingTop: 0 }}>
+                                            <Collapse in={expandedRows[order.id]} timeout="auto" unmountOnExit>
+                                                <Box sx={{ margin: 1 }}>
+                                                    <Typography variant="subtitle2" gutterBottom>
+                                                        Products ({order.orderItems?.length || 0})
+                                                    </Typography>
+                                                    <Table size="small" aria-label="products">
+                                                        <TableHead>
+                                                            <TableRow>
+                                                                <TableCell>Product</TableCell>
+                                                                <TableCell>SKU</TableCell>
+                                                                <TableCell align="right">Price</TableCell>
+                                                                <TableCell align="right">Qty</TableCell>
+                                                                <TableCell align="right">Total</TableCell>
+                                                            </TableRow>
+                                                        </TableHead>
+                                                        <TableBody>
+                                                            {order.orderItems?.map((item, index) => (
+                                                                <TableRow key={index}>
+                                                                    <TableCell>
+                                                                        <Box display="flex" alignItems="center">
+                                                                            {item.image_path && (
+                                                                                <Avatar
+                                                                                    src={item.image_path}
+                                                                                    alt={item.product_name}
+                                                                                    sx={{ width: 40, height: 40, mr: 1 }}
+                                                                                />
+                                                                            )}
+                                                                            {item.product_name}
+                                                                        </Box>
+                                                                    </TableCell>
+                                                                    <TableCell>{item.item_id}-{item.tagno}</TableCell>
+                                                                    <TableCell align="right">₹{item.price.toFixed(2)}</TableCell>
+                                                                    <TableCell align="right">{item.quantity}</TableCell>
+                                                                    <TableCell align="right">₹{(item.price * item.quantity).toFixed(2)}</TableCell>
+                                                                </TableRow>
+                                                            ))}
+                                                        </TableBody>
+                                                    </Table>
+                                                </Box>
+                                            </Collapse>
+                                        </TableCell>
+                                    </TableRow>
+                                </React.Fragment>
                             ))
                         ) : (
                             <TableRow>
@@ -904,6 +917,15 @@ const OrderStatusManagement = () => {
                                 onPageChange={handleChangePage}
                                 onRowsPerPageChange={handleChangeRowsPerPage}
                                 ActionsComponent={TablePaginationActions}
+                                sx={{
+                                    '& .MuiTablePagination-toolbar': {
+                                        flexWrap: 'wrap',
+                                        justifyContent: 'center'
+                                    },
+                                    '& .MuiTablePagination-spacer': {
+                                        flex: 'none'
+                                    }
+                                }}
                             />
                         </TableRow>
                     </TableFooter>
@@ -1058,7 +1080,7 @@ const OrderStatusManagement = () => {
                                         disabled={updateOrderStatus.isLoading}
                                     >
                                         <MenuItem value="PENDING">Pending</MenuItem>
-                                        <MenuItem value="PROCESSING">Placed</MenuItem>
+                                        <MenuItem value="PROCESSING">Processing</MenuItem>
                                         <MenuItem value="SHIPPED">Shipped</MenuItem>
                                         <MenuItem value="DELIVERED">Delivered</MenuItem>
                                         <MenuItem value="CANCELLED">Cancelled</MenuItem>
@@ -1068,13 +1090,13 @@ const OrderStatusManagement = () => {
                             <Grid item xs={12}>
                                 <TextField
                                     fullWidth
-                                    size="small"
+                                    size="medium"
                                     label="Remarks"
                                     name="remarks"
                                     value={editForm.remarks}
                                     onChange={handleEditFormChange}
                                     multiline
-                                    rows={3}
+                                    rows={8}
                                     placeholder="Enter any remarks about this status change"
                                     disabled={updateOrderStatus.isLoading}
                                 />

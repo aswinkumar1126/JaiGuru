@@ -33,4 +33,16 @@ export const useUpdateOrderStatus = () => {
     return useMutation({
         mutationFn: (payload) => orderService.updateStatus(payload),
     });
+    
+};
+// 🔹 5. Get Orders by Date Range
+export const useOrdersByDateRange = (startDate, endDate) => {
+    return useQuery({
+        queryKey: ['ordersByDateRange', startDate, endDate],
+        queryFn: async () => {
+            const response = await orderService.getOrdersByDateRange(startDate, endDate);
+            return response.data; // Make sure to return response.data
+        },
+        enabled: !!startDate && !!endDate,
+    });
 };

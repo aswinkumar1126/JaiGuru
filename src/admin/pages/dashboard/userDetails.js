@@ -2,8 +2,8 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import classes from './UserDetails.module.css';
 import dashBoardDetailsService from '../../service/dashBoardDetailsService';
 import * as XLSX from 'xlsx';
-import jsPDF from 'jspdf';
-import 'jspdf-autotable';
+import { jsPDF } from 'jspdf';
+import autoTable from 'jspdf-autotable';
 import { saveAs } from 'file-saver';
 import { 
   FaFileExcel, 
@@ -182,6 +182,8 @@ function UserDetails() {
     }
   }, [filteredUsers]);
 
+
+
   const handleExportPDF = useCallback(() => {
     if (filteredUsers.length === 0) {
       setError('No user data available to export.');
@@ -192,78 +194,84 @@ function UserDetails() {
       const doc = new jsPDF({
         orientation: 'landscape',
         unit: 'mm',
-        compress: true
+        format: 'a4'
       });
 
-      // Title and metadata
-      doc.setFont('helvetica', 'bold');
-      doc.setFontSize(16);
-      doc.setTextColor(40, 40, 40);
-      doc.text('User Details Report', 15, 15);
+      const timestamp = new Date().toLocaleTimeString("en-US", {
+        hour12: false,
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+      });
 
-      doc.setFont('helvetica', 'normal');
+      const date = new Date().toLocaleDateString("en-GB", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric"
+      }).split("/").join("-");
+
+      doc.setFontSize(14);
+      doc.setTextColor(40);
+      doc.text("User Details Report", 14, 14);
       doc.setFontSize(10);
-      doc.setTextColor(100, 100, 100);
-      doc.text(`Generated: ${new Date().toLocaleString()}`, 15, 22);
-      doc.text(`Total Users: ${filteredUsers.length}`, 15, 27);
+      doc.text(`Generated: ${timestamp} ${date}`, 14, 22);
+      doc.text(`Total Users: ${filteredUsers.length}`, 14, 28);
 
-      // Prepare table data
-      const tableData = filteredUsers.map((user, index) => [
+      const headers = [["S.No", "ID", "Username", "Email", "Contact", "Roles"]];
+      const data = filteredUsers.map((user, index) => [
         index + 1,
-        user.id,
-        user.username,
-        user.email,
-        user.contactNumber,
-        user.roles?.length ? user.roles.join(', ') : 'None',
+        user.id || "N/A",
+        user.username || "N/A",
+        user.email || "N/A",
+        user.contactNumber || "N/A",
+        user.roles?.length ? user.roles.join(', ') : 'None'
       ]);
 
-      // Generate table
-      doc.autoTable({
-        startY: 35,
-        head: [['S.No', 'ID', 'Username', 'Email', 'Contact', 'Roles', 'Status']],
-        body: tableData,
-        theme: 'grid',
-        headStyles: {
-          fillColor: [51, 102, 153],
-          textColor: 255,
-          fontStyle: 'bold',
-          fontSize: 10
-        },
+      autoTable(doc, {
+        startY: 34,
+        head: headers,
+        body: data,
         styles: {
           fontSize: 9,
-          cellPadding: 3,
+          cellPadding: 2,
           overflow: 'linebreak',
-          valign: 'middle'
+          valign: 'middle',
+          halign: 'left',
+          minCellHeight: 10
         },
-        margin: { left: 15 },
+        headStyles: {
+          fillColor: [25, 118, 210],
+          textColor: 255,
+          fontStyle: 'bold',
+          halign: 'center'
+        },
         columnStyles: {
-          0: { cellWidth: 10, halign: 'center' },
-          1: { cellWidth: 15, halign: 'center' },
-          2: { cellWidth: 25 },
-          3: { cellWidth: 45 },
-          4: { cellWidth: 20, halign: 'center' },
-          5: { cellWidth: 30 },
-          6: { cellWidth: 15, halign: 'center' }
+          0: { cellWidth: 12, halign: 'center' },  // S.No
+          1: { cellWidth: 20, halign: 'center' },  // ID
+          2: { cellWidth: 30 },                    // Username
+          3: { cellWidth: 50 },                    // Email
+          4: { cellWidth: 30, halign: 'center' },  // Contact
+          5: { cellWidth: 40 }                     // Roles
         },
+        margin: { top: 34, left: 10, right: 10 },
         didDrawPage: (data) => {
-          // Footer
+          const pageHeight = doc.internal.pageSize.height;
           doc.setFontSize(8);
-          doc.setTextColor(150);
           doc.text(
-            `Page ${data.pageCount}`,
-            doc.internal.pageSize.width - 15,
-            doc.internal.pageSize.height - 10,
-            { align: 'right' }
+            `Page ${doc.internal.getNumberOfPages()}`,
+            data.settings.margin.left,
+            pageHeight - 5
           );
         }
       });
 
-      doc.save(`User_Details_${new Date().toISOString().slice(0, 10)}.pdf`);
+      doc.save(`User_Details_${date}.pdf`);
     } catch (err) {
       console.error('PDF export failed:', err);
       setError('Failed to generate PDF. Please try again.');
     }
   }, [filteredUsers]);
+  
 
   const handlePrint = useCallback(() => {
     if (filteredUsers.length === 0) {

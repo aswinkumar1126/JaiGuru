@@ -1,182 +1,145 @@
-.category-section {
-    padding: 20px 10px;
-    background-color: inherit;
+/* JewelryCategories.css */
+.jewelry-categories-section {
+    padding: 3rem 1rem;
     text-align: center;
-    overflow: hidden;
+    background: inherit;
 }
 
-.category-title {
-    font-size: 1.5rem;
+.jewelry-categories-title {
+    font-size: 2rem;
+    margin-bottom: 2.5rem;
+    color: #333;
     font-weight: 600;
-    color: #2a2a2a;
-    margin-bottom: 15px;
     position: relative;
     display: inline-block;
+    font-family: 'Playfair Display', serif;
 }
 
-.category-title::after {
-    content: "";
+.jewelry-categories-title::after {
+    content: '';
     position: absolute;
-    bottom: -5px;
+    bottom: -10px;
     left: 50%;
     transform: translateX(-50%);
-    width: 50px;
-    height: 2px;
-    background: linear-gradient(90deg, #d4af37, #b89c30);
-    border-radius: 2px;
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(to right, #d4af37, #b89c30);
 }
 
-.category-grid {
-    display: flex;
-    flex-wrap: nowrap;
-    gap: 12px;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    -webkit-overflow-scrolling: touch;
-    padding: 10px 10px 20px;
-    margin: 0 -10px;
-    scrollbar-width: none;
+.jewelry-categories-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 1.5rem;
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 0 1rem;
 }
 
-.category-grid::-webkit-scrollbar {
-    display: none;
-}
-
-.category-card {
-    background-color: #ffffff;
-    border-radius: 12px;
-    padding: 12px;
+.jewelry-category-card {
     cursor: pointer;
-    min-width: 90px;
-    flex: 0 0 auto;
-    scroll-snap-align: center;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
-    border: 1px solid rgba(0, 0, 0, 0.03);
     display: flex;
     flex-direction: column;
     align-items: center;
-    transition: box-shadow 0.2s ease;
-    will-change: transform, box-shadow;
+    gap: 0.5rem;
 }
 
-.category-card:hover {
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.12);
+.jewelry-category-img-container {
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+    border: 2px solid rgba(212, 175, 55, 0.2);
 }
 
-.icon-container {
-    width: 80px ;
-    height: 80px ;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 8px;
-    background: #fdfdfd ;
-    border-radius: 8px;
-    padding: 8px;
-    transition: background 0.2s ease, transform 0.2s ease;
-}
-
-.category-card:hover .icon-container {
-    background: linear-gradient(135deg, #f5f5f5, #e8e8e8);
-    transform: scale(1.1) rotate(3deg);
-}
-
-.category-icon {
+.jewelry-category-img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    border-radius: 6px;
-    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.08));
+    transition: transform 0.5s ease;
 }
 
-.category-label {
-    font-size: 0.85rem;
+.jewelry-category-card:hover .jewelry-category-img {
+    transform: scale(1.1);
+}
+
+.jewelry-category-shine {
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg,
+            rgba(255, 255, 255, 0) 0%,
+            rgba(255, 255, 255, 0.3) 50%,
+            rgba(255, 255, 255, 0) 100%);
+    transition: all 0.8s ease;
+}
+
+.jewelry-category-card:hover .jewelry-category-shine {
+    left: 100%;
+}
+
+.jewelry-category-name {
+    font-size: 1rem;
     font-weight: 500;
     color: #333;
-    white-space: nowrap;
-    transition: color 0.2s ease, font-weight 0.2s ease;
+    transition: all 0.3s ease;
+    font-family: 'Montserrat', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
-.category-card:hover .category-label {
-    color: #d4af37;
-    font-weight: 600;
-}
-
-/* Larger screens (unchanged from original) */
-@media screen and (min-width: 768px) {
-    .category-section {
-        padding: 60px 20px;
+/* Responsive Design */
+@media (max-width: 768px) {
+    .jewelry-categories-grid {
+        grid-template-columns: repeat(4, 1fr);
     }
 
-    .category-title {
-        font-size: 2.2rem;
-        margin-bottom: 40px;
-    }
-
-    .category-title::after {
-        bottom: -10px;
+    .jewelry-category-img-container {
         width: 80px;
-        height: 3px;
-        background: linear-gradient(90deg, #d4af37, #b89c30, #d4af37);
-        border-radius: 3px;
+        height: 80px;
+    }
+        .jewelry-category-name {
+            font-size: 0.8rem;
+        }
+}
+
+@media (max-width: 480px) {
+    .jewelry-categories-title {
+        font-size: 1.0rem;
     }
 
-    .category-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-        gap: 25px;
-        justify-items: center;
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 0 20px;
-        overflow-x: visible;
+    .jewelry-categories-grid {
+        gap: 0.2rem;
     }
 
-    .category-card {
-        min-width: unset;
-        width: 100%;
-        max-width: 180px;
-        padding: 25px 15px;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-        border: 1px solid rgba(0, 0, 0, 0.05);
+    .jewelry-category-img-container {
+        width: 50px;
+        height: 50px;
     }
 
-    .icon-container {
-        width: 100px;
-        height: 100px;
-        margin-bottom: 15px;
-        padding: 15px;
-    }
-
-    .category-label {
-        font-size: 1rem;
-        margin-top: 10px;
+    .jewelry-category-name {
+        font-size: 0.5rem;
     }
 }
 
-@media screen and (min-width: 1024px) {
-    .category-card {
-        max-width: 180px;
-        padding: 25px 15px;
-    }
-
-    .icon-container {
-        width: 100px;
-        height: 100px;
-    }
-}
-
-/* Reduced motion preference */
+/* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
 
-    .category-card,
-    .icon-container,
-    .category-label {
-        transition: none;
+    .jewelry-category-card,
+    .jewelry-category-img-container,
+    .jewelry-category-img,
+    .jewelry-category-name {
+        transition: none !important;
+        animation: none !important;
     }
 
-    .category-card:hover,
-    .category-card:hover .icon-container {
-        transform: none;
-        box-shadow: none;
+    .magic-animate,
+    .magic-hover,
+    .magic-click {
+        animation: none !important;
+        transition: none !important;
     } }

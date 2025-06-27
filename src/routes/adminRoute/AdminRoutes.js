@@ -28,6 +28,7 @@ import OrderStatusManagement from '../../admin/pages/order/orderStatus';
 import { PendingOrdersPage, ShippedOrdersPage, DeliveredOrdersPage, CancelledOrdersPage, TotalRevenuePage, TodayRevenuePage, MonthlySalesPage } from '../../admin/pages/order/OrderPages';
 
 import './AdminRoutes.css';
+import OrderHistoryPage from '../../admin/pages/order/todayOrders';
 
 const AdminRoutes = () => {
     const { isSidebarOpen, setIsSidebarOpen, themeMode } = useContext(MyContext);
@@ -96,6 +97,8 @@ const AdminRoutes = () => {
 
                         {/* Open admin routes */}
                         <Route path="userDetails" element={<UserDetails />} />
+                        <Route path="order/today" element={<OrderHistoryPage />} />
+
                         <Route path="order/status" element={<OrderStatusManagement />} />
                         <Route path="AllOrderPage" element={<OrderStatusManagement />} />
                         <Route path="pendingOrders" element={<PendingOrdersPage />} />

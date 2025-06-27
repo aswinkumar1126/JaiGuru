@@ -1,5 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useParams } from "react-router-dom";
+import { gsap } from "gsap";
+import 'magic.css/dist/magic.min.css';
 import Error from "../../components/error/Error";
 import SkeletonLoader from "../../components/loader/SkeletonLoader";
 import Button from "../../components/button/Button";
@@ -13,6 +15,9 @@ import { useRatesQuery } from "../../hook/rate/useRatesQuery";
 
 const ProductDetails = () => {
     const { sno } = useParams();
+    const stickyCartRef = useRef(null);
+    const [isStickyVisible, setIsStickyVisible] = useState(false);
+    const animationRef = useRef(null);
 
     useEffect(() => {
         if (sno) {
@@ -36,6 +41,36 @@ const ProductDetails = () => {
     const baseUrl = "https://app.bmgjewellers.com";
     const [imageUrls, setImageUrls] = useState([]);
 
+    // GSAP animations for sticky cart
+    useEffect(() => {
+        if (!stickyCartRef.current) return;
+
+        const handleScroll = () => {
+            const scrollPosition = window.scrollY;
+            const triggerPosition = 300;
+            const viewportHeight = window.innerHeight;
+            const documentHeight = document.documentElement.scrollHeight;
+            const isNearBottom = scrollPosition + viewportHeight >= documentHeight - 100;
+
+            if (scrollPosition > triggerPosition && !isStickyVisible && !isNearBottom) {
+                setIsStickyVisible(true);
+                gsap.fromTo(stickyCartRef.current,
+                    { y: 50, opacity: 0 },
+                    { y: 0, opacity: 1, duration: 0.3, ease: "power2.out" }
+                );
+            } else if ((scrollPosition <= triggerPosition || isNearBottom) && isStickyVisible) {
+                setIsStickyVisible(false);
+                gsap.to(stickyCartRef.current,
+                    { y: 50, opacity: 0, duration: 0.3, ease: "power2.in" }
+                );
+            }
+        };
+
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, [isStickyVisible]);
+
+    // Image handling
     useEffect(() => {
         try {
             const parsedImages = JSON.parse(productDetail?.ImagePath || "[]");
@@ -90,6 +125,8 @@ const ProductDetails = () => {
     };
 
     const handleAddToCart = () => {
+        if (!productDetail) return;
+
         addToCartHandler({
             itemTagSno: productDetail.SNO,
             itemId: productDetail.ITEMID,
@@ -107,7 +144,6 @@ const ProductDetails = () => {
 
     const toggleSpecs = () => {
         setExpandedSpecs(!expandedSpecs);
-        
     };
 
     const toggleFullImage = () => {
@@ -140,7 +176,6 @@ const ProductDetails = () => {
             { label: "Stone Amount", value: `₹${productDetail.StoneAmount}` },
             { label: "Misc Amount", value: `₹${productDetail.MiscAmount}` },
             { label: `GST (${productDetail.GSTPer})`, value: `₹${productDetail.GSTAmount}` },
-            // { label: "Gross Amount", value: `₹${productDetail.GrandTotal - productDetail.StoneAmount}` },
             { label: "Grand Total", value: `₹${productDetail.GrandTotal}` },
         ],
     };
@@ -149,6 +184,34 @@ const ProductDetails = () => {
         <>
             <div className="product-details-container">
                 <div className="product-details-wrapper">
+                    {/* Sticky Add to Cart Bar */}
+                    <div
+                        ref={stickyCartRef}
+                        className={`sticky-cart-bar ${isStickyVisible ? 'visible' : ''}`}
+                    >
+                        <div className="sticky-cart-content">
+                            <div className="sticky-cart-left">
+                                <img
+                                    src={mainImage}
+                                    alt={productDetail.ITEMNAME}
+                                    className="sticky-cart-image"
+                                />
+                                <span className="sticky-cart-name">
+                                    {productDetail.ITEMNAME || productDetail.productName}
+                                </span>
+                            </div>
+                            <div className="sticky-cart-right">
+                                <span className="sticky-cart-price">₹{productDetail.GrandTotal}</span>
+                                <Button
+                                    className="sticky-cart-btn"
+                                    label="Add to Cart"
+                                    onClick={handleAddToCart}
+                                    primary
+                                />
+                            </div>
+                        </div>
+                    </div>
+
                     <div className="product-image-section">
                         <div
                             className="image-container"
@@ -235,6 +298,7 @@ const ProductDetails = () => {
                             />
                         </div>
                     </div>
+
                     <div className="product-info-section">
                         <div className="product-header">
                             <div className="product-title-row">
@@ -327,7 +391,6 @@ const ProductDetails = () => {
                     </div>
                 </div>
             )}
-
             <section>
                 <RecentlyViewedPage />
             </section>

@@ -1,0 +1,46 @@
+/* Search Results Page Specific Styles */
+.search-result-card {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Responsive card sizing */
+@media (max-width: 400px) {
+    .search-result-card {
+       
+        align-items: center;
+        justify-content: center;
+    }
+}
+
+@media (min-width: 600px) {
+    .search-result-card {
+        min-width: 180px;
+    }
+}
+
+@media (min-width: 900px) {
+    .search-result-card {
+        min-width: 220px;
+    }
+}
+
+@media (min-width: 1200px) {
+    .search-result-card {
+        min-width: 240px;
+    }
+}
+
+/* Animation styles */
+.search-result-card {
+    will-change: transform, opacity;
+    transform-origin: center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .search-result-card {
+        animation: none !important;
+        transition: none !important;
+    } }

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useLocation, useNavigate } from "react-router-dom";
 import { useFilteredItems } from "../../hook/search/useSearchQuery";
 import ProductCard from "../../components/productCard/ProductCard";
@@ -15,11 +16,38 @@ import {
     useTheme
 } from "@mui/material";
 import { AddShoppingCart, SearchOff } from "@mui/icons-material";
+import './SearchResultsPage.css'
+// Animation variants
+const searchContainerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+        opacity: 1,
+        transition: {
+            staggerChildren: 0.1,
+            when: "beforeChildren"
+        }
+    }
+};
+
+const searchItemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: {
+        y: 0,
+        opacity: 1,
+        transition: {
+            type: "spring",
+            stiffness: 100,
+            damping: 10
+        }
+    }
+};
 
 const SearchResultsPage = () => {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
     const isSmallMobile = useMediaQuery(theme.breakpoints.down(400));
+    const isTablet = useMediaQuery(theme.breakpoints.between("sm", "lg"));
+    const isDesktop = useMediaQuery(theme.breakpoints.up("lg"));
     const user = localStorage.getItem("user");
     const location = useLocation();
     const navigate = useNavigate();
@@ -28,9 +56,10 @@ const SearchResultsPage = () => {
 
     // Pagination state
     const [page, setPage] = useState(1);
-    const pageSize = 12; // Number of items per page
-    const [allItems, setAllItems] = useState([]); // Stores all loaded items
-    const [hasMore, setHasMore] = useState(true); // Tracks if more items are available
+    const pageSize = 12;
+    const [allItems, setAllItems] = useState([]);
+    const [hasMore, setHasMore] = useState(true);
+    const [isInitialLoad, setIsInitialLoad] = useState(true);
 
     const {
         data,
@@ -41,13 +70,12 @@ const SearchResultsPage = () => {
         refetch
     } = useFilteredItems({
         itemName,
-        page: page - 1, // Convert to 0-based index for backend
+        page: page - 1,
         pageSize
     });
 
     const { addToCartHandler, isAddingToCart } = useCart();
 
-    // Combine new items with existing ones when page changes
     useEffect(() => {
         if (data?.data?.data) {
             if (page === 1) {
@@ -56,12 +84,16 @@ const SearchResultsPage = () => {
                 setAllItems(prevItems => [...prevItems, ...data.data.data]);
             }
 
-            // Check if we've loaded all available items
             if (data.data.data.length < pageSize) {
                 setHasMore(false);
             }
         }
     }, [data, page, pageSize]);
+
+    useEffect(() => {
+        const timer = setTimeout(() => setIsInitialLoad(false), 300);
+        return () => clearTimeout(timer);
+    }, []);
 
     const handleAddToCart = async (item) => {
         if (!user) {
@@ -98,12 +130,23 @@ const SearchResultsPage = () => {
         setPage(prevPage => prevPage + 1);
     };
 
+    // Get grid size based on screen size
+    const getGridSize = () => {
+        if (isSmallMobile) return 6;  // 2 cards per row
+        if (isMobile) return 4;       // 3 cards per row
+        if (isTablet) return 3;       // 4 cards per row
+        if (isDesktop) return 2.4;    // 5 cards per row
+        return 3;                     // default
+    };
+
+    const gridSize = getGridSize();
+
     if (isLoading && page === 1) {
         return (
             <Container maxWidth={false} sx={{ py: 4, px: { xs: 1, sm: 2 } }}>
                 <Grid container spacing={2}>
                     {[...Array(6)].map((_, index) => (
-                        <Grid item xs={6} sm={4} md={3} lg={2} key={index}>
+                        <Grid item xs={6} sm={4} md={3} lg={2.4} key={index}>
                             <Box sx={{ height: 300 }}>
                                 <CircularProgress />
                             </Box>
@@ -162,30 +205,42 @@ const SearchResultsPage = () => {
                 </Box>
             ) : (
                 <>
-                    <Grid container spacing={isSmallMobile ? 1 : 2}>
-                        {allItems.map((item) => (
-                            <Grid
-                                item
-                                xs={6}
-                                sm={4}
-                                md={3}
-                                lg={2.4}
-                                xl={2}
-                                key={item.SNO}
-                                sx={{
-                                    minWidth: isSmallMobile ? '140px' : 'auto'
-                                }}
-                            >
-                                <ProductCard
-                                    product={item}
-                                    onQuickView={() => navigate(`/product/${item.SNO}`)}
-                                    onAddToCart={() => handleAddToCart(item)}
-                                    isAddingToCart={isAddingToCart}
-                                    actionIcon={<AddShoppingCart />}
-                                />
-                            </Grid>
-                        ))}
-                    </Grid>
+                    <motion.div
+                        initial="hidden"
+                        animate={isInitialLoad ? "hidden" : "visible"}
+                        variants={searchContainerVariants}
+                    >
+                        <Grid container spacing={isSmallMobile ? 1 : 2} alignItems="center" justifyContent="center">
+                            <AnimatePresence>
+                                {allItems.map((item) => (
+                                    <Grid
+                                        item
+                                        xs={6}
+                                        sm={4}
+                                        md={3}
+                                        lg={2.4}
+                                        key={item.SNO}
+                                    >
+                                        <motion.div
+                                            variants={searchItemVariants}
+                                            whileHover={{ scale: isDesktop ? 1.05 : 1.03 }}
+                                            whileTap={{ scale: 0.98 }}
+                                            transition={{ type: "spring", stiffness: 400 }}
+                                            className="search-result-card"
+                                        >
+                                            <ProductCard
+                                                product={item}
+                                                onQuickView={() => navigate(`/product/${item.SNO}`)}
+                                                onAddToCart={() => handleAddToCart(item)}
+                                                isAddingToCart={isAddingToCart}
+                                                actionIcon={<AddShoppingCart />}
+                                            />
+                                        </motion.div>
+                                    </Grid>
+                                ))}
+                            </AnimatePresence>
+                        </Grid>
+                    </motion.div>
 
                     {hasMore && (
                         <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>

@@ -50,9 +50,7 @@ function Product({ products = [], loading, error }) {
         <div className="product-container">
             <div className="page-header">
                 <h2 className="title animate-char">Our Premium Collection</h2>
-                <p className="subtitle animate-subtitle">
-                    Discover quality products for your needs
-                </p>
+               
             </div>
 
             <div className="product-grid">

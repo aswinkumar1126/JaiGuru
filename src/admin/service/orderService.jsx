@@ -58,4 +58,10 @@ export const orderService = {
       // 🔹 11. Get Monthly Sales Report
       getMonthlySalesReport: () =>
             axiosInstance.get("/order/monthly-sales"),
+
+      // 🔹 12. Get Orders by Date Range
+      getOrdersByDateRange: (startDate, endDate) =>
+            axiosInstance.get("/order/orders-by-date", {
+                  params: { startDate, endDate },
+            }),
 };
