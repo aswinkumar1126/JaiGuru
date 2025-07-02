@@ -112,8 +112,7 @@
 
 /* Card Styles with Enhanced Animations */
 .wishlist-card {
-    background: #fff;
-    border-radius: var(--wishlist-radius);
+    background: inherit;
     overflow: hidden;
     box-shadow: var(--wishlist-shadow);
     transition: var(--wishlist-transition);

@@ -1,8 +1,10 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Montserrat:wght@500;600;700&family=Poppins:wght@400;500;600&display=swap');/* Base Styles */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Montserrat:wght@500;600;700&family=Poppins:wght@400;500;600&display=swap');
+
+/* Base Styles */
 .product-card {
     position: relative;
-    background: #fff;
-    border-radius: 10px;
+    background: inherit;
+    border-radius: 0 !important;
     overflow: hidden;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
     transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
@@ -54,7 +56,7 @@
     /* 1:1 Aspect Ratio */
     overflow: hidden;
     cursor: pointer;
-    background: #f8f8f8;
+    background: inherit;
 }
 
 .product-card__image-wrapper {
@@ -64,9 +66,11 @@
     width: 100%;
     height: 100%;
 }
+
 .AnimatePresence .motion.div {
     transition-duration: 0.3s !important;
 }
+
 .product-card__image {
     position: absolute;
     top: 0;
@@ -81,7 +85,7 @@
 .product-card__quick-view {
     position: absolute;
     bottom: 15px;
-    left: 50%;
+    left: 55%;
     transform: translateX(-50%);
     background: rgba(255, 255, 255, 0.95);
     color: #333;
@@ -174,7 +178,7 @@
     overflow: hidden;
     text-overflow: ellipsis;
     transition: color 0.3s ease;
-    font-family:  serif;
+    font-family: serif;
     letter-spacing: 0.3px;
 }
 

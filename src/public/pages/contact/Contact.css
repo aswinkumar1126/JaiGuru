@@ -256,7 +256,7 @@
 
 .form-icon {
     position: absolute;
-    left: 5px;
+    left:8px;
     top: 40%;
     transform: translateY(-50%);
     color: var(--icon-orange);
@@ -264,17 +264,14 @@
 }
 
 .text-input {
-    padding-left: var(--padding-sm);
+    padding-left: 40px !important;
+    color: #222;
 }
 
-.text-input::placeholder {
-    padding-left: var(--padding-sm);
-}
 
 .form-group input,
 .form-group textarea {
     width: 100%;
-    padding: var(--padding-sm) var(--padding-sm) var(--padding-sm) 25px !important;
     border: 1px solid var(--border-light);
     border-radius: var(--border-radius-sm);
     font-size: 1rem;

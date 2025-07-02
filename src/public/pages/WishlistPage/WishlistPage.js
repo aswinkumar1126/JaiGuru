@@ -8,7 +8,7 @@ import Button from "../../components/button/Button";
 import { useCart } from "../../hook/cart/useCartQuery";
 import { FiHeart, FiShoppingBag, FiTrash2, FiArrowRight } from "react-icons/fi";
 import "./WishlistPage.css";
-
+import { useNavigate } from "react-router-dom";
 const WishlistPage = () => {
     const { data, isLoading, isError } = useFavorites();
 
@@ -96,6 +96,7 @@ const WishlistItem = ({ sno }) => {
     const { data: product, isLoading, isError } = useSingleProductQuery(sno);
     const { addToCartHandler } = useCart();
     const { mutate: removeFavorite, isLoading: isRemoving } = useRemoveFavorite();
+    const navigate=useNavigate()
 
     const handleAddToCart = (product) => {
         addToCartHandler({
@@ -129,7 +130,11 @@ const WishlistItem = ({ sno }) => {
         e.stopPropagation();
         removeFavorite(sno);
     };
+    console.log(product);
 
+    const handleImageClick = (product) =>{
+        navigate(`/product/${product.SNO}`)  
+    }
     return (
         <motion.div
             className="wishlist-card"
@@ -147,6 +152,7 @@ const WishlistItem = ({ sno }) => {
                 className="card-image-container"
                 whileHover={{ scale: 1.02 }}
                 transition={{ duration: 0.3 }}
+                onClick={() => handleImageClick(product)}
             >
                 <img
                     src={firstImage}

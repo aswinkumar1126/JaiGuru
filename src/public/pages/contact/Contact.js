@@ -2,13 +2,14 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { FaMapMarkerAlt, FaStore, FaPhone, FaClock, FaDirections, FaPaperPlane, FaUser, FaEnvelope, FaComment } from 'react-icons/fa';
 import './Contact.css';
+import PublicUrl from '../../api/publicUrl';
 
 const Contact = () => {
     const [formData, setFormData] = useState({
-        name: '',
+        customerName: '',
         email: '',
-        phone: '',
-        message: ''
+        phoneNumber: '',
+        comment: ''
     });
 
     const handleChange = (e) => {
@@ -19,26 +20,26 @@ const Contact = () => {
         }));
     };
 
-    // const handleSubmit = async (e) => {
-    //     e.preventDefault();
-    //     try {
-    //         const response = await axiosAdminInstance.post("http://localhost:8081/api/admin/message", {
-    //             ...formData
-    //         });
-    //         console.log('Server response:', response.data);
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            const response = await PublicUrl.post("/feedback/submit", {
+                ...formData
+            });
+            console.log('Server response:', response.data);
 
-    //         alert('Thank you for your message! We will contact you soon.');
-    //         setFormData({
-    //             name: '',
-    //             email: '',
-    //             phone: '',
-    //             message: ''
-    //         });
-    //     } catch (error) {
-    //         console.error('Error submitting form:', error);
-    //         alert('Something went wrong. Please try again later.');
-    //     }
-    // };
+            alert('Thank you for your message! We will contact you soon.');
+            setFormData({
+                customerName: '',
+                email: '',
+                phoneNumber: '',
+                comment: ''
+            });
+        } catch (error) {
+            console.error('Error submitting form:', error);
+            alert('Something went wrong. Please try again later.');
+        }
+    };
 
     return (
         <motion.div
@@ -158,7 +159,7 @@ const Contact = () => {
                         transition={{ delay: 1, duration: 0.6 }}
                     >
                         <h3>Send Us a Message</h3>
-                        <form className="contact-form">
+                        <form className="contact-form" onSubmit={handleSubmit}>
                             <motion.div
                                 className="form-group"
                                 whileHover={{ scale: 1.02 }}
@@ -167,8 +168,8 @@ const Contact = () => {
                                 <FaUser className="form-icon" />
                                 <input
                                     type="text"
-                                    name="name"
-                                    value={formData.name}
+                                    name="customerName"
+                                    value={formData.customerName}
                                     onChange={handleChange}
                                     placeholder="Your Name"
                                     required
@@ -201,8 +202,8 @@ const Contact = () => {
                                 <FaPhone className="form-icon" />
                                 <input
                                     type="tel"
-                                    name="phone"
-                                    value={formData.phone}
+                                    name="phoneNumber"
+                                    value={formData.phoneNumber}
                                     onChange={handleChange}
                                     placeholder="Your Phone Number"
                                     className='text-input'
@@ -216,8 +217,8 @@ const Contact = () => {
                             >
                                 <FaComment className="form-icon" />
                                 <textarea
-                                    name="message"
-                                    value={formData.message}
+                                    name="comment"
+                                    value={formData.comment}
                                     onChange={handleChange}
                                     placeholder="Your Message"
                                     rows="5"

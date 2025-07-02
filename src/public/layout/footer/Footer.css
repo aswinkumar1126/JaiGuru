@@ -59,6 +59,7 @@
     line-height: 1.4;
     margin-bottom: 0.5rem;
     word-wrap: break-word;
+    text-decoration: none;
 }
 
 .contact-title {

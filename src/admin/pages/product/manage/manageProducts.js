@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { useNavigate, Link, useParams } from 'react-router-dom';
@@ -17,10 +18,10 @@ const ManageProduct = ({
 }) => {
     const navigate = useNavigate();
     const { sno: snoFromUrl } = useParams();
-    const { images, description, getImages, deleteImage, updateDescription, loading } = useProductContext();
+    const { images, description, getImages, updateImage, deleteImage, updateDescription } = useProductContext();
 
-    // State management (move selectedImages up)
-    const [selectedImages, setSelectedImages] = useState([]); // Moved before useMemo
+    // State management
+    const [selectedImages, setSelectedImages] = useState([]);
     const [isInitialLoad, setIsInitialLoad] = useState(true);
     const [sno, setSno] = useState(snoFromUrl || localStorage.getItem('sno') || '');
     const [newDescription, setNewDescription] = useState(description || '');
@@ -31,8 +32,11 @@ const ManageProduct = ({
     const [showFilters, setShowFilters] = useState(false);
     const fetchAttempts = useRef(0);
     const printRef = useRef();
-
-   
+    const [imageToUpdate, setImageToUpdate] = useState(null);
+    const [newImageFile, setNewImageFile] = useState(null);
+    const [showUpdateModal, setShowUpdateModal] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [searchSno, setSearchSno] = useState('');
 
     // Filters state
     const [filters, setFilters] = useState({
@@ -105,6 +109,29 @@ const ManageProduct = ({
     useEffect(() => {
         setNewDescription(description);
     }, [description]);
+    // Add this function to handle SNO search
+    const handleSearchBySno = async () => {
+        if (!searchSno.trim()) {
+            setFeedback({ error: 'Please enter a serial number', success: '' });
+            return;
+        }
+
+        setLoading(true);
+        try {
+            await getImages(searchSno);
+            setSno(searchSno);
+            localStorage.setItem('sno', searchSno); // Store in localStorage for persistence
+            setFeedback({ error: '', success: 'Product details loaded successfully' });
+        } catch (err) {
+            console.error('Error fetching product:', err);
+            setFeedback({
+                error: err.response?.data?.error || 'Failed to load product details. Please check the SNO and try again.',
+                success: ''
+            });
+        } finally {
+            setLoading(false);
+        }
+    }
 
     // Listen for localStorage changes (for cross-tab updates)
     useEffect(() => {
@@ -192,59 +219,59 @@ const ManageProduct = ({
         if (!hasImages) return alert('No images available to print.');
         const printWindow = window.open('', '_blank');
         printWindow.document.write(`
-      <!DOCTYPE html>
-      <html lang="en">
-      <head>
-        <title>Product Images - ${sno}</title>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <style>
-          body { font-family: Arial, sans-serif; margin: 20mm; color: #333; }
-          .print-header { margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 15px; }
-          .print-header h2 { color: #2c3e50; margin-bottom: 5px; }
-          .print-table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 12px; }
-          .print-table th, .print-table td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-          .print-table th { background-color: #f5f5f5; font-weight: bold; }
-          .print-image { max-width: 150px; max-height: 150px; display: block; margin: 0 auto; }
-          @page { size: A4 landscape; margin: 20mm; }
-          @media print { body { margin: 0; } }
-        </style>
-      </head>
-      <body>
-        <div class="print-header">
-          <h2>Product Images Report</h2>
-          <p><strong>Serial Number:</strong> ${sno}</p>
-          <p><strong>Description:</strong> ${description || 'No description available'}</p>
-          <p><strong>Generated:</strong> ${new Date().toLocaleString()}</p>
-        </div>
-        <table class="print-table">
-          <thead>
-            <tr>
-              <th>S.No</th>
-              <th>Image Preview</th>
-              <th>Image Path</th>
-              <th>Full URL</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${images.map(
+            <!DOCTYPE html>
+            <html lang="en">
+            <head>
+                <title>Product Images - ${sno}</title>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <style>
+                    body { font-family: Arial, sans-serif; margin: 20mm; color: #333; }
+                    .print-header { margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 15px; }
+                    .print-header h2 { color: #2c3e50; margin-bottom: 5px; }
+                    .print-table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 12px; }
+                    .print-table th, .print-table td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+                    .print-table th { background-color: #f5f5f5; font-weight: bold; }
+                    .print-image { max-width: 150px; max-height: 150px; display: block; margin: 0 auto; }
+                    @page { size: A4 landscape; margin: 20mm; }
+                    @media print { body { margin: 0; } }
+                </style>
+            </head>
+            <body>
+                <div class="print-header">
+                    <h2>Product Images Report</h2>
+                    <p><strong>Serial Number:</strong> ${sno}</p>
+                    <p><strong>Description:</strong> ${description || 'No description available'}</p>
+                    <p><strong>Generated:</strong> ${new Date().toLocaleString()}</p>
+                </div>
+                <table class="print-table">
+                    <thead>
+                        <tr>
+                            <th>S.No</th>
+                            <th>Image Preview</th>
+                            <th>Image Path</th>
+                            <th>Full URL</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${images.map(
             (img, index) => `
-                <tr>
-                  <td>${index + 1}</td>
-                  <td><img class="print-image" src="${baseUrl}${img}" alt="Product Image ${index + 1}" onerror="this.src='https://via.placeholder.com/150?text=Image+Not+Available';"></td>
-                  <td>${img}</td>
-                  <td>${baseUrl}${img}</td>
-                </tr>
-              `
+                                <tr>
+                                    <td>${index + 1}</td>
+                                    <td><img class="print-image" src="${baseUrl}${img}" alt="Product Image ${index + 1}" onerror="this.src='https://via.placeholder.com/150?text=Image+Not+Available';"></td>
+                                    <td>${img}</td>
+                                    <td>${baseUrl}${img}</td>
+                                </tr>
+                            `
         ).join('')}
-          </tbody>
-        </table>
-        <script>
-          window.onload = () => setTimeout(() => { window.print(); window.close(); }, 200);
-        </script>
-      </body>
-      </html>
-    `);
+                    </tbody>
+                </table>
+                <script>
+                    window.onload = () => setTimeout(() => { window.print(); window.close(); }, 200);
+                </script>
+            </body>
+            </html>
+        `);
         printWindow.document.close();
     }, [images, sno, baseUrl, description, hasImages]);
 
@@ -253,6 +280,81 @@ const ManageProduct = ({
     const handleExit = useCallback(() => navigate('/admin'), [navigate]);
 
     // Image management
+    const handleUpdateImageClick = (imagePath) => {
+        setImageToUpdate(imagePath);
+        setNewImageFile(null);
+        setShowUpdateModal(true);
+    };
+
+    const handleFileChange = (e) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        // Validate file type
+        if (!file.type.match('image.*')) {
+            setFeedback({ error: 'Only image files are allowed', success: '' });
+            return;
+        }
+
+        // Validate file size (5MB max)
+        if (file.size > 5 * 1024 * 1024) {
+            setFeedback({ error: 'Image size must be less than 5MB', success: '' });
+            return;
+        }
+
+        setNewImageFile(file);
+    };
+
+    const handleImageUpdate = async () => {
+        if (!newImageFile) {
+            setFeedback({ error: 'Please select a new image file', success: '' });
+            return;
+        }
+
+        setLoading(true);
+        try {
+            await updateImage(sno, imageToUpdate, newImageFile);
+            setFeedback({
+                error: '',
+                success: 'Image was successfully updated.'
+            });
+            setShowUpdateModal(false);
+            // Refresh the images after successful update
+            await fetchImages();
+        } catch (err) {
+            console.error('Error updating image:', err);
+            let errorMsg = 'Failed to update image';
+            if (err.response) {
+                errorMsg = err.response.data?.error ||
+                    err.response.data?.message ||
+                    errorMsg;
+            }
+            setFeedback({
+                error: errorMsg,
+                success: ''
+            });
+        } finally {
+            setLoading(false);
+        }
+    };
+
+
+    // Update the modal actions to show loading state
+    <button
+        className="btn primary"
+        onClick={handleImageUpdate}
+        disabled={!newImageFile || loading}
+    >
+        {loading ? (
+            <>
+                <span className="spinner-icon" aria-hidden="true"></span>
+                Updating...
+            </>
+        ) : (
+            'Update Image'
+        )}
+    </button>
+
     const handleDeleteImage = useCallback(
         async (imagePath) => {
             if (!window.confirm('Are you sure you want to permanently delete this image?')) return;
@@ -339,7 +441,7 @@ const ManageProduct = ({
         const baseColumns = [
             { id: 'index', label: '#', width: '4rem' },
             { id: 'image', label: 'Image', width: '10rem' },
-            { id: 'sno', label: 'Serial Number', width: '8rem' },
+            { id: 'sno', label: 'SNO', width: '10rem' },
             { id: 'description', label: 'Description', width: 'auto' },
             { id: 'actions', label: 'Actions', width: '10rem' },
         ];
@@ -557,15 +659,26 @@ const ManageProduct = ({
                                 <span className="icon" aria-hidden="true">👁️</span>
                             </a>
                             {imageEditMode && (
-                                <button
-                                    className="btn small danger"
-                                    onClick={() => handleDeleteImage(img)}
-                                    aria-label={`Delete image ${index + 1}`}
-                                    disabled={loading}
-                                    title="Delete this image"
-                                >
-                                    <span className="icon" aria-hidden="true">🗑️</span>
-                                </button>
+                                <>
+                                    <button
+                                        className="btn small warning"
+                                        onClick={() => handleUpdateImageClick(img)}
+                                        aria-label={`Update image ${index + 1}`}
+                                        disabled={loading}
+                                        title="Update this image"
+                                    >
+                                        <span className="icon" aria-hidden="true">🔄</span>
+                                    </button>
+                                    <button
+                                        className="btn small danger"
+                                        onClick={() => handleDeleteImage(img)}
+                                        aria-label={`Delete image ${index + 1}`}
+                                        disabled={loading}
+                                        title="Delete this image"
+                                    >
+                                        <span className="icon" aria-hidden="true">🗑️</span>
+                                    </button>
+                                </>
                             )}
                         </div>
                     </div>
@@ -583,7 +696,7 @@ const ManageProduct = ({
                         <Link to="/">Dashboard</Link>
                     </li>
                     <li className="breadcrumb-item active" aria-current="page">
-                        Manage Product - {sno || 'No Serial Number'}
+                        Manage Product - {sno || 'No SNO'}
                     </li>
                 </ol>
             </nav>
@@ -659,6 +772,35 @@ const ManageProduct = ({
                     </div>
                 </div>
             </motion.div>
+            <div className="search-section">
+                <div className="search-container">
+                    <input
+                        type="text"
+                        value={searchSno}
+                        onChange={(e) => setSearchSno(e.target.value)}
+                        placeholder="Enter Product SNO"
+                        className="search-input"
+                        disabled={loading}
+                    />
+                    <button
+                        className="btn primary search-button"
+                        onClick={handleSearchBySno}
+                        disabled={loading || !searchSno.trim()}
+                    >
+                        {loading ? (
+                            <>
+                                <span className="spinner-icon" aria-hidden="true"></span>
+                                Searching...
+                            </>
+                        ) : (
+                            <>
+                                <span className="icon" aria-hidden="true">🔍</span>
+                                Search
+                            </>
+                        )}
+                    </button>
+                </div>
+            </div>
 
             {/* Feedback Messages */}
             <AnimatePresence>
@@ -707,7 +849,7 @@ const ManageProduct = ({
                     <h3 id="description-section-title">Product Description</h3>
                     <div className="section-actions">
                         <span className="sno-badge">
-                            <span className="sno-label">Serial:</span>
+                            <span className="sno-label">SNO:</span>
                             <span className="sno-value">{sno || 'N/A'}</span>
                         </span>
                         {editMode ? (
@@ -920,16 +1062,28 @@ const ManageProduct = ({
                                                             View
                                                         </a>
                                                         {imageEditMode && (
-                                                            <button
-                                                                className="btn small danger"
-                                                                onClick={() => handleDeleteImage(img)}
-                                                                aria-label={`Delete image ${index + 1}`}
-                                                                disabled={loading}
-                                                                title="Delete this image"
-                                                            >
-                                                                <span className="icon" aria-hidden="true">🗑️</span>
-                                                                Delete
-                                                            </button>
+                                                            <>
+                                                                <button
+                                                                    className="btn small warning"
+                                                                    onClick={() => handleUpdateImageClick(img)}
+                                                                    aria-label={`Update image ${index + 1}`}
+                                                                    disabled={loading}
+                                                                    title="Update this image"
+                                                                >
+                                                                    <span className="icon" aria-hidden="true">🔄</span>
+                                                                    Update
+                                                                </button>
+                                                                <button
+                                                                    className="btn small danger"
+                                                                    onClick={() => handleDeleteImage(img)}
+                                                                    aria-label={`Delete image ${index + 1}`}
+                                                                    disabled={loading}
+                                                                    title="Delete this image"
+                                                                >
+                                                                    <span className="icon" aria-hidden="true">🗑️</span>
+                                                                    Delete
+                                                                </button>
+                                                            </>
                                                         )}
                                                     </div>
                                                 </td>
@@ -972,6 +1126,75 @@ const ManageProduct = ({
                     </motion.div>
                 )}
             </motion.div>
+
+            {/* Update Image Modal */}
+            <AnimatePresence>
+                {showUpdateModal && (
+                    <motion.div
+                        className="modal-overlay"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        onClick={() => setShowUpdateModal(false)}
+                    >
+                        <motion.div
+                            className="modal-content"
+                            initial={{ scale: 0.9, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            exit={{ scale: 0.9, opacity: 0 }}
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            <h3>Update Image</h3>
+                            <p>Replacing: {imageToUpdate}</p>
+
+                            <div className="form-group">
+                                <label htmlFor="newImageFile">Select New Image:</label>
+                                <input
+                                    type="file"
+                                    id="newImageFile"
+                                    accept="image/*"
+                                    onChange={handleFileChange}
+                                    disabled={loading}
+                                />
+                                {newImageFile && (
+                                    <div className="image-preview">
+                                        <p>Preview:</p>
+                                        <img
+                                            src={URL.createObjectURL(newImageFile)}
+                                            alt="Preview of new image"
+                                            style={{ maxWidth: '100%', maxHeight: '200px' }}
+                                        />
+                                    </div>
+                                )}
+                            </div>
+
+                            <div className="modal-actions">
+                                <button
+                                    className="btn primary"
+                                    onClick={handleImageUpdate}
+                                    disabled={!newImageFile || loading}
+                                >
+                                    {loading ? (
+                                        <>
+                                            <span className="spinner-icon" aria-hidden="true"></span>
+                                            Updating...
+                                        </>
+                                    ) : (
+                                        'Update Image'
+                                    )}
+                                </button>
+                                <button
+                                    className="btn danger"
+                                    onClick={() => setShowUpdateModal(false)}
+                                    disabled={loading}
+                                >
+                                    Cancel
+                                </button>
+                            </div>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </div>
     );
 };

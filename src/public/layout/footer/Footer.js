@@ -125,11 +125,14 @@ const Footer = () => {
                         <span className="contact-title">Showroom Address:</span> M/s. BMG Jewellers Pvt Ltd, 160, Melamasi St, Madurai-625001
                     </motion.p>
                     <motion.p variants={itemVariants} className="footer-contact-text">
-                        <span className="contact-title">Primary Contact:</span> +91-70946 70946, 86085 96085
+                        <span className="contact-title">Primary Contact:</span> +91-95143 33601 ,95143 33609
                     </motion.p>
                     <motion.p variants={itemVariants} className="footer-contact-text">
-                        websupport@justdial.com
+                        <a href="mailto:Contact@bmgjewellers.in?subject=Inquiry&body=Hello, I have a question..." target='_blank' className="footer-contact-text">
+                            Contact@bmgjewellers.in
+                        </a>
                     </motion.p>
+
                     
                 </motion.div>
                
@@ -168,7 +171,7 @@ const Footer = () => {
                     </motion.div>
 
                     <p className="copy-rights">© 2025 BMG Jewellery Pvt Ltd. All rights reserved.</p>
-                    <p className="design">Powered by <a href="https://www.brightechsoftware.com" className="designed-by">BrightechSoftwareSolutions</a></p>
+                    <p className="design">Powered by <a href="https://www.brightechsoftware.com" target='_blank' className="designed-by">BrightechSoftwareSolutions</a></p>
                     <div className="payment-methods">
                         <i className="fab fa-cc-visa"></i>
                         <i className="fab fa-cc-mastercard"></i>

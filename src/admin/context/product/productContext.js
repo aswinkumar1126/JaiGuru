@@ -7,73 +7,97 @@ export const ProductProvider = ({ children }) => {
     const [images, setImages] = useState([]);
     const [description, setDescription] = useState('');
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
 
     const getImages = useCallback(async (sno) => {
         setLoading(true);
+        setError(null);
         try {
             const response = await productService.getImages(sno);
-            setImages(response.data.images || []); // Store image paths
-            setDescription(response.data.description || ''); // Store description
-        } catch (error) {
-            console.error('Error fetching images:', error);
-            setImages([]);
-            setDescription('');
+            setImages(response.images || []);
+            setDescription(response.description || '');
+            return response;
+        } catch (err) {
+            setError(err.message || 'Failed to fetch images');
+            throw err;
         } finally {
             setLoading(false);
         }
     }, []);
 
-    const uploadImages = async (sno, imageFiles, description) => {
+    const uploadImages = useCallback(async (sno, imageFiles, description) => {
+        setLoading(true);
+        setError(null);
         try {
             await productService.uploadImages(sno, imageFiles, description);
-            await getImages(sno); // Refresh images and description
-        } catch (error) {
-            console.error('Error uploading images:', error);
-            throw error; // Let the caller handle the error
+            const updatedData = await getImages(sno);
+            return updatedData;
+        } catch (err) {
+            setError(err.message || 'Failed to upload images');
+            throw err;
+        } finally {
+            setLoading(false);
         }
-    };
+    }, [getImages]);
 
-    const deleteImage = async (sno, imagePath) => {
+    const deleteImage = useCallback(async (sno, imagePath) => {
+        setLoading(true);
+        setError(null);
         try {
             await productService.deleteImage(sno, imagePath);
-            await getImages(sno); // Refresh images and description
-        } catch (error) {
-            console.error('Error deleting image:', error);
-            throw error;
+            const updatedData = await getImages(sno);
+            return updatedData;
+        } catch (err) {
+            setError(err.message || 'Failed to delete image');
+            throw err;
+        } finally {
+            setLoading(false);
         }
-    };
+    }, [getImages]);
 
-    const updateImage = async (sno, oldImagePath, newImage) => {
+    const updateImage = useCallback(async (sno, oldImagePath, newImageFile) => {
+        setLoading(true);
+        setError(null);
         try {
-            await productService.updateImage(sno, oldImagePath, newImage);
-            await getImages(sno); // Refresh images and description
-        } catch (error) {
-            console.error('Error updating image:', error);
-            throw error;
+            await productService.updateImage(sno, oldImagePath, newImageFile);
+            const updatedData = await getImages(sno);
+            return updatedData;
+        } catch (err) {
+            setError(err.message || 'Failed to update image');
+            throw err;
+        } finally {
+            setLoading(false);
         }
-    };
+    }, [getImages]);
 
-    const updateDescription = async (sno, newDescription) => {
+    const updateDescription = useCallback(async (sno, newDescription) => {
+        setLoading(true);
+        setError(null);
         try {
             await productService.updateDescription(sno, newDescription);
-            await getImages(sno); // Refresh description (and images)
-        } catch (error) {
-            console.error('Error updating description:', error);
-            throw error;
+            const updatedData = await getImages(sno);
+            return updatedData;
+        } catch (err) {
+            setError(err.message || 'Failed to update description');
+            throw err;
+        } finally {
+            setLoading(false);
         }
-    };
+    }, [getImages]);
 
     return (
         <ProductContext.Provider
             value={{
                 images,
-                description, // Provide description
+                description,
                 loading,
+                error,
                 getImages,
                 uploadImages,
                 deleteImage,
                 updateImage,
-                updateDescription // Provide updateDescription function
+                updateDescription,
+                setError // Allow manual error setting if needed
             }}
         >
             {children}

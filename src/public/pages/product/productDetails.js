@@ -7,7 +7,7 @@ import SkeletonLoader from "../../components/loader/SkeletonLoader";
 import Button from "../../components/button/Button";
 import { useSingleProductQuery } from "../../hook/product/useSingleProductQuery";
 import './ProductDetails.css';
-import { FiChevronLeft, FiChevronRight, FiZoomIn } from "react-icons/fi";
+import { FiChevronLeft, FiChevronRight, FiZoomIn, FiX } from "react-icons/fi";
 import { useCart } from "../../hook/cart/useCartQuery";
 import { useRecentlyViewed } from "../../hook/recentlyViewed/useRecentlyViewedQuery";
 import RecentlyViewedPage from "../recentlyViewed/RecentlyViewed";
@@ -18,6 +18,7 @@ const ProductDetails = () => {
     const stickyCartRef = useRef(null);
     const [isStickyVisible, setIsStickyVisible] = useState(false);
     const animationRef = useRef(null);
+    console.log(sno);
 
     useEffect(() => {
         if (sno) {
@@ -26,6 +27,9 @@ const ProductDetails = () => {
     }, [sno]);
 
     const { data: productDetail, isLoading, isError, error } = useSingleProductQuery(sno);
+    console.log(productDetail);
+    const { data: metalRates } = useRatesQuery();
+
     const { addToCartHandler } = useCart();
     const { addItem } = useRecentlyViewed();
 
@@ -34,6 +38,7 @@ const ProductDetails = () => {
     const [activeImageIndex, setActiveImageIndex] = useState(0);
     const [expandedSpecs, setExpandedSpecs] = useState(true);
     const [showFullImage, setShowFullImage] = useState(false);
+    const [isTransitioning, setIsTransitioning] = useState(false);
     const imgRef = useRef(null);
     const zoomRef = useRef(null);
     const thumbnailContainerRef = useRef(null);
@@ -111,17 +116,28 @@ const ProductDetails = () => {
     };
 
     const handleThumbnailClick = (index) => {
+        if (index === activeImageIndex || isTransitioning) return;
         setActiveImageIndex(index);
-        if (thumbnailContainerRef.current) {
-            const thumbnails = thumbnailContainerRef.current.children;
-            if (thumbnails[index]) {
-                thumbnails[index].scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'nearest',
-                    inline: 'center'
-                });
-            }
+    };
+
+    const navigateImage = (direction) => {
+        if (isTransitioning) return;
+
+        setIsTransitioning(true);
+
+        let newIndex;
+        if (direction === 'next') {
+            newIndex = (activeImageIndex + 1) % imageUrls.length;
+        } else {
+            newIndex = (activeImageIndex - 1 + imageUrls.length) % imageUrls.length;
         }
+
+        setActiveImageIndex(newIndex);
+
+        // Reset transitioning state after animation would complete
+        setTimeout(() => {
+            setIsTransitioning(false);
+        }, 300);
     };
 
     const handleAddToCart = () => {
@@ -150,13 +166,32 @@ const ProductDetails = () => {
         setShowFullImage(!showFullImage);
     };
 
-    if (isError) return <Error error={error} />;
+    if (isError) {
+        console.error("Product fetch error:", error);
+        return <Error error={error} />;
+      }
     if (isLoading || !productDetail) return <SkeletonLoader count={1} type="details" />;
 
     if (productDetail.METALID === 'G') productDetail.METALID = 'GOLD';
     if (productDetail.METALID === 'S') productDetail.METALID = 'SILVER';
     if (productDetail.METALID === 'D') productDetail.METALID = 'DIAMOND';
     if (productDetail.METALID === 'P') productDetail.METALID = 'PLATINUM';
+
+    let metalRateSpec = [];
+
+    if (metalRates) {
+        if (productDetail.METALID === 'GOLD' && metalRates.GOLDRATE) {
+            metalRateSpec.push({
+                label: 'Gold Rate',
+                value: `₹${metalRates.GOLDRATE.toLocaleString()} /gm`
+            });
+        } else if (productDetail.METALID === 'SILVER' && metalRates.SILVERRATE) {
+            metalRateSpec.push({
+                label: 'Silver Rate',
+                value: `₹${metalRates.SILVERRATE.toLocaleString()} /gm`
+            });
+        }
+    }
 
     const specificationGroups = {
         "Basic Details": [
@@ -165,7 +200,9 @@ const ProductDetails = () => {
             { label: "SK-Unit", value: `${productDetail.ITEMID || '-'} - ${productDetail.TAGNO}` },
             { label: "Purity", value: productDetail.PURITY },
             { label: "Metal Type", value: productDetail.METALID },
+            ...metalRateSpec
         ],
+
         "Weight Details": [
             { label: "Gross Weight", value: `${productDetail.GRSWT} grams` },
             { label: "Net Weight", value: `${productDetail.NETWT} grams` },
@@ -221,19 +258,50 @@ const ProductDetails = () => {
                             ref={imgRef}
                             onClick={toggleFullImage}
                         >
+                            {imageUrls.length > 1 && (
+                                <>
+                                    <button
+                                        className="image-nav-button left"
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            navigateImage('prev');
+                                        }}
+                                        aria-label="Previous image"
+                                    >
+                                        <FiChevronLeft size={24} />
+                                    </button>
+                                    <button
+                                        className="image-nav-button right"
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            navigateImage('next');
+                                        }}
+                                        aria-label="Next image"
+                                    >
+                                        <FiChevronRight size={24} />
+                                    </button>
+                                </>
+                            )}
+
                             <img
                                 src={mainImage}
                                 alt={productDetail.ITEMNAME || productDetail.productName}
-                                className="main-product-image"
+                                className={`main-product-image ${isTransitioning ? 'fade' : ''}`}
                                 loading="lazy"
                                 onError={(e) => {
                                     e.target.src = '/fallback.jpg';
                                     e.target.alt = 'Product image not available';
                                 }}
                             />
+
+                            <div className="image-counter">
+                                {activeImageIndex + 1} / {imageUrls.length}
+                            </div>
+
                             <button className="zoom-indicator">
                                 <FiZoomIn size={24} />
                             </button>
+
                             {showZoom && (
                                 <div
                                     className="zoom-preview"
@@ -259,7 +327,10 @@ const ProductDetails = () => {
                                         <button
                                             key={index}
                                             className={`thumbnail ${index === activeImageIndex ? 'active' : ''}`}
-                                            onClick={() => handleThumbnailClick(index)}
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleThumbnailClick(index);
+                                            }}
                                             aria-label={`View image ${index + 1}`}
                                         >
                                             <img
@@ -380,17 +451,45 @@ const ProductDetails = () => {
             {showFullImage && (
                 <div className="full-image-modal" onClick={toggleFullImage}>
                     <div className="full-image-content">
+                        <button
+                            className="modal-nav-button left"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                navigateImage('prev');
+                            }}
+                            aria-label="Previous image"
+                        >
+                            <FiChevronLeft size={32} />
+                        </button>
+
                         <img
                             src={mainImage}
                             alt="Full size product"
                             onClick={(e) => e.stopPropagation()}
                         />
+
+                        <button
+                            className="modal-nav-button right"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                navigateImage('next');
+                            }}
+                            aria-label="Next image"
+                        >
+                            <FiChevronRight size={32} />
+                        </button>
+
+                        <div className="modal-image-counter">
+                            {activeImageIndex + 1} / {imageUrls.length}
+                        </div>
+
                         <button className="close-modal" onClick={toggleFullImage}>
-                            &times;
+                            <FiX size={24} />
                         </button>
                     </div>
                 </div>
             )}
+
             <section>
                 <RecentlyViewedPage />
             </section>

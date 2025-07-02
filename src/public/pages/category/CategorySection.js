@@ -1,18 +1,20 @@
-import React from "react";
+import React, { useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import "magic.css/dist/magic.min.css";
-import "./CategorySection.css"; // Renamed CSS file
+import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
+import "./CategorySection.css";
 import goldIcon from "../../assets/icons/gold.jpg";
 import silverIcon from "../../assets/icons/silver.jpg";
-import diamondIcon from "../../assets/icons/diamond.avif";
-import allProductsIcon from "../../assets/icons/gold.jpg";
+import diamondIcon from "../../assets/icons/pooja.jpg";
+import allProductsIcon from "../../assets/icons/gift.jpg";
+import others from '../../assets/icons/other.jpg';
 
 const jewelryCategories = [
-    { label: "Gold", id: "G", icon: goldIcon },
-    { label: "Silver", id: "S", icon: silverIcon },
-    { label: "Diamond", id: "D", icon: diamondIcon },
-    { label: "All Products", id: "", icon: allProductsIcon },
+    { label: "Silver Gold Polish", id: "G", icon: goldIcon },
+    { label: "Silver Jewels", id: "S", icon: silverIcon },
+    { label: "Pooja sets", id: "D", icon: diamondIcon },
+    { label: "Gift Items", id: "O", icon: allProductsIcon },
+    { label: 'Others', id: "T", icon: others }
 ];
 
 const containerAnimation = {
@@ -31,63 +33,77 @@ const cardAnimation = {
     visible: {
         y: 0,
         opacity: 1,
-        transition: { type: "spring", stiffness: 100 }
+        transition: {
+            type: "spring",
+            stiffness: 100,
+            damping: 10
+        }
     }
 };
 
 function CategorySection() {
     const navigate = useNavigate();
+    const gridRef = useRef(null);
+
+    const scroll = (direction) => {
+        if (gridRef.current) {
+            const scrollAmount = direction === 'left' ? -300 : 300;
+            gridRef.current.scrollBy({
+                left: scrollAmount,
+                behavior: 'smooth'
+            });
+        }
+    };
 
     return (
         <section className="jewelry-categories-section">
-            <motion.h2
-                className="jewelry-categories-title magic-animate magic-animate__fadeInDown"
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-            >
-                Our Collections
-            </motion.h2>
+            <div className="jewelry-categories-container">
+                <motion.h2
+                    className="jewelry-categories-title"
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6, ease: "easeOut" }}
+                >
+                    Our Collections
+                </motion.h2>
 
-            <motion.div
-                className="jewelry-categories-grid"
-                variants={containerAnimation}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true, margin: "0px 0px -50px 0px" }}
-            >
-                {jewelryCategories.map((category) => (
-                    <motion.div
-                        key={category.id}
-                        className="jewelry-category-card magic-hover magic-hover__float"
-                        variants={cardAnimation}
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        onClick={() => {
-                            document.getElementById(`jewelry-cat-${category.id}`)
-                                .classList.add('magic-click', 'magic-click__puff');
-                            setTimeout(() => navigate(`/products?metalId=${category.id}`), 300);
-                        }}
-                        id={`jewelry-cat-${category.id}`}
-                    >
-                        <div className="jewelry-category-img-container magic-animate magic-animate__zoomIn">
-                            <img
-                                src={category.icon}
-                                alt={category.label}
-                                className="jewelry-category-img"
-                                loading="lazy"
-                            />
-                            <div className="jewelry-category-shine"></div>
-                        </div>
-                        <motion.span
-                            className="jewelry-category-name magic-animate magic-animate__slideUp"
-                            whileHover={{ color: "#d4af37" }}
+            
+
+                <motion.div
+                    className="jewelry-categories-grid"
+                    ref={gridRef}
+                    variants={containerAnimation}
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true, margin: "0px 0px -50px 0px" }}
+                >
+                    {jewelryCategories.map((category) => (
+                        <motion.div
+                            key={category.id}
+                            className="jewelry-category-card"
+                            variants={cardAnimation}
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.98 }}
+                            onClick={() => navigate(`/products?metalId=${category.id}`)}
                         >
-                            {category.label}
-                        </motion.span>
-                    </motion.div>
-                ))}
-            </motion.div>
+                            <div className="jewelry-category-img-container">
+                                <img
+                                    src={category.icon}
+                                    alt={category.label}
+                                    className="jewelry-category-img"
+                                    loading="lazy"
+                                />
+                                <div className="jewelry-category-shine"></div>
+                            </div>
+                            <span className="jewelry-category-name">
+                                {category.label}
+                            </span>
+                        </motion.div>
+                    ))}
+                </motion.div>
+
+              
+            </div>
         </section>
     );
 }

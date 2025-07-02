@@ -15,57 +15,65 @@ const RatesPage = () => {
     const titleRef = useRef(null);
     const containerRef = useRef(null);
 
-    // GSAP Animations
+    // GSAP Animations - Fixed with proper null checks
     useEffect(() => {
+        if (!containerRef.current) return;
+
         const ctx = gsap.context(() => {
-            gsap.from(titleRef.current, {
-                y: -30,
-                opacity: 0,
-                duration: 0.8,
-                ease: "power2.out"
-            });
-
-            const [goldCoin, silverCoin] = coinRefs.current;
-
-            if (isDesktop) {
-                gsap.to(goldCoin, {
-                    rotationY: 360,
-                    yoyo: true,
-                    repeat: -1,
-                    duration: 8,
-                    ease: "power1.inOut"
+            // Only animate title if ref exists
+            if (titleRef.current) {
+                gsap.from(titleRef.current, {
+                    y: -30,
+                    opacity: 0,
+                    duration: 0.8,
+                    ease: "power2.out"
                 });
+            }
 
-                gsap.to(silverCoin, {
-                    rotationY: 360,
-                    yoyo: true,
-                    repeat: -1,
-                    duration: 6,
-                    ease: "power1.inOut",
-                    delay: 0.5
-                });
-            } else {
-                gsap.to(goldCoin, {
-                    y: -5,
-                    yoyo: true,
-                    repeat: -1,
-                    duration: 2,
-                    ease: "sine.inOut"
-                });
+            // Only animate coins if refs exist
+            if (coinRefs.current[0] && coinRefs.current[1]) {
+                const [goldCoin, silverCoin] = coinRefs.current;
 
-                gsap.to(silverCoin, {
-                    y: -5,
-                    yoyo: true,
-                    repeat: -1,
-                    duration: 2.5,
-                    ease: "sine.inOut",
-                    delay: 0.3
-                });
+                if (isDesktop) {
+                    gsap.to(goldCoin, {
+                        rotationY: 360,
+                        yoyo: true,
+                        repeat: -1,
+                        duration: 8,
+                        ease: "power1.inOut"
+                    });
+
+                    gsap.to(silverCoin, {
+                        rotationY: 360,
+                        yoyo: true,
+                        repeat: -1,
+                        duration: 6,
+                        ease: "power1.inOut",
+                        delay: 0.5
+                    });
+                } else {
+                    gsap.to(goldCoin, {
+                        y: -5,
+                        yoyo: true,
+                        repeat: -1,
+                        duration: 2,
+                        ease: "sine.inOut"
+                    });
+
+                    gsap.to(silverCoin, {
+                        y: -5,
+                        yoyo: true,
+                        repeat: -1,
+                        duration: 2.5,
+                        ease: "sine.inOut",
+                        delay: 0.3
+                    });
+                }
             }
         }, containerRef);
 
         return () => ctx.revert();
-    }, [isDesktop]);
+    }, [isDesktop, rates]); // Added rates to dependency array to re-run when data loads
 
     const containerVariants = {
         hidden: { opacity: 0 },
@@ -109,16 +117,20 @@ const RatesPage = () => {
             >
                 <div className="rp-coin-container">
                     <img
-                        ref={el => coinRefs.current[isGold ? 0 : 1] = el}
+                        ref={el => {
+                            if (el) {
+                                coinRefs.current[isGold ? 0 : 1] = el;
+                            }
+                        }}
                         src={coinImg}
                         alt={type}
                         className="rp-coin"
                     />
                 </div>
                 <div className="rp-rate-content">
-                    <h2>{type} ({isGold ? '24K' : '99.9%'})</h2>
+                    <h2>{type} ({isGold ? '22K' : '22K'})</h2>
                     <p className="rp-rate-value">
-                        ₹{rate?.toLocaleString() || '--'}
+                        <span className="rp-rate-amount">₹{rate?.toLocaleString() || '--'}</span>
                         <span className="rp-rate-per">per gram</span>
                     </p>
                 </div>
@@ -140,17 +152,21 @@ const RatesPage = () => {
                 {isDesktop && <p className="rp-subtitle">Updated every 5 minutes</p>}
 
                 <div className={isDesktop ? "rp-grid" : "rp-mobile-row"}>
-                    <RateCard
-                        type="Gold"
-                        rate={rates?.GOLDRATE}
-                        coinImg={GoldCoin}
-                    />
-                    <RateCard
-                        type="Silver"
-                        rate={rates?.SILVERRATE}
-                        coinImg={SilverCoin}
-                        delay={isDesktop ? 0.1 : 0}
-                    />
+                    {rates && (
+                        <>
+                            <RateCard
+                                type="Gold"
+                                rate={rates?.GOLDRATE}
+                                coinImg={GoldCoin}
+                            />
+                            <RateCard
+                                type="Silver"
+                                rate={rates?.SILVERRATE}
+                                coinImg={SilverCoin}
+                                delay={isDesktop ? 0.1 : 0}
+                            />
+                        </>
+                    )}
                 </div>
             </motion.div>
         </div>

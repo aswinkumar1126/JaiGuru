@@ -10,7 +10,7 @@ import {
 } from '../../hook/favorites/useFavoritesQuery';
 import { useNavigate } from 'react-router-dom';
 
-function ProductCard({ product, onQuickView }) {
+function ProductCard({ product, onQuickView, showSubItemName = false}) {
     const user = localStorage.getItem("user");
     const navigate = useNavigate();
     const itemSno = product?.SNO;
@@ -22,7 +22,8 @@ function ProductCard({ product, onQuickView }) {
     const [isHovered, setIsHovered] = useState(false);
     const [animateHeart, setAnimateHeart] = useState(false);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
-
+   
+    const displayName = showSubItemName ? product.SUBITEMNAME : product.ITEMNAME;
     const getProductImages = () => {
         try {
             const images = JSON.parse(product.ImagePath || '[]');
@@ -111,28 +112,7 @@ function ProductCard({ product, onQuickView }) {
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
         >
-            <div className="product-card__badge">
-                {product.isNew && (
-                    <motion.span
-                        className="badge badge--new"
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
-                        transition={{ delay: 0.3 }}
-                    >
-                        New
-                    </motion.span>
-                )}
-                {product.discount && (
-                    <motion.span
-                        className="badge badge--discount"
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
-                        transition={{ delay: 0.4 }}
-                    >
-                        -{product.discount}%
-                    </motion.span>
-                )}
-            </div>
+           
 
             <div className="product-card__image-container" onClick={handleQuickView}>
                 <AnimatePresence mode="wait">
@@ -223,7 +203,7 @@ function ProductCard({ product, onQuickView }) {
                     whileHover={{ color: '#d4af37' }}
                     transition={{ duration: 0.3 }}
                 >
-                    {product.ITEMNAME}
+                    {displayName}
                 </motion.h3>
 
                 <motion.div
