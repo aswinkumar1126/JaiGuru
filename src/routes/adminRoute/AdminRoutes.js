@@ -26,7 +26,7 @@ import UserDetails from '../../admin/pages/dashboard/userDetails';
 import NewAdminHeader from '../../admin/components/head/header';
 import OrderStatusManagement from '../../admin/pages/order/orderStatus';
 import { PendingOrdersPage, ShippedOrdersPage, DeliveredOrdersPage, CancelledOrdersPage, TotalRevenuePage, TodayRevenuePage, MonthlySalesPage } from '../../admin/pages/order/OrderPages';
-
+import EstimationProductsPage from '../../admin/pages/product/manage/EstimationProductsPage';
 import './AdminRoutes.css';
 import OrderHistoryPage from '../../admin/pages/order/todayOrders';
 
@@ -85,6 +85,7 @@ const AdminRoutes = () => {
                         <Route path="/" element={<ProtectedRoute allowedRoles={allowedRoles}><MainContent /></ProtectedRoute>} />
                         <Route path="product/add" element={<ProtectedRoute allowedRoles={allowedRoles}><AddProduct /></ProtectedRoute>} />
                         <Route path="product/manage/:sno?" element={<ProtectedRoute allowedRoles={allowedRoles}><ManageProduct /></ProtectedRoute>} />
+                        <Route path="product/itemManage" element={<ProtectedRoute allowedRoles={allowedRoles}><EstimationProductsPage /></ProtectedRoute>} />
                         <Route path="banner/add" element={<ProtectedRoute allowedRoles={allowedRoles}><AddBanner /></ProtectedRoute>} />
                         <Route path="banner/manage" element={<ProtectedRoute allowedRoles={allowedRoles}><ManageBanner /></ProtectedRoute>} />
                         <Route path="video/add" element={<ProtectedRoute allowedRoles={allowedRoles}><AddVideos /></ProtectedRoute>} />

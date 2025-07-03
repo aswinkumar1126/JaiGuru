@@ -43,7 +43,7 @@ console.log(products);
         NETWT: product.netWt,
         PURITY: 916, // Default purity value (916 = 22k gold)
         StoneAmount: 0, // Default stone amount
-        GrandTotal: product.rate * product.netWt, // Calculate total price
+        GrandTotal: product.rate , // Calculate total price
         imagePath: product.imagePath || '/images/product-placeholder.jpg' // Fallback image
     }));
 
@@ -161,17 +161,17 @@ console.log(products);
                                 {getVisibleProducts().map((product) => (
                                     isMobile ? (
                                         <MobileProductCard
-                                            key={`mobile-${product.SNO}`}
+                                            key={`mobile-${product.ITEMSNO ?? Math.random()}`}
                                             product={product}
-                                            onQuickView={() => navigate(`/product/${encodeURIComponent(product.ITEMSNO)}`)}
+                                            onQuickView={() => navigate(`/product/${(product.ITEMSNO)}`)}
                                             onAddToCart={() => handleAddToCart(product)}
                                             isNewArrival={true}
                                         />
                                     ) : (
                                         <ProductCard
-                                            key={`desktop-${product.SNO}`}
+                                            key={`desktop-${product.ITEMSNO ?? Math.random()}`}
                                             product={product}
-                                                onQuickView={() => navigate(`/product/${encodeURIComponent(product.ITEMSNO)}`)}
+                                            onQuickView={() => navigate(`/product/${(product.ITEMSNO)}`)}
                                             onAddToCart={() => handleAddToCart(product)}
                                             isNewArrival={true}
                                         />

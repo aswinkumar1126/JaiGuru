@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaChevronDown, FaTimes } from 'react-icons/fa';
@@ -19,8 +19,10 @@ const NavBar = ({
     setActiveDropdown,
     navRef,
     dropdownRef,
+    location,
+    className,
 }) => {
-    const location = useLocation();
+    const [activeSubmenu, setActiveSubmenu] = useState(null);
 
     const navItems = [
         { name: 'HOME', path: '/home', metal: null },
@@ -94,29 +96,32 @@ const NavBar = ({
         }
     };
 
-    // Helper function to determine active state
+    const toggleSubmenu = (categoryTitle) => {
+        setActiveSubmenu((prev) => (prev === categoryTitle ? null : categoryTitle));
+    };
+
     const isNavItemActive = (navItem) => {
         const searchParams = new URLSearchParams(location.search);
         const currentMetalId = searchParams.get('metalId');
 
         if (navItem.metal) {
-            // For GOLD, SILVER, DIAMOND
             return location.pathname === '/products' && currentMetalId === navItem.metal;
         } else if (navItem.name === 'ALL PRODUCTS') {
-            // For ALL PRODUCTS
             return location.pathname === '/products' && !currentMetalId;
         } else {
-            // For HOME, VIDEOS
             return location.pathname === navItem.path;
         }
     };
 
     return (
-        <nav
+        <motion.nav
             id="public-main-navigation"
-            className={`public-nav-links ${isMobileMenuOpen ? 'public-active' : ''}`}
+            className={`public-nav-links ${isMobileMenuOpen ? 'public-active' : ''} ${className}`}
             aria-label="Main navigation"
             ref={navRef}
+            initial={{ x: isMobile ? '-100%' : 0 }}
+            animate={{ x: isMobile && isMobileMenuOpen ? 0 : isMobile ? '-100%' : 0 }}
+            transition={{ duration: 0.3, ease: 'easeInOut' }}
         >
             {isMobile && (
                 <>
@@ -145,7 +150,7 @@ const NavBar = ({
                         >
                             <NavLink
                                 to={navItem.path}
-                                end={navItem.metal === null} // Exact match for HOME, ALL PRODUCTS, VIDEOS
+                                end={navItem.metal === null}
                                 onClick={(e) => handleItemClick(e, navItem)}
                                 className={isNavItemActive(navItem) ? 'public-active-nav-link' : ''}
                                 aria-haspopup={navItem.submenu ? 'true' : 'false'}
@@ -167,9 +172,9 @@ const NavBar = ({
                                         {activeDropdown === navItem.name && (
                                             <motion.div
                                                 className="public-dropdown-modal"
-                                                initial={{ opacity: 0, y: -20, scale: 0.95 }}
+                                                initial={{ opacity: 0, y: isMobile ? 0 : -20, scale: isMobile ? 1 : 0.95 }}
                                                 animate={{ opacity: 1, y: 0, scale: 1 }}
-                                                exit={{ opacity: 0, y: -20, scale: 0.95 }}
+                                                exit={{ opacity: 0, y: isMobile ? 0 : -20, scale: isMobile ? 1 : 0.95 }}
                                                 transition={{
                                                     duration: 0.4,
                                                     ease: [0.4, 0.0, 0.2, 1],
@@ -180,20 +185,10 @@ const NavBar = ({
                                                 role="dialog"
                                                 aria-label={`${navItem.name} category menu`}
                                             >
-                                                <div className="public-dropdown-header">
-                                                    <h3>{`${navItem.name} Jewellery`}</h3>
-                                                    <button
-                                                        className="public-dropdown-close"
-                                                        onClick={() => setActiveDropdown(null)}
-                                                        aria-label="Close category menu"
-                                                    >
-                                                        <FaTimes />
-                                                    </button>
-                                                </div>
                                                 <div className="public-dropdown-content">
                                                     <motion.div
                                                         className="public-dropdown-categories"
-                                                        initial={{ opacity: 0, x: -30 }}
+                                                        initial={{ opacity: 0, x: isMobile ? 0 : -30 }}
                                                         animate={{ opacity: 1, x: 0 }}
                                                         transition={{ delay: 0.15, duration: 0.4 }}
                                                     >
@@ -238,14 +233,28 @@ const NavBar = ({
                                                                         ease: 'easeOut',
                                                                     }}
                                                                 >
-                                                                    <h4 className="public-dropdown-category-title">{category.title}</h4>
-                                                                    <ul className="public-dropdown-category-items">
+                                                                    <h4
+                                                                        className="public-dropdown-category-title"
+                                                                        onClick={() => isMobile && toggleSubmenu(category.title)}
+                                                                    >
+                                                                        {category.title}
+                                                                        {isMobile && (
+                                                                            <FaChevronDown
+                                                                                className={`public-dropdown-arrow ${activeSubmenu === category.title ? 'rotate' : ''
+                                                                                    }`}
+                                                                            />
+                                                                        )}
+                                                                    </h4>
+                                                                    <ul
+                                                                        className={`public-dropdown-category-items ${isMobile && activeSubmenu === category.title ? 'show-submenu' : ''
+                                                                            }`}
+                                                                    >
                                                                         {category.items.map((item, itemIndex) => (
                                                                             <motion.li
                                                                                 key={`${catIndex}-${itemIndex}`}
                                                                                 className="public-dropdown-item"
                                                                                 whileHover={{
-                                                                                    x: 5,
+                                                                                    x: isMobile ? 0 : 5,
                                                                                     transition: { duration: 0.2 },
                                                                                 }}
                                                                                 initial={{ opacity: 0, x: -10 }}
@@ -296,8 +305,11 @@ const NavBar = ({
                                                             >
                                                                 <img
                                                                     src={image1}
-                                                                    alt="Jewelry collection"
+                                                                    alt="Premium jewelry collection"
                                                                     className="public-dropdown-image"
+                                                                    onError={(e) => {
+                                                                        e.target.style.display = 'none';
+                                                                    }}
                                                                 />
                                                                 <div className="public-image-overlay">
                                                                     <span>Premium Collection</span>
@@ -310,8 +322,11 @@ const NavBar = ({
                                                             >
                                                                 <img
                                                                     src={image2}
-                                                                    alt="Jewelry collection"
+                                                                    alt="Latest jewelry designs"
                                                                     className="public-dropdown-image"
+                                                                    onError={(e) => {
+                                                                        e.target.style.display = 'none';
+                                                                    }}
                                                                 />
                                                                 <div className="public-image-overlay">
                                                                     <span>Latest Designs</span>
@@ -339,7 +354,7 @@ const NavBar = ({
                     );
                 })}
             </ul>
-        </nav>
+        </motion.nav>
     );
 };
 

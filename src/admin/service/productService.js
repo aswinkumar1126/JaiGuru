@@ -89,6 +89,15 @@ const productService = {
             console.error('Error updating description:', error);
             throw error.response?.data || error;
         }
+    },
+    getEstimationList: async () => {
+        try {
+            const response = await axiosInstance.get('/product/list');
+            return response.data;
+        } catch (error) {
+            console.error('Error fetching estimation list:', error);
+            throw error.response?.data || error;
+        }
     }
 };
 

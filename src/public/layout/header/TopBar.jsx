@@ -1,12 +1,12 @@
 import React from 'react';
-import './Header.css'; 
+import './Header.css';
 
-const TopBar = ({ announcement }) => {
+const TopBar = ({ announcement, className }) => {
     return (
-        <div className="public-top-bar-container">
-            <div className="public-top-bar">
+        <div className={`public-top-bar ${className}`}>
+            <div className="public-top-bar-content">
                 <div className="public-top-bar-text">
-                    {announcement}
+                    <span className="public-top-bar-announcement">{announcement}</span>
                 </div>
             </div>
         </div>

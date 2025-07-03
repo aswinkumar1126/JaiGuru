@@ -5,7 +5,7 @@ import { getProductBySno } from '../../service/ProductService';
 export const useSingleProductQuery = (sno) => {
     return useQuery({
         queryKey: ['singleProduct', sno],
-        queryFn: () => getProductBySno(encodeURIComponent(sno)),
+        queryFn: () => getProductBySno((sno)),
         enabled: !!sno,
     });
 };

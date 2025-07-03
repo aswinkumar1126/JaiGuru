@@ -29,7 +29,7 @@ const menuItems = [
     },
     {
         title: 'Orders',
-        icon: <FaClipboardList arSign className="section-icon" />,
+        icon: <FaClipboardList  className="section-icon" />,
         submenu: [
             { title: 'Today Orders', path: '/admin/order/today' },
             { title: 'Order Status', path: '/admin/order/status' },
@@ -41,6 +41,7 @@ const menuItems = [
         submenu: [
             { title: 'Add Product', path: '/admin/product/add' },
             { title: 'Manage Products', path: '/admin/product/manage' },
+            { title: 'Manage ALLProducts', path: '/admin/product/itemManage' },
         ],
     },
     {

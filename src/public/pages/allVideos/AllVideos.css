@@ -55,7 +55,6 @@
 /* Error State with ErrorComponent */
 .video-error-state {
     padding: 3rem 2rem;
-    min-height: 400px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -125,7 +124,6 @@
     align-items: center;
     justify-content: center;
     text-align: center;
-    min-height: 400px;
 }
 
 /* Loading State */
@@ -289,9 +287,7 @@
         font-size: 1rem;
     }
 
-    .video-state {
-        min-height: 300px;
-    }
+ 
 }
 
 @media (max-width: 480px) {

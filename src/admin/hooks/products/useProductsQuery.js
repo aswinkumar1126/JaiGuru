@@ -16,4 +16,5 @@ const useProductQuery = (sno) => {
     });
 };
 
+
 export default useProductQuery;

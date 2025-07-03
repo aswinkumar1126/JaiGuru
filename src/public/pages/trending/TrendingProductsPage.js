@@ -145,7 +145,7 @@ function TrendingProductsPage() {
                                 {getVisibleProducts().map((product) => (
                                     isMobile ? (
                                         <MobileProductCard
-                                            key={`mobile-${product.SNO}`}
+                                            key={`mobile-${product.SNO ?? Math.random()}`}
                                             product={product}
                                             onQuickView={() => navigate(`/product/${product.SNO}`)}
                                             onAddToCart={() => handleAddToCart(product)}
@@ -153,7 +153,7 @@ function TrendingProductsPage() {
                                         />
                                     ) : (
                                         <ProductCard
-                                            key={`desktop-${product.SNO}`}
+                                            key={`desktop-${product.SNO ?? Math.random()}`}
                                             product={product}
                                             onQuickView={() => navigate(`/product/${product.SNO}`)}
                                             onAddToCart={() => handleAddToCart(product)}

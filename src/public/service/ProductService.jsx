@@ -12,7 +12,7 @@ export const getAllProducts = async (metalId = '', page = 1, pageSize = 50) => {
 };
 export const getProductBySno = async (sno) => {
     const response = await PublicUrl.get('/product/getSnofilter', {
-        params: { sno:encodeURIComponent(sno) }
+        params: { sno: sno }
     });
 
     const data = response.data;

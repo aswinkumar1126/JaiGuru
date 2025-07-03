@@ -10,12 +10,13 @@ import './Header.css';
 
 const Header = () => {
     const [isScrolled, setIsScrolled] = useState(false);
+    const [showTopBar, setShowTopBar] = useState(true);
+    const [showNavBar, setShowNavBar] = useState(true);
+    const [compact, setCompact] = useState(false);
     const [activeDropdown, setActiveDropdown] = useState(null);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [isMobile, setIsMobile] = useState(window.innerWidth <= 992);
     const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
-    const [showNav, setShowNav] = useState(true);
-
     const lastScrollY = useRef(0);
     const profileMenuRef = useRef(null);
     const navRef = useRef(null);
@@ -86,7 +87,12 @@ const Header = () => {
     useEffect(() => {
         const handleScroll = () => {
             const currentScrollY = window.scrollY;
-            setShowNav(currentScrollY <= lastScrollY.current || currentScrollY <= 100);
+            const isScrollingUp = currentScrollY < lastScrollY.current;
+            const isAtTop = currentScrollY <= 50;
+
+            setShowTopBar(isAtTop);
+            setShowNavBar(isScrollingUp || isAtTop);
+            setCompact(currentScrollY > 50 && !isScrollingUp);
             setIsScrolled(currentScrollY > 50);
             lastScrollY.current = currentScrollY;
         };
@@ -126,8 +132,11 @@ const Header = () => {
     }, []);
 
     return (
-        <header className={`public-header-container ${isScrolled ? 'public-scrolled' : ''}`}>
-            <TopBar announcement="🔥 Free Shipping on Orders Above ₹50,000 | Special Discounts This Week!" />
+        <header className={`public-header-container ${isScrolled ? 'public-scrolled' : ''} ${compact ? 'compact' : ''}`}>
+            <TopBar
+                announcement="🔥 Free Shipping on Orders Above ₹50,000 | Special Discounts This Week!"
+                className={showTopBar ? '' : 'hide-top-bar'}
+            />
             <MainHeader
                 isMobile={isMobile}
                 isAuthenticated={isAuthenticated}
@@ -151,6 +160,7 @@ const Header = () => {
                 navRef={navRef}
                 dropdownRef={dropdownRef}
                 location={location}
+                className={showNavBar ? '' : 'hide-nav-bar'}
             />
         </header>
     );

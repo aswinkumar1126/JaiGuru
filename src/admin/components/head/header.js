@@ -177,7 +177,7 @@ const NewAdminHeader = ({ toggleSidebar, isSidebarOpen }) => {
             <img src={logo} alt="BMG Jewelers Logo" className="new-logo-image" />
             {windowWidth > 576 && (
               <h1 className="new-company-name">
-                BMG Jewelers {windowWidth > 768 && <span>pvt ltd</span>}
+                BMG Jewelers {windowWidth > 768 && <span className='new-company-sub-name'>pvt ltd</span>}
               </h1>
             )}
           </div>

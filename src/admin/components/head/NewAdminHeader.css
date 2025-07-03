@@ -133,7 +133,7 @@
 .new-company-name span {
     font-size: 0.9rem;
     font-weight: 400;
-    color: var(--light-gray);
+    color: var(--text-dark);
 }
 
 .new-header.dark .new-company-name {
@@ -141,7 +141,7 @@
 }
 
 .new-header.dark .new-company-name span {
-    color: var(--text-light-dark);
+    color: var(--text-lights);
 }
 
 .new-header-center {
