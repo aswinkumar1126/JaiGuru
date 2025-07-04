@@ -48,13 +48,6 @@
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-.mobile-badge--new {
-    background-color: rgba(76, 175, 80, 0.9);
-}
-
-.mobile-badge--discount {
-    background-color: rgba(244, 67, 54, 0.9);
-}
 
 /* Image Container */
 .mobile-product-image-container {
@@ -62,7 +55,7 @@
     aspect-ratio: 1/1;
     position: relative;
     overflow: hidden;
-    background: var(--light-bg);
+    background: inherit;
 }
 
 .mobile-product-image {

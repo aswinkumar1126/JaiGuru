@@ -16,7 +16,7 @@ function WhyUs() {
             {/* Hero Section */}
             <section className="hero-section">
                 <div className="hero-content">
-                    <h1>Why Choose <span className="highlight">BMG Jewellers</span>?</h1>
+                    <h1>Why Choose <span className="highlight">JaiGuru Jewellers</span>?</h1>
                     <p className="subtitle">Crafting trust with every sparkle since 1985</p>
                     <div className="divider"></div>
                 </div>
@@ -45,7 +45,7 @@ function WhyUs() {
                     <h2>Our Legacy of Trust</h2>
                     <div className="divider"></div>
                     <p>
-                        At BMG Jewellers, we take pride in our legacy of trust, elegance, and excellence.
+                        At JaiGuru Jewellers, we take pride in our legacy of trust, elegance, and excellence.
                         From our humble beginnings in Madurai, we've grown into a name synonymous with
                         purity and craftsmanship. Our skilled artisans and customer-first philosophy have
                         made us one of the most beloved jewellers in Tamil Nadu.
@@ -70,7 +70,7 @@ function WhyUs() {
             {/* CTA Section */}
             <section className="cta-section">
                 <div className="cta-content">
-                    <h2>Experience the BMG Difference</h2>
+                    <h2>Experience the jaiguru Difference</h2>
                     <p>Discover our exquisite collection crafted with passion and precision</p>
                     <button className="cta-button" onClick={() => window.location.href = '/products'}>
                         Explore Our Collections
@@ -87,20 +87,20 @@ function WhyUs() {
 
                     <div className="address-container">
                         <div className="address-card">
-                            <h3>Registered Office</h3>
+                            <h3>Showroom Address</h3>
                             <address>
-                                M/s. BMG Jewellers Private Limited<br />
-                                No. 54, Vaithyanathapuram<br />
-                                Thathaneri, Madurai - 625018
+                                M/s. Jaiguru Jewellers <br />
+                                Tiruvallur Showroom: 712, TNHB, Kakkalur Bypass Road, <br />
+                                Tiruvallur - 602001
                             </address>
                         </div>
 
                         <div className="address-card">
                             <h3>Showroom Address</h3>
                             <address>
-                                M/s. BMG Jewellers Private Limited<br />
-                                160, Melamasi Street<br />
-                                Madurai - 625001
+                                M/s. JaiGuru Jewellers <br />
+                                Tiruttani Showroom: 321/322 Ma Po Si Salai, <br />
+                                Tiruttani
                             </address>
                         </div>
                     </div>

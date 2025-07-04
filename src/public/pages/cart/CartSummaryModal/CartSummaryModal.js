@@ -5,7 +5,7 @@ import "./CartSummaryModal.css";
 const CartSummaryModal = ({ isOpen, onClose, selectedItems, cartList, productMap, onCheckout }) => {
     if (!isOpen) return null;
 
-    const baseUrl = 'https://app.bmgjewellers.com';
+    const baseUrl = 'https://jaigurujewellers.com';
 
     const selectedCartItems = cartList.filter(item =>
         selectedItems.includes(item.itemTagSno) && item.itemTagSno
@@ -21,7 +21,7 @@ const CartSummaryModal = ({ isOpen, onClose, selectedItems, cartList, productMap
         (count, item) => count + item.quantity,
         0
     );
-   
+
 
     return (
         <div className="cart-summary-modal-overlay">
@@ -67,7 +67,7 @@ const CartSummaryModal = ({ isOpen, onClose, selectedItems, cartList, productMap
                                                             src={firstImage || "/fallback.jpg"}
                                                             onError={(e) => (e.target.src = "/fallback.jpg")}
                                                             alt={product.ITEMNAME || "Jewellery Item"}
-                                                      />
+                                                        />
                                                     ) : (
                                                         <div className="image-placeholder">
                                                             <span>Jewellery</span>
@@ -78,7 +78,7 @@ const CartSummaryModal = ({ isOpen, onClose, selectedItems, cartList, productMap
                                                     <p className="item-name">
                                                         {product.ITEMNAME || "Jewellery Item"}
                                                     </p>
-                                                
+
                                                     <div className="item-meta">
                                                         <span>Tag No: {item.tagNo || "N/A"}</span>
                                                         <span>Qty: {item.quantity}</span>

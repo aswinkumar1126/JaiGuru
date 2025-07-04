@@ -55,11 +55,11 @@ function Banner({ images, loading, error }) {
 
     const handleImageError = (e) => {
         e.target.onerror = null;
-        e.target.src = "/fallback-image.jpg";
+        e.target.src = "/Banner2.jpg";
         e.target.alt = "Fallback content image";
     };
 
-    const baseUrl = "https://app.bmgjewellers.com";
+    const baseUrl = "https://jaigurujewellers.com";
 
     const renderSlideContent = (img, index) => {
         const imgSrc = img?.image_path ? `${baseUrl}${img.image_path}` : img?.image || img;

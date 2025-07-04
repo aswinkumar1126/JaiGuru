@@ -114,7 +114,7 @@ function AllVideos({ onRetry }) {
                                 onEnded={handleVideoEnded} // Added to loop through playlist
                             >
                                 <source
-                                    src={`https://app.bmgjewellers.com${videos[currentVideoIndex]?.video_path}`}
+                                    src={`https://jaigurujewellers.com${videos[currentVideoIndex]?.video_path}`}
                                     type="video/mp4"
                                 />
                                 Your browser does not support HTML5 video.

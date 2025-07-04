@@ -118,30 +118,30 @@ const RecentlyViewedPage = () => {
     const isLoading = isSnoLoading || (productQueries.some(q => q.isLoading) && products.length === 0);
 
     return (
-        <section className="recently-viewed-section">
-            <div className="recently-viewed-container">
-                <header className="section-header">
-                    <div className="header-title-wrapper">
-                        <FiClock className="header-icon" />
-                        <h2 className="section-title">Recently Viewed</h2>
+        <section className="rv-section">
+            <div className="rv-container">
+                <header className="rv-header">
+                    <div className="rv-header-title-wrapper">
+                        <FiClock className="rv-header-icon" />
+                        <h2 className="rv-title">Recently Viewed</h2>
                         {!isLoading && products.length > 0 && (
-                            <span className="items-count-badge">
+                            <span className="rv-items-count">
                                 {products.length} {products.length === 1 ? 'item' : 'items'}
                             </span>
                         )}
                     </div>
-                    <p className="section-subtitle">
+                    <p className="rv-subtitle">
                         Your personal jewelry browsing history
                     </p>
                 </header>
 
                 <div
-                    className="carousel-container"
+                    className="rv-carousel-container"
                     onMouseEnter={() => !isMobile && setShowArrows(true)}
                     onMouseLeave={() => !isMobile && setShowArrows(false)}
                 >
                     {isLoading ? (
-                        <div className="products-grid loading">
+                        <div className="rv-products-grid rv-loading">
                             {[...Array(productsPerPage)].map((_, i) => (
                                 <SkeletonLoader key={`skeleton-${i}`} height={320} />
                             ))}
@@ -151,7 +151,7 @@ const RecentlyViewedPage = () => {
                             {!isMobile && showArrows && totalProducts > productsPerPage && (
                                 <>
                                     <button
-                                        className={`carousel-arrow left-arrow ${currentIndex === 0 ? 'disabled' : ''}`}
+                                        className={`rv-carousel-arrow rv-left-arrow ${currentIndex === 0 ? 'disabled' : ''}`}
                                         onClick={handlePrev}
                                         disabled={currentIndex === 0}
                                         aria-label="Previous items"
@@ -159,7 +159,7 @@ const RecentlyViewedPage = () => {
                                         <FaArrowLeft />
                                     </button>
                                     <button
-                                        className={`carousel-arrow right-arrow ${currentIndex >= maxIndex ? 'disabled' : ''}`}
+                                        className={`rv-carousel-arrow rv-right-arrow ${currentIndex >= maxIndex ? 'disabled' : ''}`}
                                         onClick={handleNext}
                                         disabled={currentIndex >= maxIndex}
                                         aria-label="Next items"
@@ -169,7 +169,7 @@ const RecentlyViewedPage = () => {
                                 </>
                             )}
 
-                            <div className="products-grid">
+                            <div className="rv-products-grid">
                                 {visibleProducts.map((product) =>
                                     isMobile ? (
                                         <MobileProductCard
@@ -180,7 +180,7 @@ const RecentlyViewedPage = () => {
                                         />
                                     ) : (
                                         <ProductCard
-                                                key={`desktop-${product.SNO ?? Math.random()}`}
+                                            key={`desktop-${product.SNO ?? Math.random()}`}
                                             product={product}
                                             onQuickView={() => navigate(`/product/${product.SNO}`)}
                                             onAddToCart={() => handleAddToCart(product)}
@@ -190,27 +190,27 @@ const RecentlyViewedPage = () => {
                             </div>
 
                             {isMobile && totalProducts > productsPerPage && (
-                                <div className="mobile-carousel-indicators">
+                                <div className="rv-mobile-indicators">
                                     <button
-                                        className={`nav-button prev ${currentIndex === 0 ? 'disabled' : ''}`}
+                                        className={`rv-nav-button rv-prev ${currentIndex === 0 ? 'disabled' : ''}`}
                                         onClick={handlePrev}
                                         disabled={currentIndex === 0}
                                     >
                                         <FaArrowLeft />
                                     </button>
-                                    <div className="dots-container">
+                                    <div className="rv-dots-container">
                                         {Array.from({
                                             length: Math.ceil(totalProducts / productsPerPage)
                                         }).map((_, i) => (
                                             <button
                                                 key={`dot-${i}`}
-                                                className={`dot ${i === Math.floor(currentIndex / productsPerPage) ? 'active' : ''}`}
+                                                className={`rv-dot ${i === Math.floor(currentIndex / productsPerPage) ? 'active' : ''}`}
                                                 onClick={() => setCurrentIndex(i * productsPerPage)}
                                             />
                                         ))}
                                     </div>
                                     <button
-                                        className={`nav-button next ${currentIndex >= maxIndex ? 'disabled' : ''}`}
+                                        className={`rv-nav-button rv-next ${currentIndex >= maxIndex ? 'disabled' : ''}`}
                                         onClick={handleNext}
                                         disabled={currentIndex >= maxIndex}
                                     >
@@ -220,15 +220,15 @@ const RecentlyViewedPage = () => {
                             )}
                         </>
                     ) : (
-                        <div className="empty-state">
-                            <div className="empty-state-content">
+                        <div className="rv-empty-state">
+                            <div className="rv-empty-content">
                                 <img
                                     src="/images/no-items.svg"
                                     alt="No recently viewed items"
-                                    className="empty-state-image"
+                                    className="rv-empty-image"
                                 />
-                                <h3 className="empty-state-title">No Recently Viewed Items</h3>
-                                <p className="empty-state-message">
+                                <h3 className="rv-empty-title">No Recently Viewed Items</h3>
+                                <p className="rv-empty-message">
                                     Items you view will appear here for easy access
                                 </p>
                                 <Button
@@ -236,7 +236,7 @@ const RecentlyViewedPage = () => {
                                     onClick={() => navigate('/products')}
                                     variant="primary"
                                     size="medium"
-                                    className="empty-state-button"
+                                    className="rv-empty-button"
                                 />
                             </div>
                         </div>
@@ -246,5 +246,4 @@ const RecentlyViewedPage = () => {
         </section>
     );
 };
-
 export default RecentlyViewedPage;

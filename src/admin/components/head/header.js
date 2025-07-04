@@ -17,7 +17,7 @@ import {
   MdMenuOpen,
 } from 'react-icons/md';
 import { MyContext } from '../../context/themeContext/themeContext';
-import logo from '../../assets/logo/logo.jpg';
+import logo from '../../assets/logo/logo.png';
 import './NewAdminHeader.css';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -174,10 +174,10 @@ const NewAdminHeader = ({ toggleSidebar, isSidebarOpen }) => {
           </button>
             )}
           <div className="new-logo">
-            <img src={logo} alt="BMG Jewelers Logo" className="new-logo-image" />
+            <img src={logo} alt=" JaiGuru Jewelers Logo" className="new-logo-image" />
             {windowWidth > 576 && (
               <h1 className="new-company-name">
-                BMG Jewelers {windowWidth > 768 && <span className='new-company-sub-name'>pvt ltd</span>}
+                JaiGuru Jewelers
               </h1>
             )}
           </div>

@@ -2,7 +2,7 @@ import React from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaShoppingCart, FaHeart, FaUserCircle, FaBars, FaTimes, FaSignOutAlt } from 'react-icons/fa';
-import Logo from '../../assets/logo/weblogo.png';
+import Logo from '../../assets/logo/logo.png';
 import Search from '../../components/search/Search';
 import RatesCard from '../../components/rateCard/RatesCard';
 import './Header.css';
@@ -32,7 +32,7 @@ const MainHeader = ({
                         <Link to="/" aria-label="Home">
                             <motion.img
                                 src={Logo}
-                                alt="BMG Jewellers Logo"
+                                alt="JaiGuru Jewellers Logo"
                                 loading="lazy"
                                 className="public-logo-img"
                                 whileHover={{ rotate: isMobile ? 0 : 5 }}
@@ -40,7 +40,7 @@ const MainHeader = ({
                             />
                         </Link>
                         <span className="public-logo-text">
-                            <pre>BMG Jewellers{'\n'}<span className="public-sub-logotext">Private Limited</span></pre>
+                            <pre>JaiGuru Jewellers</pre>
                         </span>
                     </motion.div>
                     {!isMobile && (

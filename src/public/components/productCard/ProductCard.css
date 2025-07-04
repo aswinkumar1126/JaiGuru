@@ -40,13 +40,6 @@
     font-family: 'Montserrat', sans-serif;
 }
 
-.badge--new {
-    background: #4CAF50;
-}
-
-.badge--discount {
-    background: #F44336;
-}
 
 /* Image Container */
 .product-card__image-container {

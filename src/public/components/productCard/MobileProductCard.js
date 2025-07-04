@@ -24,7 +24,7 @@ const MobileProductCard = ({ product, onQuickView, showSubItemName = false }) =>
         try {
             const images = JSON.parse(product.ImagePath || '[]');
             return images.length > 0
-                ? images.map(img => `https://app.bmgjewellers.com${img}`)
+                ? images.map(img => `https://jaigurujewellers.com${img}`)
                 : ['/fallback.jpg'];
         } catch {
             return ['/fallback.jpg'];
@@ -96,6 +96,7 @@ const MobileProductCard = ({ product, onQuickView, showSubItemName = false }) =>
                         src={images[currentImageIndex]}
                         alt={product.ITEMNAME}
                         className="mobile-product-image"
+                        onError={(e) => (e.target.src = '/fallback.jpg')}
                         loading="lazy"
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}

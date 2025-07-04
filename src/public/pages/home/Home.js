@@ -45,7 +45,7 @@ function Home() {
 
     const firstVideoUrl =
         videosData.length > 0
-            ? `https://app.bmgjewellers.com${videosData[0].video_path}`
+            ? `https://jaigurujewellers.com${videosData[0].video_path}`
             : null;
 
     // if (bannersLoading || videoLoading || productsLoading)
@@ -74,10 +74,10 @@ function Home() {
                 error={productsError}
             />
 
-            
+
 
             <NewArrivalsPage />
-            
+
             <ProtectedRecentlyViewedWrapper />
 
             {firstVideoUrl && (

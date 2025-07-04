@@ -14,26 +14,28 @@ const ProductsPage = () => {
     const searchParams = new URLSearchParams(location.search);
     const page = parseInt(searchParams.get('page')) || 1;
 
-    // State for tracking screen size
     const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
-    // Get parameters from both URL and state
     const { state } = location;
     const itemId = state?.itemId;
     const metalType = state?.metal;
     const fullItemName = state?.itemName || itemName.replace(/-/g, ' ');
 
-    // Handle screen resize
     useEffect(() => {
         const handleResize = () => {
             setIsMobile(window.innerWidth < 768);
         };
-
         window.addEventListener('resize', handleResize);
         return () => window.removeEventListener('resize', handleResize);
     }, []);
 
-    const { data: products, isLoading, isError, error, isPreviousData } = useItemFilter({
+    const {
+        data: products,
+        isLoading,
+        isError,
+        error,
+        isPreviousData
+    } = useItemFilter({
         itemId,
         itemName: fullItemName,
         metal: metalType,
@@ -42,7 +44,7 @@ const ProductsPage = () => {
     });
 
     const handlePageChange = (newPage) => {
-        if (!isPreviousData) {
+        if (!isPreviousData && newPage > 0) {
             searchParams.set('page', newPage);
             navigate({ search: searchParams.toString() }, { replace: true });
         }
@@ -54,7 +56,7 @@ const ProductsPage = () => {
 
     if (isLoading) {
         return (
-            <div className="products-loading-container">
+            <div className="pp-loading-container">
                 <LoadingSpinner />
                 <p>Loading products...</p>
             </div>
@@ -71,44 +73,71 @@ const ProductsPage = () => {
     }
 
     return (
-        <div className="products-page-container">
-            <h1 className="products-page-title">
+        <div className="pp-container">
+            <h1 className="pp-title">
                 {fullItemName.toUpperCase()}
             </h1>
 
-            <div className="products-filters">
-                <div className="products-count">
+            <div className="pp-filters">
+                <div className="pp-count">
                     {products?.length > 0 ? `${products.length} items found` : 'No items found'}
                 </div>
             </div>
 
             {products?.length > 0 ? (
-                <div className={`products-grid ${isMobile ? 'mobile-view' : 'desktop-view'}`}>
-                    {products.map(product => {
-                        const productProps = {
-                            key: product.TAGNO,
-                            product: {
-                                ...product,
-                                isNew: product.isNew || false,
-                                discount: product.discount || 0
-                            },
-                            showSubItemName: true, // 👈 tell the card to show subitem
-                            onQuickView: () => handleQuickView(product.SNO)
-                        };
-
-                        return isMobile ? (
-                            <MobileProductCard {...productProps} />
+                <div className={`pp-grid ${isMobile ? 'pp-mobile-view' : 'pp-desktop-view'}`}>
+                    {products.map(product => (
+                        isMobile ? (
+                            <MobileProductCard
+                                key={product.TAGNO}
+                                product={{
+                                    ...product,
+                                    isNew: product.isNew || false,
+                                    discount: product.discount || 0
+                                }}
+                                showSubItemName={true}
+                                onQuickView={() => handleQuickView(product.SNO)}
+                            />
                         ) : (
-                            <ProductCard {...productProps} />
-                        );
-                    })}
+                            <ProductCard
+                                key={product.TAGNO}
+                                product={{
+                                    ...product,
+                                    isNew: product.isNew || false,
+                                    discount: product.discount || 0
+                                }}
+                                showSubItemName={true}
+                                onQuickView={() => handleQuickView(product.SNO)}
+                            />
+                        )
+                    ))}
                 </div>
             ) : (
-                <div className="no-products-message">
+                <div className="pp-no-products">
                     <p>No products found for this category.</p>
                 </div>
             )}
 
+            {/* Fixed Pagination Controls */}
+            {products && products.length > 0 && (
+                <div className="pp-pagination">
+                    <button
+                        onClick={() => handlePageChange(page - 1)}
+                        disabled={page === 1 || isPreviousData}
+                        className="pp-pagination-button"
+                    >
+                        Previous
+                    </button>
+                    <span className="pp-page-number">Page {page}</span>
+                    <button
+                        onClick={() => handlePageChange(page + 1)}
+                        disabled={products.length < 20 || isPreviousData}
+                        className="pp-pagination-button"
+                    >
+                        Next
+                    </button>
+                </div>
+            )}
         </div>
     );
 };

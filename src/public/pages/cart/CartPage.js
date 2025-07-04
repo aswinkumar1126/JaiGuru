@@ -16,9 +16,9 @@ import "./CartPage.css";
 
 const CartPage = () => {
     const navigate = useNavigate();
-    const { cartItems, isLoading,  deleteCart, error } = useCart();
+    const { cartItems, isLoading, deleteCart, error } = useCart();
 
-    console.log('cartitems',cartItems.data);
+    console.log('cartitems', cartItems.data);
 
     const cartList = Array.isArray(cartItems?.data) ? cartItems.data : [];
     const [productMap, setProductMap] = useState({});
@@ -30,7 +30,7 @@ const CartPage = () => {
     const priceDetailsRef = useRef(null);
     const cartContainerRef = useRef(null);
 
-    const baseUrl = "https://app.bmgjewellers.com";
+    const baseUrl = "https://jaigurujewellers.com";
 
     // 🔁 Handle responsive layout
     useEffect(() => {
@@ -137,7 +137,7 @@ const CartPage = () => {
 
         navigate('/order', { state: orderData });
     };
-    
+
 
     // ⏳ Loading & Error states
     if (isLoading) return <SkeletonLoader />;

@@ -6,6 +6,7 @@ import { useAuth } from '../../context/authContext/UserAuthContext';
 import TopBar from './TopBar';
 import MainHeader from './MainHeader';
 import NavBar from './NavBar';
+import BottomNav from './BottomNav'; // New component
 import './Header.css';
 
 const Header = () => {
@@ -86,15 +87,22 @@ const Header = () => {
 
     useEffect(() => {
         const handleScroll = () => {
-            const currentScrollY = window.scrollY;
-            const isScrollingUp = currentScrollY < lastScrollY.current;
-            const isAtTop = currentScrollY <= 50;
+            if (isMobile) {
+                setShowTopBar(true);
+                setShowNavBar(true);
+                setCompact(false);
+                setIsScrolled(false);
+            } else {
+                const currentScrollY = window.scrollY;
+                const isScrollingUp = currentScrollY < lastScrollY.current;
+                const isAtTop = currentScrollY <= 50;
 
-            setShowTopBar(isAtTop);
-            setShowNavBar(isScrollingUp || isAtTop);
-            setCompact(currentScrollY > 50 && !isScrollingUp);
-            setIsScrolled(currentScrollY > 50);
-            lastScrollY.current = currentScrollY;
+                setShowTopBar(isAtTop);
+                setShowNavBar(isScrollingUp || isAtTop);
+                setCompact(currentScrollY > 50 && !isScrollingUp);
+                setIsScrolled(currentScrollY > 50);
+                lastScrollY.current = currentScrollY;
+            }
         };
 
         const handleResize = debounce(() => {
@@ -113,7 +121,7 @@ const Header = () => {
             window.removeEventListener('scroll', handleScroll);
             window.removeEventListener('resize', handleResize);
         };
-    }, [debounce]);
+    }, [debounce, isMobile]);
 
     useEffect(() => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -162,6 +170,7 @@ const Header = () => {
                 location={location}
                 className={showNavBar ? '' : 'hide-nav-bar'}
             />
+            {isMobile && <BottomNav />}
         </header>
     );
 };

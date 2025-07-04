@@ -19,7 +19,7 @@ const ProfileModal = ({ onClose }) => {
                 <h3>Admin Profile</h3>
                 <div className="profile-details">
                     <p><strong>Name:</strong> Admin Name</p>
-                    <p><strong>Email:</strong> admin@bmgjewelers.com</p>
+                    <p><strong>Email:</strong> admin@jaiguru.com</p>
                     <p><strong>Role:</strong> Administrator</p>
                     <p><strong>Joined Date:</strong> January 15, 2020</p>
                     <p><strong>Contact Number:</strong> +91 98765 43210</p>

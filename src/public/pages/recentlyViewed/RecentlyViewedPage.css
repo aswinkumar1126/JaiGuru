@@ -1,40 +1,40 @@
-.recently-viewed-section {
+.rv-section {
     padding: 3rem 0;
     background-color: inherit;
 }
 
-.recently-viewed-container {
+.rv-container {
     max-width: 1400px;
     margin: 0 auto;
     padding: 0 1.5rem;
 }
 
-.section-header {
+.rv-header {
     text-align: center;
     margin-bottom: 2.5rem;
 }
 
-.header-title-wrapper {
+.rv-header-title-wrapper {
     display: inline-flex;
     align-items: center;
     position: relative;
     margin-bottom: 0.75rem;
 }
 
-.header-icon {
+.rv-header-icon {
     font-size: 1.75rem;
     color: var(--primary-color);
     margin-right: 0.75rem;
 }
 
-.section-title {
+.rv-title {
     font-size: 2rem;
     font-weight: 600;
     color: #2d3748;
     margin: 0;
 }
 
-.items-count-badge {
+.rv-items-count {
     background-color: var(--primary-light);
     color: var(--primary-color);
     font-size: 0.85rem;
@@ -44,30 +44,30 @@
     margin-left: 0.75rem;
 }
 
-.section-subtitle {
+.rv-subtitle {
     color: #718096;
     font-size: 1.1rem;
     margin: 0;
     line-height: 1.5;
 }
 
-.carousel-container {
+.rv-carousel-container {
     position: relative;
     margin: 0 auto;
 }
 
-.products-grid {
+.rv-products-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 2rem;
     padding: 0.5rem;
 }
 
-.products-grid.loading {
+.rv-products-grid.rv-loading {
     padding: 1rem;
 }
 
-.carousel-arrow {
+.rv-carousel-arrow {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
@@ -86,33 +86,33 @@
     color: #4a5568;
 }
 
-.carousel-arrow:hover {
+.rv-carousel-arrow:hover {
     background-color: var(--primary-color);
     color: white;
     box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
 }
 
-.carousel-arrow.disabled {
+.rv-carousel-arrow.disabled {
     opacity: 0.5;
     cursor: not-allowed;
     background-color: #edf2f7;
 }
 
-.carousel-arrow.disabled:hover {
+.rv-carousel-arrow.disabled:hover {
     background-color: #edf2f7;
     color: #4a5568;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-.left-arrow {
+.rv-left-arrow {
     left: -24px;
 }
 
-.right-arrow {
+.rv-right-arrow {
     right: -24px;
 }
 
-.mobile-carousel-indicators {
+.rv-mobile-indicators {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -120,7 +120,7 @@
     gap: 1rem;
 }
 
-.nav-button {
+.rv-nav-button {
     background: none;
     border: none;
     color: #4a5568;
@@ -129,17 +129,17 @@
     padding: 0.5rem;
 }
 
-.nav-button.disabled {
+.rv-nav-button.disabled {
     opacity: 0.5;
     cursor: not-allowed;
 }
 
-.dots-container {
+.rv-dots-container {
     display: flex;
     gap: 0.5rem;
 }
 
-.dot {
+.rv-dot {
     width: 10px;
     height: 10px;
     border-radius: 50%;
@@ -150,89 +150,89 @@
     transition: all 0.3s ease;
 }
 
-.dot.active {
+.rv-dot.active {
     background-color: var(--primary-color);
     transform: scale(1.2);
 }
 
-.empty-state {
+.rv-empty-state {
     display: flex;
     justify-content: center;
     align-items: center;
     padding: 3rem 0;
 }
 
-.empty-state-content {
+.rv-empty-content {
     text-align: center;
     max-width: 400px;
     margin: 0 auto;
 }
 
-.empty-state-image {
+.rv-empty-image {
     width: 180px;
     height: auto;
     margin-bottom: 1.5rem;
     opacity: 0.8;
 }
 
-.empty-state-title {
+.rv-empty-title {
     font-size: 1.5rem;
     color: #2d3748;
     margin-bottom: 0.75rem;
 }
 
-.empty-state-message {
+.rv-empty-message {
     color: #718096;
     margin-bottom: 1.5rem;
     line-height: 1.5;
 }
 
-.empty-state-button {
+.rv-empty-button {
     margin-top: 1rem;
 }
 
 @media (max-width: 768px) {
-    .recently-viewed-section {
+    .rv-section {
         padding: 2rem 0;
     }
 
-    .recently-viewed-container {
+    .rv-container {
         padding: 0 1rem;
     }
 
-    .section-title {
+    .rv-title {
         font-size: 1.75rem;
     }
 
-    .products-grid {
+    .rv-products-grid {
         grid-template-columns: repeat(2, 1fr);
         gap: 1rem;
     }
 
-    .carousel-arrow {
+    .rv-carousel-arrow {
         width: 40px;
         height: 40px;
     }
 
-    .left-arrow {
+    .rv-left-arrow {
         left: -10px;
     }
 
-    .right-arrow {
+    .rv-right-arrow {
         right: -10px;
     }
 }
 
 @media (max-width: 300px) {
-    .section-title {
+    .rv-title {
         font-size: 1.5rem;
     }
 
-    .header-icon {
+    .rv-header-icon {
         font-size: 1.5rem;
     }
 
-    .products-grid {
+    .rv-products-grid {
         grid-template-columns: 1fr;
     }
 }

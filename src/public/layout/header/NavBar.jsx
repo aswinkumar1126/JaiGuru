@@ -1,11 +1,9 @@
 import React, { useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaChevronDown, FaTimes } from 'react-icons/fa';
+import { FaChevronDown } from 'react-icons/fa';
 import { useQuery } from '@tanstack/react-query';
 import { getItemAndSubItemNames } from '../../service/CategoryItemsService';
-import Search from '../../components/search/Search';
-import RatesCard from '../../components/rateCard/RatesCard';
 import './Header.css';
 import image1 from '../../assets/images/nav1.jpg';
 import image2 from '../../assets/images/nav2.jpg';
@@ -123,16 +121,6 @@ const NavBar = ({
             animate={{ x: isMobile && isMobileMenuOpen ? 0 : isMobile ? '-100%' : 0 }}
             transition={{ duration: 0.3, ease: 'easeInOut' }}
         >
-            {isMobile && (
-                <>
-                    <div className="public-mobile-search-container">
-                        <Search onSearchComplete={closeMobileMenu} />
-                    </div>
-                    <div className="public-mobile-rates-container">
-                        <RatesCard isMobile={isMobile} />
-                    </div>
-                </>
-            )}
             <ul className="public-nav-list">
                 {navItems.map((navItem) => {
                     const { data: items, isLoading, error } = navItem.submenu
@@ -240,14 +228,12 @@ const NavBar = ({
                                                                         {category.title}
                                                                         {isMobile && (
                                                                             <FaChevronDown
-                                                                                className={`public-dropdown-arrow ${activeSubmenu === category.title ? 'rotate' : ''
-                                                                                    }`}
+                                                                                className={`public-dropdown-arrow ${activeSubmenu === category.title ? 'rotate' : ''}`}
                                                                             />
                                                                         )}
                                                                     </h4>
                                                                     <ul
-                                                                        className={`public-dropdown-category-items ${isMobile && activeSubmenu === category.title ? 'show-submenu' : ''
-                                                                            }`}
+                                                                        className={`public-dropdown-category-items ${isMobile && activeSubmenu === category.title ? 'show-submenu' : ''}`}
                                                                     >
                                                                         {category.items.map((item, itemIndex) => (
                                                                             <motion.li
@@ -266,10 +252,7 @@ const NavBar = ({
                                                                                 role="none"
                                                                             >
                                                                                 <NavLink
-                                                                                    to={`/${navItem.name.toLowerCase()}/${item.ITEMNAME.toLowerCase().replace(
-                                                                                        /\s+/g,
-                                                                                        '-'
-                                                                                    )}`}
+                                                                                    to={`/${navItem.name.toLowerCase()}/${item.ITEMNAME.toLowerCase().replace(/\s+/g, '-')}`}
                                                                                     state={{
                                                                                         itemId: item.ITEMID,
                                                                                         itemName: item.ITEMNAME,
@@ -307,9 +290,7 @@ const NavBar = ({
                                                                     src={image1}
                                                                     alt="Premium jewelry collection"
                                                                     className="public-dropdown-image"
-                                                                    onError={(e) => {
-                                                                        e.target.style.display = 'none';
-                                                                    }}
+                                                                    onError={(e) => { e.target.style.display = 'none'; }}
                                                                 />
                                                                 <div className="public-image-overlay">
                                                                     <span>Premium Collection</span>
@@ -324,9 +305,7 @@ const NavBar = ({
                                                                     src={image2}
                                                                     alt="Latest jewelry designs"
                                                                     className="public-dropdown-image"
-                                                                    onError={(e) => {
-                                                                        e.target.style.display = 'none';
-                                                                    }}
+                                                                    onError={(e) => { e.target.style.display = 'none'; }}
                                                                 />
                                                                 <div className="public-image-overlay">
                                                                     <span>Latest Designs</span>

@@ -65,7 +65,7 @@ const Footer = () => {
         <footer className="footer">
             <div className="footer-container">
                 {/* Useful Links Column */}
-                <motion.div
+                {/* <motion.div
                     className="footer-column"
                     initial="hidden"
                     whileInView="visible"
@@ -96,7 +96,7 @@ const Footer = () => {
                             </motion.li>
                         ))}
                     </ul>
-                </motion.div>
+                </motion.div> */}
 
                 {/* Navigation Column */}
                 <motion.div
@@ -150,26 +150,28 @@ const Footer = () => {
                         variants={itemVariants}
                         className={`footer-contact-text ${openColumns.contact ? 'show-links' : ''}`}
                     >
-                        <span className="contact-title">Showroom Address:</span> M/s. BMG Jewellers Pvt Ltd, 160,
-                        Melamasi St, Madurai-625001
+                        <span className="contact-title">Showroom Address:</span> 
+                        Tiruvallur Showroom: 712, TNHB, Kakkalur Bypass Road, Tiruvallur - 602001
+                        <span className="contact-title">Showroom Address:</span>
+                        Tiruttani Showroom: 321/322 Ma Po Si Salai, Tiruttani
                     </motion.p>
                     <motion.p
                         variants={itemVariants}
                         className={`footer-contact-text ${openColumns.contact ? 'show-links' : ''}`}
                     >
-                        <span className="contact-title">Primary Contact:</span> +91-95143 33601, 95143 33609
+                        <span className="contact-title">Primary Contact:</span> +91- 9600972227, 9884808428 ,9169161469
                     </motion.p>
                     <motion.p
                         variants={itemVariants}
                         className={`footer-contact-text ${openColumns.contact ? 'show-links' : ''}`}
                     >
                         <a
-                            href="mailto:Contact@bmgjewellers.in?subject=Inquiry&body=Hello, I have a question..."
+                            // href="mailto:Contact@bmgjewellers.in?subject=Inquiry&body=Hello, I have a question..."
                             target="_blank"
                             rel="noopener noreferrer"
                             className="footer-contact-text"
                         >
-                            Contact@bmgjewellers.in
+                            @JaiGurujewellers.in
                         </a>
                     </motion.p>
                 </motion.div>
@@ -204,7 +206,7 @@ const Footer = () => {
                         ))}
                     </motion.div>
 
-                    <p className="copy Rights">© 2025 BMG Jewellery Pvt Ltd. All rights reserved.</p>
+                    <p className="copy Rights">© 2025 JaiGuru Jewellery. All rights reserved.</p>
                     <p className="design">
                         Powered by{' '}
                         <a href="https://www.brightechsoftware.com" target="_blank" className="designed-by">

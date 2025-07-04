@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useLocation, useNavigate } from "react-router-dom";
+import {  useLocation, useNavigate } from "react-router-dom";
 import { useFilteredItems } from "../../hook/search/useSearchQuery";
 import ProductCard from "../../components/productCard/ProductCard";
 import { useCart } from "../../hook/cart/useCartQuery";
@@ -16,7 +16,9 @@ import {
     useTheme
 } from "@mui/material";
 import { AddShoppingCart, SearchOff } from "@mui/icons-material";
+import Search from '../../components/search/Search';
 import './SearchResultsPage.css'
+
 // Animation variants
 const searchContainerVariants = {
     hidden: { opacity: 0 },
@@ -60,6 +62,7 @@ const SearchResultsPage = () => {
     const [allItems, setAllItems] = useState([]);
     const [hasMore, setHasMore] = useState(true);
     const [isInitialLoad, setIsInitialLoad] = useState(true);
+    const [issMobile, setIssMobile] = useState(window.innerWidth <= 992);
 
     const {
         data,
@@ -170,6 +173,7 @@ const SearchResultsPage = () => {
     return (
         <Container maxWidth={false} sx={{ py: 4, px: { xs: 1, sm: 2 } }}>
             <Box sx={{ mb: 4, textAlign: 'center' }}>
+                {issMobile && <Search />}
                 <Typography variant="h4" component="h1" gutterBottom>
                     Search Results for "{itemName}"
                 </Typography>

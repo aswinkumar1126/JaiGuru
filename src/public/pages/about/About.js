@@ -22,7 +22,7 @@ const About = () => {
                     animate={{ scale: 1 }}
                     transition={{ delay: 0.4, type: 'spring', stiffness: 100 }}
                 >
-                    About BMG Jewellers
+                    About jaiGuru Jewellers
                 </motion.h1>
             </motion.div>
 
@@ -33,7 +33,7 @@ const About = () => {
                 transition={{ delay: 0.6, duration: 0.6 }}
             >
                 <motion.p whileHover={{ scale: 1.02, x: 5 }}>
-                    At <strong>BMG Jewellers</strong>, we pride ourselves on offering premium-quality gold and silver ornaments, rooted in trust and tradition. Since our inception, we have consistently delivered excellence in craftsmanship and transparent pricing.
+                    At <strong>jaiGuru Jewellers</strong>, we pride ourselves on offering premium-quality gold and silver ornaments, rooted in trust and tradition. Since our inception, we have consistently delivered excellence in craftsmanship and transparent pricing.
                 </motion.p>
 
                 <motion.div

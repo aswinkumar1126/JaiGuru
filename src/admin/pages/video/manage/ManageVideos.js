@@ -11,7 +11,7 @@ import { FaEdit, FaTrash, FaSave, FaTimes, FaPlus, FaSync, FaSearch } from 'reac
 import { useNavigate } from 'react-router-dom';
 import "./ManageVideos.css";
 
-const BASE_VIDEO_URL = "https://app.bmgjewellers.com";
+const BASE_VIDEO_URL = "https://jaigurujewellers.com";
 
 const ManageVideos = () => {
     const navigate = useNavigate();

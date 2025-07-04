@@ -10,7 +10,7 @@ import {
 } from '../../hook/favorites/useFavoritesQuery';
 import { useNavigate } from 'react-router-dom';
 
-function ProductCard({ product, onQuickView, showSubItemName = false}) {
+function ProductCard({ product, onQuickView, showSubItemName = false }) {
     const user = localStorage.getItem("user");
     const navigate = useNavigate();
     const itemSno = product?.SNO;
@@ -22,13 +22,13 @@ function ProductCard({ product, onQuickView, showSubItemName = false}) {
     const [isHovered, setIsHovered] = useState(false);
     const [animateHeart, setAnimateHeart] = useState(false);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
-   
+
     const displayName = showSubItemName ? product.SUBITEMNAME : product.ITEMNAME;
     const getProductImages = () => {
         try {
             const images = JSON.parse(product.ImagePath || '[]');
             return images.length > 0
-                ? images.map(img => `https://app.bmgjewellers.com${img}`)
+                ? images.map(img => `https://jaigurujewellers.com${img}`)
                 : ['/fallback.jpg'];
         } catch {
             return ['/fallback.jpg'];
@@ -112,7 +112,7 @@ function ProductCard({ product, onQuickView, showSubItemName = false}) {
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
         >
-           
+
 
             <div className="product-card__image-container" onClick={handleQuickView}>
                 <AnimatePresence mode="wait">
@@ -128,6 +128,7 @@ function ProductCard({ product, onQuickView, showSubItemName = false}) {
                             src={images[currentImageIndex]}
                             alt={product.ITEMNAME}
                             className="product-card__image"
+                            onError={(e) => (e.target.src = '/fallback.jpg')}
                             loading="lazy"
                             width="300"
                             height="300"

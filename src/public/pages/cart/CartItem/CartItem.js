@@ -1,11 +1,11 @@
-import React,{useEffect,useState} from "react";
+import React, { useEffect, useState } from "react";
 import { useSingleProductQuery } from "../../../hook/product/useSingleProductQuery";
 import SkeletonLoader from "../../../components/loader/SkeletonLoader";
 
 
-const CartItem = ({ item,  isSelected, onSelectToggle,  onRemove, onProductDataReady }) => {
+const CartItem = ({ item, isSelected, onSelectToggle, onRemove, onProductDataReady }) => {
     const { data: product, isLoading } = useSingleProductQuery(item.itemTagSno);
-    const baseUrl = "https://app.bmgjewellers.com";
+    const baseUrl = "https://jaigurujewellers.com";
     const [hasSentProductData, setHasSentProductData] = useState(false);
 
     useEffect(() => {
@@ -41,16 +41,16 @@ const CartItem = ({ item,  isSelected, onSelectToggle,  onRemove, onProductDataR
                 />
             </div>
             <div className="cart-item-details">
-               
-                    <input
-                        type="checkbox"
-                        checked={isSelected}
-                        onChange={() => onSelectToggle(item.itemTagSno)}
-                        aria-label={`Select ${product?.ITEMNAME || "item"}`}
-                        className="cart-item-checkbox"
-                    />
-                    <h4 className="cart-item-title">{product?.ITEMNAME || "Jewellery Item"}</h4>
-                
+
+                <input
+                    type="checkbox"
+                    checked={isSelected}
+                    onChange={() => onSelectToggle(item.itemTagSno)}
+                    aria-label={`Select ${product?.ITEMNAME || "item"}`}
+                    className="cart-item-checkbox"
+                />
+                <h4 className="cart-item-title">{product?.ITEMNAME || "Jewellery Item"}</h4>
+
                 <p className="cart-item-tag"><strong>Tag No:</strong> {item.tagNo}</p>
                 <p className="cart-item-weight">Weight: {product?.NETWT || item.netWt || "N/A"}g</p>
                 <p className="cart-item-price">
@@ -58,7 +58,7 @@ const CartItem = ({ item,  isSelected, onSelectToggle,  onRemove, onProductDataR
                         ? Number(product.GrandTotal).toFixed(2)
                         : (item.amount || 0).toFixed(2)}
                 </p>
-             
+
                 <div className="cart-item-options">
                     <button
                         className="remove-btn"

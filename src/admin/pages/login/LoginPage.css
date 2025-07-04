@@ -14,14 +14,14 @@
 .sign-in-logo {
     display: inline-block;
     width: 80%;
-    height: 0px;
+    height: 50px;
 }
 
 .sign-in-logo img {
-    height: 100px;
+    height: 80px;
     position: relative;
     display: inline-flex;
-    margin-right: 240px;
+    margin-right: 200px;
 }
 
 .sign-in-from {

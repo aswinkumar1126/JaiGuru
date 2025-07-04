@@ -92,11 +92,11 @@ const WishlistPage = () => {
 };
 
 const WishlistItem = ({ sno }) => {
-    const baseUrl = "https://app.bmgjewellers.com";
+    const baseUrl = "https://jaigurujewellers.com";
     const { data: product, isLoading, isError } = useSingleProductQuery(sno);
     const { addToCartHandler } = useCart();
     const { mutate: removeFavorite, isLoading: isRemoving } = useRemoveFavorite();
-    const navigate=useNavigate()
+    const navigate = useNavigate()
 
     const handleAddToCart = (product) => {
         addToCartHandler({
@@ -132,8 +132,8 @@ const WishlistItem = ({ sno }) => {
     };
     console.log(product);
 
-    const handleImageClick = (product) =>{
-        navigate(`/product/${product.SNO}`)  
+    const handleImageClick = (product) => {
+        navigate(`/product/${product.SNO}`)
     }
     return (
         <motion.div

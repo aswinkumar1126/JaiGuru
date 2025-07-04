@@ -38,7 +38,7 @@ const Gallery = () => {
             {/* Hero Section */}
             <section className="gallery-hero">
                 <div className="hero-overlay">
-                    <h1>BMG Jewelry Gallery</h1>
+                    <h1>JaiGuru Jewelry Gallery</h1>
                     <p className="subtitle">Where Tradition Meets Exquisite Craftsmanship</p>
                     <div className="divider"></div>
                 </div>

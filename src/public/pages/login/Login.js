@@ -2,11 +2,11 @@ import React, { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useAuth as useUserAuth } from "../../context/authContext/UserAuthContext";
-import Image1 from '../../assets/login/loginImage1.jpg';
-import Image2 from '../../assets/login/loginImagw2.jpg';
-import Image3 from '../../assets/login/loginImage3.jpg';
-import Image4 from '../../assets/login/loginImage4.jpg';
-import Logo from '../../assets/image.png';
+import Image1 from '../../assets/login/login4.jpg';
+import Image2 from '../../assets/login/Login1.jpg';
+import Image3 from '../../assets/login/Login2.jpg';
+import Image4 from '../../assets/login/Login3.jpg';
+import Logo from '../../assets/logo/logo.png';
 import "./Login.css";
 
 const Login = () => {
@@ -152,9 +152,9 @@ const Login = () => {
                 >
                     <div className="login-branding">
                         <motion.div className="login-brand-header" variants={itemVariants}>
-                            <img src={Logo} alt="BMG Jewellers Logo" className="login-logo" />
+                            <img src={Logo} alt="JaiGuru Jewellers Logo" className="login-logo" />
                             <h1 className="login-brand-title">
-                                BMG Jewellers <span className="login-brand-sub-title">Private Limited</span>
+                                JaiGuru Jewellers <span className="login-brand-sub-title">Private Limited</span>
                             </h1>
                         </motion.div>
                         <motion.p className="login-brand-tagline" variants={itemVariants}>

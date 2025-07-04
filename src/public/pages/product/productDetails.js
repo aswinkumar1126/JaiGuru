@@ -43,7 +43,7 @@ const ProductDetails = () => {
     const zoomRef = useRef(null);
     const thumbnailContainerRef = useRef(null);
 
-    const baseUrl = "https://app.bmgjewellers.com";
+    const baseUrl = "https://jaigurujewellers.com";
     const [imageUrls, setImageUrls] = useState([]);
 
     // GSAP animations for sticky cart
@@ -169,7 +169,7 @@ const ProductDetails = () => {
     if (isError) {
         console.error("Product fetch error:", error);
         return <Error error={error} />;
-      }
+    }
     if (isLoading || !productDetail) return <SkeletonLoader count={1} type="details" />;
 
     if (productDetail.METALID === 'G') productDetail.METALID = 'GOLD';

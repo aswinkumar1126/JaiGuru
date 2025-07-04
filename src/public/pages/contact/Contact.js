@@ -59,7 +59,7 @@ const Contact = () => {
                     animate={{ scale: 1 }}
                     transition={{ delay: 0.4, type: 'spring', stiffness: 100 }}
                 >
-                    Contact BMG Jewellers
+                    Contact JaiGuru Jewellers
                 </motion.h1>
             </motion.div>
 
@@ -76,10 +76,10 @@ const Contact = () => {
                         transition={{ type: "spring", stiffness: 300 }}
                     >
                         <div className="icon-container">
-                            <FaMapMarkerAlt className="contact-icon" />
+                            <FaStore className="contact-icon" />
                         </div>
-                        <h3>Registered Office</h3>
-                        <p>No. 54, Vaithyanathapuram, Thathaneri, Madurai - 625018</p>
+                        <h3>Showroom Address</h3>
+                        <p> Tiruvallur Showroom: 712, TNHB, Kakkalur Bypass Road, Tiruvallur - 602001</p>
                     </motion.div>
 
                     <motion.div
@@ -90,8 +90,8 @@ const Contact = () => {
                         <div className="icon-container">
                             <FaStore className="contact-icon" />
                         </div>
-                        <h3>Showroom Address</h3>
-                        <p>160, Melamasi Street, Madurai - 625001</p>
+                        <h3>Another Showroom Address</h3>
+                        <p> Tiruttani Showroom: 321/322 Ma Po Si Salai, Tiruttani</p>
                     </motion.div>
 
                     <motion.div
@@ -103,7 +103,7 @@ const Contact = () => {
                             <FaPhone className="contact-icon" />
                         </div>
                         <h3>Contact Numbers</h3>
-                        <p>70946 70946<br />86085 96085<br />86829 96829</p>
+                        <p>+91 9600972227,  9169161469</p>
                     </motion.div>
 
                     <motion.div
@@ -130,7 +130,7 @@ const Contact = () => {
                         <div className="map-header">
                             <h3>Our Location</h3>
                             <motion.a
-                                href="https://www.google.com/maps/dir//M/s.+BMG+Jewellers+Private+Limited,+160,+Melamasi+Street,+Madurai-625001"
+                                href="https://maps.app.goo.gl/eSz4sDjHxAVRhY8R8"
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="direction-btn"
@@ -140,17 +140,18 @@ const Contact = () => {
                                 <FaDirections /> Get Directions
                             </motion.a>
                         </div>
+
                         <iframe
-                            title="BMG Location"
+                            title="Jaiguru Location"
                             width="100%"
                             height="400"
                             loading="lazy"
                             allowFullScreen
                             referrerPolicy="no-referrer-when-downgrade"
-                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3930.123456789012!2d78.123456!3d9.987654!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3b00c582b118963f%3A0x9e4e3b1a3d1e1b1d!2sBMG%20Jewellers!5e0!3m2!1sen!2sin!4v1234567890123!5m2!1sen!2sin"
-                        >
-                        </iframe>
+                            src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d15704.299423395883!2d79.9075288!3d13.1245166!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a52901f89b2edd9%3A0x31d61e505b551702!2sJai%20Guru%20Jewellers%20-%20Tiruvallur%7CShop%20Wedding%2CAntique%2CTemple%26DesignerJewellery%26Silver%20Pooja%20articles!5e1!3m2!1sen!2sin!4v1741262001036!5m2!1sen!2sin"
+                        ></iframe>
                     </motion.div>
+
 
                     <motion.div
                         className="contact-form-container"

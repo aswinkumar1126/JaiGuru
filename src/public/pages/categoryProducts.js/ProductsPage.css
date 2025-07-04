@@ -1,24 +1,116 @@
+/* ProductsPage.css */
+
 /* Base grid styles */
-.products-grid {
+.pp-grid {
     display: grid;
     gap: 20px;
     padding: 10px;
 }
 
 /* Desktop view (default) */
-.products-grid.desktop-view {
+.pp-grid.pp-desktop-view {
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
 }
 
 /* Mobile view */
-.products-grid.mobile-view {
+.pp-grid.pp-mobile-view {
     grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
 }
 
+/* Container styles */
+.pp-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.pp-title {
+    font-size: 2rem;
+    text-align: center;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.pp-filters {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.pp-count {
+    font-size: 1rem;
+    color: #666;
+}
+
+.pp-loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 300px;
+}
+
+.pp-no-products {
+    text-align: center;
+    padding: 40px;
+    font-size: 1.2rem;
+    color: #666;
+}
+
+/* Pagination styles */
+.pp-pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    margin-top: 30px;
+}
+
+.pp-pagination-button {
+    padding: 8px 16px;
+    background-color: #f0f0f0;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.pp-pagination-button:hover:not(:disabled) {
+    background-color: #e0e0e0;
+}
+
+.pp-pagination-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.pp-page-number {
+    font-size: 1rem;
+    color: #333;
+}
+
 /* Responsive adjustments */
+@media (max-width: 768px) {
+    .pp-title {
+        font-size: 1.5rem;
+    }
+
+    .pp-grid.pp-mobile-view {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+}
+
 @media (max-width: 480px) {
-    .products-grid.mobile-view {
-        grid-template-columns: 1fr 1fr;
+    .pp-title {
+        font-size: 1.3rem;
+    }
+
+    .pp-grid.pp-mobile-view {
+        grid-template-columns: 1fr;
+    }
+
+    .pp-pagination {
         gap: 10px;
     }
 }

@@ -108,10 +108,10 @@
     align-items: center;
     justify-content: center;
     padding: 1.5rem;
-    background-image: linear-gradient(var(--black-transparent), var(--black-transparent)), url('../../assets/image.png');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
+    background-color: #ffffff;
 }
 
 /* Login Card */

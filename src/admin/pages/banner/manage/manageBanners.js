@@ -20,7 +20,7 @@ import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import './ManageBanners.css';
 
-const BASE_IMAGE_URL = 'https://app.bmgjewellers.com';
+const BASE_IMAGE_URL = 'https://jaigurujewellers.com';
 
 const ManageBanner = () => {
     const navigate = useNavigate();

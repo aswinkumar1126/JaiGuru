@@ -14,7 +14,7 @@ const MAX_RETRIES = 3;
 const RETRY_DELAY_MS = 1000;
 
 const ManageProduct = ({
-    baseUrl = process.env.REACT_APP_API_BASE_URL || 'https://app.bmgjewellers.com',
+    baseUrl = process.env.REACT_APP_API_BASE_URL || 'https://jaigurujewellers.com',
 }) => {
     const navigate = useNavigate();
     const { sno: snoFromUrl } = useParams();

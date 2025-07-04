@@ -14,7 +14,7 @@ import image1 from '../../assets/images/login/Login1.jpg';
 import image2 from '../../assets/images/login/Login2.jpg';
 import image3 from '../../assets/images/login/Login3.png';
 
-import Logo from '../../assets/logo/logo.jpg';
+import Logo from '../../assets/logo/logo.png';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 const LoginPage = () => {
