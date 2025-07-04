@@ -1,11 +1,13 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useParams } from "react-router-dom";
+import { gsap } from "gsap";
+import 'magic.css/dist/magic.min.css';
 import Error from "../../components/error/Error";
 import SkeletonLoader from "../../components/loader/SkeletonLoader";
 import Button from "../../components/button/Button";
 import { useSingleProductQuery } from "../../hook/product/useSingleProductQuery";
 import './ProductDetails.css';
-import { FiChevronLeft, FiChevronRight, FiZoomIn } from "react-icons/fi";
+import { FiChevronLeft, FiChevronRight, FiZoomIn, FiX } from "react-icons/fi";
 import { useCart } from "../../hook/cart/useCartQuery";
 import { useRecentlyViewed } from "../../hook/recentlyViewed/useRecentlyViewedQuery";
 import RecentlyViewedPage from "../recentlyViewed/RecentlyViewed";
@@ -13,6 +15,10 @@ import { useRatesQuery } from "../../hook/rate/useRatesQuery";
 
 const ProductDetails = () => {
     const { sno } = useParams();
+    const stickyCartRef = useRef(null);
+    const [isStickyVisible, setIsStickyVisible] = useState(false);
+    const animationRef = useRef(null);
+    console.log(sno);
 
     useEffect(() => {
         if (sno) {
@@ -21,6 +27,9 @@ const ProductDetails = () => {
     }, [sno]);
 
     const { data: productDetail, isLoading, isError, error } = useSingleProductQuery(sno);
+    console.log(productDetail);
+    const { data: metalRates } = useRatesQuery();
+
     const { addToCartHandler } = useCart();
     const { addItem } = useRecentlyViewed();
 
@@ -29,6 +38,7 @@ const ProductDetails = () => {
     const [activeImageIndex, setActiveImageIndex] = useState(0);
     const [expandedSpecs, setExpandedSpecs] = useState(true);
     const [showFullImage, setShowFullImage] = useState(false);
+    const [isTransitioning, setIsTransitioning] = useState(false);
     const imgRef = useRef(null);
     const zoomRef = useRef(null);
     const thumbnailContainerRef = useRef(null);
@@ -36,6 +46,36 @@ const ProductDetails = () => {
     const baseUrl = "https://app.bmgjewellers.com";
     const [imageUrls, setImageUrls] = useState([]);
 
+    // GSAP animations for sticky cart
+    useEffect(() => {
+        if (!stickyCartRef.current) return;
+
+        const handleScroll = () => {
+            const scrollPosition = window.scrollY;
+            const triggerPosition = 300;
+            const viewportHeight = window.innerHeight;
+            const documentHeight = document.documentElement.scrollHeight;
+            const isNearBottom = scrollPosition + viewportHeight >= documentHeight - 100;
+
+            if (scrollPosition > triggerPosition && !isStickyVisible && !isNearBottom) {
+                setIsStickyVisible(true);
+                gsap.fromTo(stickyCartRef.current,
+                    { y: 50, opacity: 0 },
+                    { y: 0, opacity: 1, duration: 0.3, ease: "power2.out" }
+                );
+            } else if ((scrollPosition <= triggerPosition || isNearBottom) && isStickyVisible) {
+                setIsStickyVisible(false);
+                gsap.to(stickyCartRef.current,
+                    { y: 50, opacity: 0, duration: 0.3, ease: "power2.in" }
+                );
+            }
+        };
+
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, [isStickyVisible]);
+
+    // Image handling
     useEffect(() => {
         try {
             const parsedImages = JSON.parse(productDetail?.ImagePath || "[]");
@@ -76,20 +116,33 @@ const ProductDetails = () => {
     };
 
     const handleThumbnailClick = (index) => {
+        if (index === activeImageIndex || isTransitioning) return;
         setActiveImageIndex(index);
-        if (thumbnailContainerRef.current) {
-            const thumbnails = thumbnailContainerRef.current.children;
-            if (thumbnails[index]) {
-                thumbnails[index].scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'nearest',
-                    inline: 'center'
-                });
-            }
+    };
+
+    const navigateImage = (direction) => {
+        if (isTransitioning) return;
+
+        setIsTransitioning(true);
+
+        let newIndex;
+        if (direction === 'next') {
+            newIndex = (activeImageIndex + 1) % imageUrls.length;
+        } else {
+            newIndex = (activeImageIndex - 1 + imageUrls.length) % imageUrls.length;
         }
+
+        setActiveImageIndex(newIndex);
+
+        // Reset transitioning state after animation would complete
+        setTimeout(() => {
+            setIsTransitioning(false);
+        }, 300);
     };
 
     const handleAddToCart = () => {
+        if (!productDetail) return;
+
         addToCartHandler({
             itemTagSno: productDetail.SNO,
             itemId: productDetail.ITEMID,
@@ -107,20 +160,38 @@ const ProductDetails = () => {
 
     const toggleSpecs = () => {
         setExpandedSpecs(!expandedSpecs);
-        
     };
 
     const toggleFullImage = () => {
         setShowFullImage(!showFullImage);
     };
 
-    if (isError) return <Error error={error} />;
+    if (isError) {
+        console.error("Product fetch error:", error);
+        return <Error error={error} />;
+      }
     if (isLoading || !productDetail) return <SkeletonLoader count={1} type="details" />;
 
     if (productDetail.METALID === 'G') productDetail.METALID = 'GOLD';
     if (productDetail.METALID === 'S') productDetail.METALID = 'SILVER';
     if (productDetail.METALID === 'D') productDetail.METALID = 'DIAMOND';
     if (productDetail.METALID === 'P') productDetail.METALID = 'PLATINUM';
+
+    let metalRateSpec = [];
+
+    if (metalRates) {
+        if (productDetail.METALID === 'GOLD' && metalRates.GOLDRATE) {
+            metalRateSpec.push({
+                label: 'Gold Rate',
+                value: `₹${metalRates.GOLDRATE.toLocaleString()} /gm`
+            });
+        } else if (productDetail.METALID === 'SILVER' && metalRates.SILVERRATE) {
+            metalRateSpec.push({
+                label: 'Silver Rate',
+                value: `₹${metalRates.SILVERRATE.toLocaleString()} /gm`
+            });
+        }
+    }
 
     const specificationGroups = {
         "Basic Details": [
@@ -129,7 +200,9 @@ const ProductDetails = () => {
             { label: "SK-Unit", value: `${productDetail.ITEMID || '-'} - ${productDetail.TAGNO}` },
             { label: "Purity", value: productDetail.PURITY },
             { label: "Metal Type", value: productDetail.METALID },
+            ...metalRateSpec
         ],
+
         "Weight Details": [
             { label: "Gross Weight", value: `${productDetail.GRSWT} grams` },
             { label: "Net Weight", value: `${productDetail.NETWT} grams` },
@@ -140,7 +213,6 @@ const ProductDetails = () => {
             { label: "Stone Amount", value: `₹${productDetail.StoneAmount}` },
             { label: "Misc Amount", value: `₹${productDetail.MiscAmount}` },
             { label: `GST (${productDetail.GSTPer})`, value: `₹${productDetail.GSTAmount}` },
-            // { label: "Gross Amount", value: `₹${productDetail.GrandTotal - productDetail.StoneAmount}` },
             { label: "Grand Total", value: `₹${productDetail.GrandTotal}` },
         ],
     };
@@ -149,6 +221,34 @@ const ProductDetails = () => {
         <>
             <div className="product-details-container">
                 <div className="product-details-wrapper">
+                    {/* Sticky Add to Cart Bar */}
+                    <div
+                        ref={stickyCartRef}
+                        className={`sticky-cart-bar ${isStickyVisible ? 'visible' : ''}`}
+                    >
+                        <div className="sticky-cart-content">
+                            <div className="sticky-cart-left">
+                                <img
+                                    src={mainImage}
+                                    alt={productDetail.ITEMNAME}
+                                    className="sticky-cart-image"
+                                />
+                                <span className="sticky-cart-name">
+                                    {productDetail.ITEMNAME || productDetail.productName}
+                                </span>
+                            </div>
+                            <div className="sticky-cart-right">
+                                <span className="sticky-cart-price">₹{productDetail.GrandTotal}</span>
+                                <Button
+                                    className="sticky-cart-btn"
+                                    label="Add to Cart"
+                                    onClick={handleAddToCart}
+                                    primary
+                                />
+                            </div>
+                        </div>
+                    </div>
+
                     <div className="product-image-section">
                         <div
                             className="image-container"
@@ -158,19 +258,50 @@ const ProductDetails = () => {
                             ref={imgRef}
                             onClick={toggleFullImage}
                         >
+                            {imageUrls.length > 1 && (
+                                <>
+                                    <button
+                                        className="image-nav-button left"
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            navigateImage('prev');
+                                        }}
+                                        aria-label="Previous image"
+                                    >
+                                        <FiChevronLeft size={24} />
+                                    </button>
+                                    <button
+                                        className="image-nav-button right"
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            navigateImage('next');
+                                        }}
+                                        aria-label="Next image"
+                                    >
+                                        <FiChevronRight size={24} />
+                                    </button>
+                                </>
+                            )}
+
                             <img
                                 src={mainImage}
                                 alt={productDetail.ITEMNAME || productDetail.productName}
-                                className="main-product-image"
+                                className={`main-product-image ${isTransitioning ? 'fade' : ''}`}
                                 loading="lazy"
                                 onError={(e) => {
                                     e.target.src = '/fallback.jpg';
                                     e.target.alt = 'Product image not available';
                                 }}
                             />
+
+                            <div className="image-counter">
+                                {activeImageIndex + 1} / {imageUrls.length}
+                            </div>
+
                             <button className="zoom-indicator">
                                 <FiZoomIn size={24} />
                             </button>
+
                             {showZoom && (
                                 <div
                                     className="zoom-preview"
@@ -196,7 +327,10 @@ const ProductDetails = () => {
                                         <button
                                             key={index}
                                             className={`thumbnail ${index === activeImageIndex ? 'active' : ''}`}
-                                            onClick={() => handleThumbnailClick(index)}
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleThumbnailClick(index);
+                                            }}
                                             aria-label={`View image ${index + 1}`}
                                         >
                                             <img
@@ -235,6 +369,7 @@ const ProductDetails = () => {
                             />
                         </div>
                     </div>
+
                     <div className="product-info-section">
                         <div className="product-header">
                             <div className="product-title-row">
@@ -316,13 +451,40 @@ const ProductDetails = () => {
             {showFullImage && (
                 <div className="full-image-modal" onClick={toggleFullImage}>
                     <div className="full-image-content">
+                        <button
+                            className="modal-nav-button left"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                navigateImage('prev');
+                            }}
+                            aria-label="Previous image"
+                        >
+                            <FiChevronLeft size={32} />
+                        </button>
+
                         <img
                             src={mainImage}
                             alt="Full size product"
                             onClick={(e) => e.stopPropagation()}
                         />
+
+                        <button
+                            className="modal-nav-button right"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                navigateImage('next');
+                            }}
+                            aria-label="Next image"
+                        >
+                            <FiChevronRight size={32} />
+                        </button>
+
+                        <div className="modal-image-counter">
+                            {activeImageIndex + 1} / {imageUrls.length}
+                        </div>
+
                         <button className="close-modal" onClick={toggleFullImage}>
-                            &times;
+                            <FiX size={24} />
                         </button>
                     </div>
                 </div>

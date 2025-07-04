@@ -11,7 +11,7 @@
 
 .product-page {
     padding: 3rem 2rem;
-    background-color: var(--light-gray);
+    background-color: inherit;
 }
 
 .page-header {

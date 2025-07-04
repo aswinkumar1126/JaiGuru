@@ -32,20 +32,20 @@
 
 .searchInput {
     padding: 0.6rem 1rem;
-    border: 1px solid #D1D5DB;
-    border-radius:1rem;
+    border: 1px solid #c25736;
+    border-radius:50px;
     width: 100%;
     max-width: 100rem;
     font-size: 1rem;
     outline: none;
     transition: all 0.3s ease;
-    box-shadow: 0 0 8px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 0 8px rgba(255, 255, 255, 0.05);
     background-color: #fff;
 }
 
 .searchInput:focus {
-    box-shadow: 0 0 0 3px #05966933;
-    border-color: #059669;
+    box-shadow: 0 0 0 3px #1f1e1e33;
+    border-color: #ffffff;
     transform: scale(1.02);
 }
 

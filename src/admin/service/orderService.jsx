@@ -22,4 +22,46 @@ export const orderService = {
             axiosInstance.get("/payment/verify-payment", {
                   params: { orderId },
             }),
+
+      // 🔹 5. Get Paginated Pending Orders
+      getPaginatedPendingOrders: (page, size) =>
+            axiosInstance.get("/order/pending-orders", {
+                  params: { page, size },
+            }),
+
+      // 🔹 6. Get Paginated Delivered Orders
+      getPaginatedDeliveredOrders: (page, size) =>
+            axiosInstance.get("/order/delivered-orders", {
+                  params: { page, size },
+            }),
+
+      // 🔹 7. Get Paginated Cancelled Orders
+      getPaginatedCancelledOrders: (page, size) =>
+            axiosInstance.get("/order/cancelled-orders", {
+                  params: { page, size },
+            }),
+
+      // 🔹 8. Get Paginated Shipped Orders
+      getPaginatedShippedOrders: (page, size) =>
+            axiosInstance.get("/order/shipped-orders", {
+                  params: { page, size },
+            }),
+
+      // 🔹 9. Get Total Revenue
+      getTotalRevenue: () =>
+            axiosInstance.get("/order/total-revenue"),
+
+      // 🔹 10. Get Today's Revenue
+      getTodayRevenue: () =>
+            axiosInstance.get("/order/today-revenue"),
+
+      // 🔹 11. Get Monthly Sales Report
+      getMonthlySalesReport: () =>
+            axiosInstance.get("/order/monthly-sales"),
+
+      // 🔹 12. Get Orders by Date Range
+      getOrdersByDateRange: (startDate, endDate) =>
+            axiosInstance.get("/order/orders-by-date", {
+                  params: { startDate, endDate },
+            }),
 };

@@ -1,143 +1,175 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useRatesQuery } from '../../hook/rate/useRatesQuery';
 import GoldCoin from '../../assets/coins/goldcoin-removebg-preview.png';
 import SilverCoin from '../../assets/coins/silvercoin-removebg-preview.png';
 import { motion } from 'framer-motion';
+import { gsap } from 'gsap';
+import { useMediaQuery } from 'react-responsive';
+import 'magic.css/dist/magic.min.css';
 import './RatesPage.css';
 
 const RatesPage = () => {
     const { data: rates, isLoading, isError, error } = useRatesQuery();
+    const isDesktop = useMediaQuery({ minWidth: 768 });
+    const coinRefs = useRef([]);
+    const titleRef = useRef(null);
+    const containerRef = useRef(null);
 
-    // Desktop animations
-    const desktopCoinVariants = {
-        animate: {
-            rotate: [0, 10, -10, 0],
-            y: [0, -5, 0],
-            transition: {
-                duration: 3,
-                repeat: Infinity,
-                ease: "easeInOut"
-            }
-        }
-    };
+    // GSAP Animations - Fixed with proper null checks
+    useEffect(() => {
+        if (!containerRef.current) return;
 
-    // Mobile animations
-    const mobileCoinVariants = {
-        animate: {
-            y: [0, -3, 0],
-            transition: {
-                duration: 2,
-                repeat: Infinity,
-                ease: "easeInOut"
+        const ctx = gsap.context(() => {
+            // Only animate title if ref exists
+            if (titleRef.current) {
+                gsap.from(titleRef.current, {
+                    y: -30,
+                    opacity: 0,
+                    duration: 0.8,
+                    ease: "power2.out"
+                });
             }
-        }
-    };
+
+            // Only animate coins if refs exist
+            if (coinRefs.current[0] && coinRefs.current[1]) {
+                const [goldCoin, silverCoin] = coinRefs.current;
+
+                if (isDesktop) {
+                    gsap.to(goldCoin, {
+                        rotationY: 360,
+                        yoyo: true,
+                        repeat: -1,
+                        duration: 8,
+                        ease: "power1.inOut"
+                    });
+
+                    gsap.to(silverCoin, {
+                        rotationY: 360,
+                        yoyo: true,
+                        repeat: -1,
+                        duration: 6,
+                        ease: "power1.inOut",
+                        delay: 0.5
+                    });
+                } else {
+                    gsap.to(goldCoin, {
+                        y: -5,
+                        yoyo: true,
+                        repeat: -1,
+                        duration: 2,
+                        ease: "sine.inOut"
+                    });
+
+                    gsap.to(silverCoin, {
+                        y: -5,
+                        yoyo: true,
+                        repeat: -1,
+                        duration: 2.5,
+                        ease: "sine.inOut",
+                        delay: 0.3
+                    });
+                }
+            }
+        }, containerRef);
+
+        return () => ctx.revert();
+    }, [isDesktop, rates]); // Added rates to dependency array to re-run when data loads
 
     const containerVariants = {
         hidden: { opacity: 0 },
         visible: {
             opacity: 1,
-            transition: {
-                staggerChildren: 0.1,
-                when: "beforeChildren"
-            }
+            transition: { staggerChildren: 0.2 }
         }
     };
 
-    const itemVariants = {
-        hidden: { y: 20, opacity: 0 },
+    const cardVariants = {
+        hidden: { y: 30, opacity: 0 },
         visible: {
             y: 0,
             opacity: 1,
-            transition: { duration: 0.5 }
+            transition: { type: "spring", stiffness: 100 }
         }
     };
 
-    if (isLoading) {
-        return (
-            <div className="rp-loading">
-                <div className="rp-loading-spinner"></div>
-                <p>Fetching current rates...</p>
-            </div>
-        );
-    }
+    if (isLoading) return (
+        <div className="rp-loading">
+            <div className="rp-loading-spinner"></div>
+            <p>Fetching current rates...</p>
+        </div>
+    );
 
-    if (isError) {
+    if (isError) return (
+        <div className="rp-error">
+            <p>Error loading rates: {error.message}</p>
+        </div>
+    );
+
+    const RateCard = ({ type, rate, coinImg, delay = 0 }) => {
+        const isGold = type === 'Gold';
         return (
-            <div className="rp-error">
-                <p>Error loading rates: {error.message}</p>
-            </div>
+            <motion.div
+                className={`rp-card ${isGold ? 'rp-gold' : 'rp-silver'}`}
+                variants={cardVariants}
+                whileHover={{ scale: isDesktop ? 1.03 : 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                transition={{ delay }}
+            >
+                <div className="rp-coin-container">
+                    <img
+                        ref={el => {
+                            if (el) {
+                                coinRefs.current[isGold ? 0 : 1] = el;
+                            }
+                        }}
+                        src={coinImg}
+                        alt={type}
+                        className="rp-coin"
+                    />
+                </div>
+                <div className="rp-rate-content">
+                    <h2>{type} ({isGold ? '22K' : '22K'})</h2>
+                    <p className="rp-rate-value">
+                        <span className="rp-rate-amount">₹{rate?.toLocaleString() || '--'}</span>
+                        <span className="rp-rate-per">per gram</span>
+                    </p>
+                </div>
+            </motion.div>
         );
-    }
+    };
 
     return (
-        <>
-            {/* Desktop Version (hidden on mobile) */}
+        <div className="rates-page-container" ref={containerRef}>
             <motion.div
-                className="rp-desktop-container"
+                className="rp-container"
                 variants={containerVariants}
                 initial="hidden"
                 animate="visible"
             >
-                <motion.h1 className="rp-title" variants={itemVariants}>
-                    Today's Precious Metal Rates
-                </motion.h1>
-                <motion.p className="rp-subtitle" variants={itemVariants}>
-                    Updated every 5 minutes
-                </motion.p>
+                <h1 className="rp-title" ref={titleRef}>
+                    {isDesktop ? "Today's Precious Metal Rates" : "Today's Rates"}
+                </h1>
+                {isDesktop && <p className="rp-subtitle">Updated every 5 minutes</p>}
 
-                <div className="rp-grid">
-                    <motion.div className="rp-card rp-gold" variants={itemVariants}>
-                        <motion.div className="rp-coin-container" variants={desktopCoinVariants} animate="animate">
-                            <img src={GoldCoin} alt="Gold" className="rp-coin rp-gold-coin" />
-                        </motion.div>
-                        <div className="rp-rate-content">
-                            <h2>Gold (24K)</h2>
-                            <p className="rp-rate-value">₹{rates?.GOLDRATE?.toLocaleString() || '--'} <span className="rp-rate-per">per gram</span></p>
-                        </div>
-                    </motion.div>
-
-                    <motion.div className="rp-card rp-silver" variants={itemVariants} transition={{ delay: 0.1 }}>
-                        <motion.div className="rp-coin-container" variants={desktopCoinVariants} animate="animate" transition={{ delay: 0.2 }}>
-                            <img src={SilverCoin} alt="Silver" className="rp-coin rp-silver-coin" />
-                        </motion.div>
-                        <div className="rp-rate-content">
-                            <h2>Silver (99.9%)</h2>
-                            <p className="rp-rate-value">₹{rates?.SILVERRATE?.toLocaleString() || '--'} <span className="rp-rate-per">per gram</span></p>
-                        </div>
-                    </motion.div>
+                <div className={isDesktop ? "rp-grid" : "rp-mobile-row"}>
+                    {rates && (
+                        <>
+                            <RateCard
+                                type="Gold"
+                                rate={rates?.GOLDRATE}
+                                coinImg={GoldCoin}
+                            />
+                            <RateCard
+                                type="Silver"
+                                rate={rates?.SILVERRATE}
+                                coinImg={SilverCoin}
+                                delay={isDesktop ? 0.1 : 0}
+                            />
+                        </>
+                    )}
                 </div>
             </motion.div>
-
-            {/* Mobile Version (hidden on desktop) */}
-            <div className="rp-mobile-container">
-                <motion.h1 className="sm-rp-title" >
-                    Today's Precious Metal Rates
-                </motion.h1>
-                <div className="rp-mobile-row">
-                    
-                    <motion.div className="rp-mobile-card rp-mobile-gold" whileHover={{ y: -2 }}>
-                        <motion.div className="rp-mobile-coin" variants={mobileCoinVariants} animate="animate">
-                            <img src={GoldCoin} alt="Gold" className="rp-mobile-coin-img" />
-                        </motion.div>
-                        <div className="rp-mobile-content">
-                            <span className="rp-mobile-label">Gold (24K)</span>
-                            <span className="rp-mobile-value">₹{rates?.GOLDRATE?.toLocaleString() || '--'} <span className="rp-rate-per-mobile">/gm</span></span>
-                        </div>
-                    </motion.div>
-
-                    <motion.div className="rp-mobile-card rp-mobile-silver" whileHover={{ y: -2 }} transition={{ delay: 0.1 }}>
-                        <motion.div className="rp-mobile-coin" variants={mobileCoinVariants} animate="animate" transition={{ delay: 0.2 }}>
-                            <img src={SilverCoin} alt="Silver" className="rp-mobile-coin-img" />
-                        </motion.div>
-                        <div className="rp-mobile-content">
-                            <span className="rp-mobile-label">Silver (99.9%)</span>
-                            <span className="rp-mobile-value">₹{rates?.SILVERRATE?.toLocaleString() || '--'} <span className="rp-rate-per-mobile">/gm</span></span>
-                        </div>
-                    </motion.div>
-                </div>
-            </div>
-        </>
+        </div>
     );
 };
 

@@ -1,13 +1,14 @@
 import React, { useState, useEffect, useContext, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  FaSearch,
+  FaHome,
   FaBell,
   FaUserCircle,
   FaCog,
   FaSignOutAlt,
   FaEnvelope,
   FaGlobe,
+  FaSearch,
 } from 'react-icons/fa';
 import {
   MdDarkMode,
@@ -27,13 +28,14 @@ import { debounce } from 'lodash';
 const NewAdminHeader = ({ toggleSidebar, isSidebarOpen }) => {
   const { themeMode, setThemeMode } = useContext(MyContext);
   const [scrolled, setScrolled] = useState(false);
-  const [isMobile, setIsMobile] = useState(window.innerWidth <= 1024);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  const [showSearch, setShowSearch] = useState(false);
   const [currentDateTime, setCurrentDateTime] = useState('');
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [isLanguageOpen, setIsLanguageOpen] = useState(false);
   const [isEmailOpen, setIsEmailOpen] = useState(false);
+  const [activeButton, setActiveButton] = useState(null);
 
   const navigate = useNavigate();
   const { t, i18n } = useTranslation();
@@ -44,11 +46,18 @@ const NewAdminHeader = ({ toggleSidebar, isSidebarOpen }) => {
   const notificationsRef = useRef(null);
   const languageRef = useRef(null);
   const emailRef = useRef(null);
+  const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef(null);
 
-  // Debounced resize handler
+  // Window resize handler
   useEffect(() => {
-    const handleResize = debounce(() => setIsMobile(window.innerWidth <= 1024), 100);
-    handleResize();
+    const handleResize = debounce(() => {
+      setWindowWidth(window.innerWidth);
+      if (window.innerWidth > 768) {
+        setShowSearch(false);
+      }
+    }, 100);
+
     window.addEventListener('resize', handleResize);
     return () => {
       window.removeEventListener('resize', handleResize);
@@ -67,12 +76,41 @@ const NewAdminHeader = ({ toggleSidebar, isSidebarOpen }) => {
     };
   }, []);
 
+  // Close dropdowns when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsOpen(false);
+      }
+      if (profileRef.current && !profileRef.current.contains(event.target)) {
+        setIsProfileOpen(false);
+        setActiveButton(null);
+      }
+      if (notificationsRef.current && !notificationsRef.current.contains(event.target)) {
+        setIsNotificationsOpen(false);
+        setActiveButton(null);
+      }
+      if (languageRef.current && !languageRef.current.contains(event.target)) {
+        setIsLanguageOpen(false);
+        setActiveButton(null);
+      }
+      if (emailRef.current && !emailRef.current.contains(event.target)) {
+        setIsEmailOpen(false);
+        setActiveButton(null);
+      }
+     
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [windowWidth]);
+
   // Date and time update
   useEffect(() => {
     const updateDateTime = () => {
       const date = new Date();
       const day = String(date.getDate()).padStart(2, '0');
-      const month = String(date.getMonth() + 1).padStart(2, '0'); // January is 0
+      const month = String(date.getMonth() + 1).padStart(2, '0');
       const year = date.getFullYear();
       const formattedDate = `${day}/${month}/${year}`;
       const formattedTime = date.toLocaleTimeString('en-US', {
@@ -80,40 +118,17 @@ const NewAdminHeader = ({ toggleSidebar, isSidebarOpen }) => {
         minute: '2-digit',
         hour12: true,
       });
-      setCurrentDateTime(`DATE:${formattedDate}-TIME:${formattedTime}`);
+      setCurrentDateTime(`DATE: ${formattedDate} - TIME: ${formattedTime}`);
     };
     updateDateTime();
     const interval = setInterval(updateDateTime, 1000);
     return () => clearInterval(interval);
   }, []);
 
-  // Close dropdowns on outside click
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (profileRef.current && !profileRef.current.contains(event.target)) {
-        setIsProfileOpen(false);
-      }
-      if (notificationsRef.current && !notificationsRef.current.contains(event.target)) {
-        setIsNotificationsOpen(false);
-      }
-      if (languageRef.current && !languageRef.current.contains(event.target)) {
-        setIsLanguageOpen(false);
-      }
-      if (emailRef.current && !emailRef.current.contains(event.target)) {
-        setIsEmailOpen(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
-
-  const handleSearch = (e) => {
-    const query = e.target.value;
-    setSearchQuery(query);
-    if (query) {
-      navigate(`/admin/search?query=${encodeURIComponent(query)}`);
-    }
+  const handleButtonClick = (buttonName) => {
+    setActiveButton(activeButton === buttonName ? null : buttonName);
   };
+
 
   const toggleTheme = () => {
     setThemeMode(themeMode === 'light' ? 'dark' : 'light');
@@ -122,6 +137,7 @@ const NewAdminHeader = ({ toggleSidebar, isSidebarOpen }) => {
   const changeLanguage = (lng) => {
     i18n.changeLanguage(lng);
     setIsLanguageOpen(false);
+    setActiveButton(null);
   };
 
   const handleLogout = () => {
@@ -129,9 +145,13 @@ const NewAdminHeader = ({ toggleSidebar, isSidebarOpen }) => {
     navigate('/admin/login');
   };
 
-  if (isLoading) {
-    return <div className="header-loading">Loading...</div>;
-  }
+  const handleHomeClick = () => {
+    const confirmed = window.confirm("Do you want to go to the home page?");
+    if (confirmed) {
+      navigate('/');
+    }
+  };
+
 
   return (
     <header
@@ -142,8 +162,9 @@ const NewAdminHeader = ({ toggleSidebar, isSidebarOpen }) => {
       <div className="new-header-container">
         {/* Left: Logo & Name */}
         <div className="new-header-left">
+          {windowWidth < 768 && (
           <button
-            className="new-menu-toggle"
+            className={`new-menu-toggle ${isSidebarOpen ? 'active' : ''}`}
             onClick={toggleSidebar}
             aria-label={isSidebarOpen ? 'Close menu' : 'Open menu'}
             tabIndex={0}
@@ -151,18 +172,22 @@ const NewAdminHeader = ({ toggleSidebar, isSidebarOpen }) => {
           >
             {isSidebarOpen ? <MdMenuOpen /> : <MdOutlineMenu />}
           </button>
+            )}
           <div className="new-logo">
             <img src={logo} alt="BMG Jewelers Logo" className="new-logo-image" />
-            <h1 className="new-company-name">
-              BMG Jewelers <span>pvt ltd</span>
-            </h1>
+            {windowWidth > 576 && (
+              <h1 className="new-company-name">
+                BMG Jewelers {windowWidth > 768 && <span className='new-company-sub-name'>pvt ltd</span>}
+              </h1>
+            )}
           </div>
         </div>
 
         {/* Center: Search & Date-Time */}
         <div className="new-header-center">
           
-          {!isMobile && (
+
+          {windowWidth > 768 && (
             <div className="new-date-time-container">
               <input
                 type="text"
@@ -177,23 +202,62 @@ const NewAdminHeader = ({ toggleSidebar, isSidebarOpen }) => {
 
         {/* Right: Icons & Profile */}
         <div className="new-header-right">
+
+          <div className="new-dropdown-wrapper" ref={dropdownRef}>
+            <button
+              className={`new-icon-button ${activeButton === 'home' ? 'active' : ''}`}
+              onClick={() => {
+                setIsOpen((prev) => !prev);
+                handleButtonClick('home');
+              }}
+              aria-label="Go to Home"
+              tabIndex={0}
+            >
+              <FaHome />
+            </button>
+
+            <AnimatePresence>
+              {isOpen && (
+                <motion.div
+                  className="new-dropdown-menu"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 20 }}
+                  transition={{ duration: 0.2, ease: 'easeInOut' }}
+                >
+                  <button
+                    onClick={handleHomeClick}
+                    tabIndex={0}
+                    className="new-dropdown-item"
+                  >
+                    Go to Home
+                  </button>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+
           <button
-            className="new-icon-button"
-            onClick={toggleTheme}
+            className={`new-icon-button ${activeButton === 'theme' ? 'active' : ''}`}
+            onClick={() => {
+              toggleTheme();
+              handleButtonClick('theme');
+            }}
             aria-label={`Switch to ${themeMode === 'light' ? 'dark' : 'light'} mode`}
             tabIndex={0}
-            onKeyDown={(e) => e.key === 'Enter' && toggleTheme()}
           >
             {themeMode === 'light' ? <MdDarkMode /> : <MdOutlineLightMode />}
           </button>
 
           <div className="new-dropdown-wrapper" ref={languageRef}>
             <button
-              className="new-icon-button"
-              onClick={() => setIsLanguageOpen(!isLanguageOpen)}
+              className={`new-icon-button ${activeButton === 'language' ? 'active' : ''}`}
+              onClick={() => {
+                setIsLanguageOpen(!isLanguageOpen);
+                handleButtonClick('language');
+              }}
               aria-label="Change language"
               tabIndex={0}
-              onKeyDown={(e) => e.key === 'Enter' && setIsLanguageOpen(!isLanguageOpen)}
             >
               <FaGlobe />
             </button>
@@ -206,10 +270,18 @@ const NewAdminHeader = ({ toggleSidebar, isSidebarOpen }) => {
                   exit={{ opacity: 0, y: 20 }}
                   transition={{ duration: 0.2, ease: 'easeInOut' }}
                 >
-                  <button onClick={() => changeLanguage('en')} tabIndex={0}>
+                  <button
+                    onClick={() => changeLanguage('en')}
+                    tabIndex={0}
+                    className="new-dropdown-item"
+                  >
                     English
                   </button>
-                  <button onClick={() => changeLanguage('ta')} tabIndex={0}>
+                  <button
+                    onClick={() => changeLanguage('ta')}
+                    tabIndex={0}
+                    className="new-dropdown-item"
+                  >
                     Tamil
                   </button>
                 </motion.div>
@@ -217,97 +289,111 @@ const NewAdminHeader = ({ toggleSidebar, isSidebarOpen }) => {
             </AnimatePresence>
           </div>
 
-          <div className="new-dropdown-wrapper" ref={emailRef}>
-            <button
-              className="new-icon-button"
-              onClick={() => setIsEmailOpen(!isEmailOpen)}
-              aria-label="Messages"
-              tabIndex={0}
-              onKeyDown={(e) => e.key === 'Enter' && setIsEmailOpen(!isEmailOpen)}
-            >
-              <FaEnvelope />
-            </button>
-            <AnimatePresence>
-              {isEmailOpen && (
-                <motion.div
-                  className="new-dropdown-menu"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 20 }}
-                  transition={{ duration: 0.2, ease: 'easeInOut' }}
+          {windowWidth > 480 && (
+            <>
+              <div className="new-dropdown-wrapper" ref={emailRef}>
+                <button
+                  className={`new-icon-button ${activeButton === 'email' ? 'active' : ''}`}
+                  onClick={() => {
+                    setIsEmailOpen(!isEmailOpen);
+                    handleButtonClick('email');
+                  }}
+                  aria-label="Messages"
+                  tabIndex={0}
                 >
-                  <div className="new-dropdown-header">Messages</div>
-                  <div className="new-dropdown-item">
-                    <div className="new-message-preview">
-                      <strong>Coming Soon</strong>
-                      <small>Messages feature under development</small>
-                    </div>
-                  </div>
-                  <div className="new-dropdown-footer">
-                    <button tabIndex={0}>View all messages</button>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
+                  <FaEnvelope />
+                </button>
+                <AnimatePresence>
+                  {isEmailOpen && (
+                    <motion.div
+                      className="new-dropdown-menu"
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 20 }}
+                      transition={{ duration: 0.2, ease: 'easeInOut' }}
+                    >
+                      <div className="new-dropdown-header">Messages</div>
+                      <div className="new-dropdown-item">
+                        <div className="new-message-preview">
+                          <strong>Coming Soon</strong>
+                          <small>Messages feature under development</small>
+                        </div>
+                      </div>
+                      <div className="new-dropdown-footer">
+                        <button tabIndex={0}>View all messages</button>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
 
-          <div className="new-dropdown-wrapper" ref={notificationsRef}>
-            <button
-              className="new-icon-button"
-              onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
-              aria-label="Notifications"
-              tabIndex={0}
-              onKeyDown={(e) => e.key === 'Enter' && setIsNotificationsOpen(!isNotificationsOpen)}
-            >
-              <FaBell />
-              <span className="new-badge">5</span>
-            </button>
-            <AnimatePresence>
-              {isNotificationsOpen && (
-                <motion.div
-                  className="new-dropdown-menu new-notification-menu"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 20 }}
-                  transition={{ duration: 0.2, ease: 'easeInOut' }}
+              <div className="new-dropdown-wrapper" ref={notificationsRef}>
+                <button
+                  className={`new-icon-button ${activeButton === 'notifications' ? 'active' : ''}`}
+                  onClick={() => {
+                    setIsNotificationsOpen(!isNotificationsOpen);
+                    handleButtonClick('notifications');
+                  }}
+                  aria-label="Notifications"
+                  tabIndex={0}
                 >
-                  <div className="new-dropdown-header">
-                    Notifications
-                    <button className="new-settings-button" aria-label="Notification settings" tabIndex={0}>
-                      <FaCog />
-                    </button>
-                  </div>
-                  <div className="new-dropdown-item">
-                    <div className="new-notification-preview">
-                      <div className="new-notification-icon">
-                        <FaUserCircle />
+                  <FaBell />
+                  <span className="new-badge">5</span>
+                </button>
+                <AnimatePresence>
+                  {isNotificationsOpen && (
+                    <motion.div
+                      className="new-dropdown-menu new-notification-menu"
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 20 }}
+                      transition={{ duration: 0.2, ease: 'easeInOut' }}
+                    >
+                      <div className="new-dropdown-header">
+                        Notifications
+                        <button className="new-settings-button" aria-label="Notification settings" tabIndex={0}>
+                          <FaCog />
+                        </button>
                       </div>
-                      <div className="new-notification-content">
-                        <strong>Coming Soon</strong>
-                        <small>Notifications feature under development</small>
+                      <div className="new-dropdown-item">
+                        <div className="new-notification-preview">
+                          <div className="new-notification-icon">
+                            <FaUserCircle />
+                          </div>
+                          <div className="new-notification-content">
+                            <strong>Coming Soon</strong>
+                            <small>Notifications feature under development</small>
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                  </div>
-                  <div className="new-dropdown-footer">
-                    <button tabIndex={0}>View all notifications</button>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
+                      <div className="new-dropdown-footer">
+                        <button tabIndex={0}>View all notifications</button>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            </>
+          )}
 
           <div className="new-dropdown-wrapper new-profile-dropdown" ref={profileRef}>
             <button
-              className="new-profile-button"
-              onClick={() => setIsProfileOpen(!isProfileOpen)}
+              className={`new-profile-button ${activeButton === 'profile' ? 'active' : ''}`}
+              onClick={() => {
+                setIsProfileOpen(!isProfileOpen);
+                handleButtonClick('profile');
+              }}
               aria-label="User profile"
               tabIndex={0}
-              onKeyDown={(e) => e.key === 'Enter' && setIsProfileOpen(!isProfileOpen)}
             >
               <div className="new-profile-avatar">
-                <FaUserCircle />
+                {user?.avatar ? (
+                  <img src={user.avatar} alt="User Avatar" />
+                ) : (
+                  <FaUserCircle />
+                )}
               </div>
-              {!isMobile && (
+              {windowWidth > 768 && (
                 <span className="new-profile-name">{user?.username || 'User'}</span>
               )}
             </button>
@@ -326,6 +412,7 @@ const NewAdminHeader = ({ toggleSidebar, isSidebarOpen }) => {
                     onClick={() => {
                       navigate('/admin/profile');
                       setIsProfileOpen(false);
+                      setActiveButton(null);
                     }}
                     tabIndex={0}
                   >
@@ -333,7 +420,11 @@ const NewAdminHeader = ({ toggleSidebar, isSidebarOpen }) => {
                     My Profile
                   </button>
                   <div className="new-dropdown-divider"></div>
-                  <button className="new-dropdown-item" onClick={handleLogout} tabIndex={0}>
+                  <button
+                    className="new-dropdown-item"
+                    onClick={handleLogout}
+                    tabIndex={0}
+                  >
                     <FaSignOutAlt className="new-menu-icon" />
                     Logout
                   </button>

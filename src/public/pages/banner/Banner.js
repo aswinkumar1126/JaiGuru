@@ -7,10 +7,33 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import "./Banner.css";
 
-/**
- * Professional Image Slider Component with responsive design,
- * accessibility features, and multiple state handling.
- */
+// Define arrow components outside the Banner component
+const NextArrow = ({ className, style, onClick }) => (
+    <button
+        className={`${className} custom-arrow next-arrow`}
+        style={{ ...style, display: "block" }} // Add display: block
+        onClick={onClick}
+        aria-label="Next slide"
+    >
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M9 18l6-6-6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+    </button>
+);
+
+const PrevArrow = ({ className, style, onClick }) => (
+    <button
+        className={`${className} custom-arrow prev-arrow`}
+        style={{ ...style, display: "block" }} // Add display: block
+        onClick={onClick}
+        aria-label="Previous slide"
+    >
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M15 18l-6-6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+    </button>
+);
+
 function Banner({ images, loading, error }) {
     const sliderSettings = {
         dots: true,
@@ -20,7 +43,7 @@ function Banner({ images, loading, error }) {
         autoplaySpeed: 5000,
         slidesToShow: 1,
         slidesToScroll: 1,
-        arrows: true,
+        arrows: false,
         pauseOnHover: true,
         cssEase: "cubic-bezier(0.645, 0.045, 0.355, 1)",
         adaptiveHeight: true,
@@ -28,7 +51,6 @@ function Banner({ images, loading, error }) {
         draggable: true,
         swipeToSlide: true,
         touchThreshold: 10,
-        
     };
 
     const handleImageError = (e) => {
@@ -124,32 +146,6 @@ const EmptyState = () => (
         <h3 className="empty-title">No Images Available</h3>
         <p className="empty-message">Please check back later or upload new images</p>
     </div>
-);
-
-const NextArrow = ({ className, style, onClick }) => (
-    <button
-        className={`${className} custom-arrow next-arrow`}
-        style={{ ...style }}
-        onClick={onClick}
-        aria-label="Next slide"
-    >
-        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <path d="M9 18l6-6-6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
-    </button>
-);
-
-const PrevArrow = ({ className, style, onClick }) => (
-    <button
-        className={`${className} custom-arrow prev-arrow`}
-        style={{ ...style }}
-        onClick={onClick}
-        aria-label="Previous slide"
-    >
-        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <path d="M15 18l-6-6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
-    </button>
 );
 
 Banner.propTypes = {

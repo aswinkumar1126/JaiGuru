@@ -102,7 +102,6 @@ const CartPage = () => {
             .filter(item => selectedItems.includes(item.itemTagSno))
             .map(item => {
                 const product = productMap[item.itemTagSno] || {};
-                console.log("product",product);
                 let imageUrls = [];
 
                 try {
@@ -111,17 +110,18 @@ const CartPage = () => {
                     console.error("Error parsing ImagePath", err);
                 }
 
-                const firstImage = imageUrls.length > 0 ? baseUrl + imageUrls[0] : "/fallback.jpg";
+                const firstImage = imageUrls?.[0] ? baseUrl + imageUrls[0] : null;
 
                 return {
                     productId: item.id || item.itemTagSno,
                     name: product.ITEMNAME || item.name || "Unknown",
                     quantity: item.quantity,
                     price: product.GrandTotal || item.amount || 0,
-                    image: firstImage,
+                    image: firstImage ?? "/fallback.jpg",
                     tagNo: product.TAGNO,
                     itemId: product.ITEMID,
                     sno: item.itemTagSno,
+                    image_path: firstImage,
                 };
             });
 
@@ -137,6 +137,7 @@ const CartPage = () => {
 
         navigate('/order', { state: orderData });
     };
+    
 
     // ⏳ Loading & Error states
     if (isLoading) return <SkeletonLoader />;

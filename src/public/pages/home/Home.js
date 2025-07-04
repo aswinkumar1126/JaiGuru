@@ -11,9 +11,11 @@ import './Home.css';
 import CategorySection from "../category/CategorySection";
 import ProtectedRecentlyViewedWrapper from "../recentlyViewed/ProtectedRecentlyViewedWrapper";
 import RatesPage from "../metalRates/metalRates";
+import NewArrivalProductService from "../../service/newArrivals";
+import NewArrivalsPage from "../newAriivals/NewArrivalsPage";
 
 function Home() {
- 
+
 
     const {
         data: bannersData,
@@ -46,23 +48,23 @@ function Home() {
             ? `https://app.bmgjewellers.com${videosData[0].video_path}`
             : null;
 
-    if (bannersLoading || videoLoading || productsLoading)
-        return <SkeletonLoader count={6} />;
+    // if (bannersLoading || videoLoading || productsLoading)
+    //     return <SkeletonLoader count={6} />;
 
-    if (bannersError || videoError || productsError)
-        return (
-            <Error
-                error={bannersError || videoError || productsError}
-                onRetry={() => window.location.reload()}
-            />
-        );
+    // if (bannersError || videoError || productsError)
+    //     return (
+    //         <Error
+    //             error={bannersError || videoError || productsError}
+    //             onRetry={() => window.location.reload()}
+    //         />
+    //     );
 
     return (
         <div className="home-section">
             <Banner images={bannerData} loading={bannersLoading} />
 
             {/* Show RatesPage only on smaller screens */}
-          <RatesPage />
+            <RatesPage />
 
             <CategorySection />
 
@@ -72,6 +74,10 @@ function Home() {
                 error={productsError}
             />
 
+            
+
+            <NewArrivalsPage />
+            
             <ProtectedRecentlyViewedWrapper />
 
             {firstVideoUrl && (

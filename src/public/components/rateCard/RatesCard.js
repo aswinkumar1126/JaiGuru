@@ -1,5 +1,5 @@
-import React from 'react';
-import { motion } from 'framer-motion';
+import React, { useEffect, useRef } from 'react';
+import { gsap } from 'gsap';
 import { useRatesQuery } from '../../hook/rate/useRatesQuery';
 import './RatesCard.css';
 import goldCoin from '../../assets/coins/goldcoin-removebg-preview.png';
@@ -7,33 +7,98 @@ import silverCoin from '../../assets/coins/silvercoin-removebg-preview.png';
 
 const RatesCard = ({ isMobile }) => {
     const { data: rates, isLoading, error } = useRatesQuery();
+    const goldCoinRef = useRef(null);
+    const silverCoinRef = useRef(null);
+    const goldCardRef = useRef(null);
+    const silverCardRef = useRef(null);
+    const containerRef = useRef(null);
+    const animationRef = useRef([]); // Store animation references
 
-    // Unified animation for both coins
-    const coinAnimation = {
-        rotateY: [0, 15, 0, -15, 0], // Reduced rotation for more subtle effect
-        y: [0, -3, 0, -3, 0],        // Slightly more pronounced bounce
-        transition: {
-            repeat: Infinity,
-            duration: 4,             // Slightly faster animation
-            ease: 'easeInOut'
-        }
-    };
+    useEffect(() => {
+        // Only initialize animations if elements exist
+        if (!containerRef.current || !goldCoinRef.current || !silverCoinRef.current) return;
 
-    const cardAnimation = {
-        initial: { opacity: 0, y: 20 },
-        animate: { opacity: 1, y: 0 },
-        transition: { duration: 0.5 }
-    };
+        const ctx = gsap.context(() => {
+            // Safe coin animations
+            if (goldCoinRef.current) {
+                const goldAnim = gsap.to(goldCoinRef.current, {
+                    rotationY: 360,
+                    yoyo: true,
+                    repeat: -1,
+                    duration: 6,
+                    ease: "power1.inOut",
+                    transformOrigin: "center center"
+                });
+                animationRef.current.push(goldAnim);
+            }
 
-    const hoverAnimation = {
-        scale: isMobile ? 1 : 1.03,
-        transition: { type: 'spring', stiffness: 400 }
-    };
+            if (silverCoinRef.current) {
+                const silverAnim = gsap.to(silverCoinRef.current, {
+                    rotationY: 360,
+                    yoyo: true,
+                    repeat: -1,
+                    duration: 4,
+                    ease: "power1.inOut",
+                    transformOrigin: "center center"
+                });
+                animationRef.current.push(silverAnim);
+            }
 
-    const tapAnimation = {
-        scale: 0.98,
-        transition: { type: 'spring', stiffness: 500 }
-    };
+            // Safe card hover animations
+            if (!isMobile) {
+                const cards = [];
+                if (goldCardRef.current) cards.push(goldCardRef.current);
+                if (silverCardRef.current) cards.push(silverCardRef.current);
+
+                cards.forEach(card => {
+                    gsap.set(card, { transformPerspective: 1000 });
+
+                    const handleMouseEnter = () => {
+                        const hoverAnim = gsap.to(card, {
+                            scale: 1.05,
+                            y: -5,
+                            boxShadow: "0 10px 25px rgba(0,0,0,0.15)",
+                            duration: 0.3,
+                            ease: "power2.out"
+                        });
+                        animationRef.current.push(hoverAnim);
+                    };
+
+                    const handleMouseLeave = () => {
+                        const leaveAnim = gsap.to(card, {
+                            scale: 1,
+                            y: 0,
+                            boxShadow: "0 3px 10px rgba(0,0,0,0.1)",
+                            duration: 0.3,
+                            ease: "power2.out"
+                        });
+                        animationRef.current.push(leaveAnim);
+                    };
+
+                    card.addEventListener('mouseenter', handleMouseEnter);
+                    card.addEventListener('mouseleave', handleMouseLeave);
+
+                    // Store references for cleanup
+                    animationRef.current.push({
+                        cleanup: () => {
+                            card.removeEventListener('mouseenter', handleMouseEnter);
+                            card.removeEventListener('mouseleave', handleMouseLeave);
+                        }
+                    });
+                });
+            }
+        }, containerRef);
+
+        return () => {
+            // Cleanup all animations and event listeners
+            ctx.revert();
+            animationRef.current.forEach(anim => {
+                if (anim?.cleanup) anim.cleanup();
+                else if (anim?.kill) anim.kill();
+            });
+            animationRef.current = [];
+        };
+    }, [isMobile]);
 
     const UNIT = '/gm ';
 
@@ -52,50 +117,28 @@ const RatesCard = ({ isMobile }) => {
     );
 
     return (
-        <div className="rates-card-container">
+        <div className="rates-card-container" ref={containerRef}>
             {isLoading && <SkeletonLoader />}
 
             {error && (
-                <motion.div
-                    className="rates-error"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                >
+                <div className="rates-error">
                     <i className="error-icon">⚠️</i>
                     <p>Failed to load rates</p>
-                </motion.div>
+                </div>
             )}
 
             {rates && (
-                <motion.div
-                    className="rates-card-wrapper"
-                    initial="initial"
-                    animate="animate"
-                    variants={{
-                        initial: { opacity: 0 },
-                        animate: {
-                            opacity: 1,
-                            transition: { staggerChildren: 0.1 }
-                        }
-                    }}
-                >
+                <div className="rates-card-wrapper">
                     {/* Gold Card */}
-                    <motion.div
+                    <div
                         className="rate-card gold-card"
-                        variants={cardAnimation}
-                        whileHover={hoverAnimation}
-                        whileTap={tapAnimation}
+                        ref={goldCardRef}
                     >
-                        <motion.img
+                        <img
+                            ref={goldCoinRef}
                             src={goldCoin}
                             alt="Gold Coin"
                             className="coin-image"
-                            animate={coinAnimation}
-                            style={{
-                                transformPerspective: 1000,
-                                transformStyle: 'preserve-3d',
-                                transformOrigin: 'center center' // Ensures consistent rotation
-                            }}
                         />
                         <div className="rate-info">
                             <h3 className="rate-title">Gold</h3>
@@ -103,25 +146,18 @@ const RatesCard = ({ isMobile }) => {
                                 ₹{rates.GOLDRATE.toFixed(2)} <span className="rate-unit">{UNIT}</span>
                             </p>
                         </div>
-                    </motion.div>
+                    </div>
 
-                    {/* Silver Card - identical animation */}
-                    <motion.div
+                    {/* Silver Card */}
+                    <div
                         className="rate-card silver-card"
-                        variants={cardAnimation}
-                        whileHover={hoverAnimation}
-                        whileTap={tapAnimation}
+                        ref={silverCardRef}
                     >
-                        <motion.img
+                        <img
+                            ref={silverCoinRef}
                             src={silverCoin}
                             alt="Silver Coin"
                             className="coin-image"
-                            animate={coinAnimation}
-                            style={{
-                                transformPerspective: 1000,
-                                transformStyle: 'preserve-3d',
-                                transformOrigin: 'center center' // Ensures consistent rotation
-                            }}
                         />
                         <div className="rate-info">
                             <h3 className="rate-title">Silver</h3>
@@ -129,8 +165,8 @@ const RatesCard = ({ isMobile }) => {
                                 ₹{rates.SILVERRATE.toFixed(2)} <span className="rate-unit">{UNIT}</span>
                             </p>
                         </div>
-                    </motion.div>
-                </motion.div>
+                    </div>
+                </div>
             )}
         </div>
     );

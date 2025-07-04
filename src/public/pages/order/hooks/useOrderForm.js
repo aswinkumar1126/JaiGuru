@@ -23,7 +23,7 @@ export const useOrderForm = (navigate, location) => {
 
     const { cartItems = [], totalAmount = 0 } = state || {};
 
-    // console.log('cartitems',cartItems)
+    console.log('cartitems',cartItems)
 
     // Set default address from customer's saved addresses
     useEffect(() => {
@@ -87,7 +87,8 @@ export const useOrderForm = (navigate, location) => {
                 price: parseFloat(item.price),
                 itemId: item.itemId,
                 tagNo: item.tagNo,
-                sno:item.sno
+                sno:item.sno,
+                imagePath:item.image_path,
 
             })),
             shippingAddressId: selectedAddress.id

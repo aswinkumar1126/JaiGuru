@@ -30,7 +30,9 @@ import TermsConditions from '../../public/pages/TermsConditions/TermsConditions'
 import RefundPolicy from '../../public/pages/RefundPolicy/RefundPolicy';
 import CancellationReturnPolicy from '../../public/pages/CancellationReturnPolicy/CancellationReturnPolicy';
 import DeliveryShippingPolicy from '../../public/pages/DeliveryShippingPolicy/DeliveryShippingPolicy';
-import SearchResultsPage from '../../public/pages/search/SearchResultsPage';
+import NotFound from '../../public/pages/notFound/NotFound';
+import EnhancedProductDisplay from '../../public/pages/search/SearchResultsPage';
+import ProductsPage from '../../public/pages/categoryProducts.js/ProductsPage';
 
 const PublicRoutes = () => {
     return (
@@ -50,10 +52,11 @@ const PublicRoutes = () => {
                     <Route path="contact" element={<Contact />} />
                     <Route path="forgot-password" element={<ForgotPasswordPage />} />
                     <Route path="reset-password" element={<ResetPasswordPage />} />
-                    <Route path="/search" element={<SearchResultsPage />} />
+                    <Route path="/search" element={<EnhancedProductDisplay />} />
 
                     {/* Protected */}
                     <Route path="product/:sno" element={<UserPrivateRoute><ProductDetails /></UserPrivateRoute>} />
+                    <Route path="/:category/:itemName" element={<ProductsPage />} />
                     <Route path="cart" element={<UserPrivateRoute><CartPage /></UserPrivateRoute>} />
                     <Route path="wishlist" element={<UserPrivateRoute><WishlistItem /></UserPrivateRoute>} />
                     <Route path="user/profile" element={<UserPrivateRoute><UserProfile /></UserPrivateRoute>} />
@@ -67,6 +70,8 @@ const PublicRoutes = () => {
                     <Route path="cancel-return" element={<CancellationReturnPolicy />} />
                     <Route path="refund" element={<RefundPolicy />} />
                     <Route path="terms-condition" element={<TermsConditions />} />
+                    {/* 404 Not Found */}
+                    <Route path="*" element={<NotFound />} />
                 </Route>
 
             </Routes>

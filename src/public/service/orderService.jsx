@@ -8,7 +8,7 @@ export const createOrder = async (orderData) => {
 
 // Get order history
 export const getOrderHistory = async ({ page = 0, size = 10, status = '' }) => {
-    const response = await publicUrl.post('/order/history', {
+    const response = await publicUrl.get('/order/history', {
         page,
         size,
         status,
