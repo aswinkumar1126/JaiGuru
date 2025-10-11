@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { NavLink } from 'react-router-dom';
+import { useCompany } from '../../context/authContext/companyName/CompanyContext';
 import './Footer.css';
 
 const Footer = () => {
@@ -9,6 +10,7 @@ const Footer = () => {
         navigation: false,
         contact: false,
     });
+    const { companyName } = useCompany();
 
     const toggleColumn = (column) => {
         setOpenColumns((prev) => ({
@@ -65,7 +67,7 @@ const Footer = () => {
         <footer className="footer">
             <div className="footer-container">
                 {/* Useful Links Column */}
-                {/* <motion.div
+                <motion.div
                     className="footer-column"
                     initial="hidden"
                     whileInView="visible"
@@ -96,7 +98,7 @@ const Footer = () => {
                             </motion.li>
                         ))}
                     </ul>
-                </motion.div> */}
+                </motion.div>
 
                 {/* Navigation Column */}
                 <motion.div
@@ -150,8 +152,13 @@ const Footer = () => {
                         variants={itemVariants}
                         className={`footer-contact-text ${openColumns.contact ? 'show-links' : ''}`}
                     >
-                        <span className="contact-title">Showroom Address:</span> 
+                        <span className="contact-title">Showroom Address:</span>
                         Tiruvallur Showroom: 712, TNHB, Kakkalur Bypass Road, Tiruvallur - 602001
+                    </motion.p>
+                    <motion.p
+                        variants={itemVariants}
+                        className={`footer-contact-text ${openColumns.contact ? 'show-links' : ''}`}
+                    >
                         <span className="contact-title">Showroom Address:</span>
                         Tiruttani Showroom: 321/322 Ma Po Si Salai, Tiruttani
                     </motion.p>
@@ -159,19 +166,29 @@ const Footer = () => {
                         variants={itemVariants}
                         className={`footer-contact-text ${openColumns.contact ? 'show-links' : ''}`}
                     >
-                        <span className="contact-title">Primary Contact:</span> +91- 9600972227, 9884808428 ,9169161469
+                        <span className="contact-title">Jn Road Showroom Address:</span>
+                        10, Jn Road Opposite to Tiurvallur  Municipality
+                        Tiruvallur - 602001
+                        Mobile :- 8220771862
+                    </motion.p>
+                 
+                    <motion.p
+                        variants={itemVariants}
+                        className={`footer-contact-text ${openColumns.contact ? 'show-links' : ''}`}
+                    >
+                        <span className="contact-title">Primary Contact:</span> +91- 9600972227, 8220771862, 9169161469
                     </motion.p>
                     <motion.p
                         variants={itemVariants}
                         className={`footer-contact-text ${openColumns.contact ? 'show-links' : ''}`}
                     >
                         <a
-                            // href="mailto:Contact@bmgjewellers.in?subject=Inquiry&body=Hello, I have a question..."
+                            href={`mailto:${companyName.toLowerCase().replace(/\s+/g, '')}@gmail.com`}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="footer-contact-text"
                         >
-                            @JaiGurujewellers.in
+                            {companyName.toLowerCase().replace(/\s+/g, '')}@gmail.com
                         </a>
                     </motion.p>
                 </motion.div>
@@ -194,7 +211,7 @@ const Footer = () => {
                         ].map((social, index) => (
                             <motion.a
                                 key={index}
-                                href={social}
+                                href={social.url}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 variants={socialIconVariants}
@@ -206,10 +223,10 @@ const Footer = () => {
                         ))}
                     </motion.div>
 
-                    <p className="copy Rights">© 2025 JaiGuru Jewellery. All rights reserved.</p>
+                    <p className="copy-rights">© 2025 {companyName}. All rights reserved.</p>
                     <p className="design">
-                        Powered by{' '}
-                        <a href="https://www.brightechsoftware.com" target="_blank" className="designed-by">
+                        Crafted  by{' '}
+                        <a href="https://www.brightechsoftware.com" target="_blank" rel="noopener noreferrer" className="designed-by">
                             BrightechSoftwareSolutions
                         </a>
                     </p>

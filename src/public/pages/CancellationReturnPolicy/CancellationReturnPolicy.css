@@ -1,18 +1,20 @@
-/* Main Container */
+/* CancellationReturnPolicy.css */
+@import url('https://fonts.googleapis.com/css2?family=Domine:wght@400;500;600;700&display=swap');
+
 .cancellation-return-policy {
-    max-width: 1200px;
-    margin: 0 auto;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: "Domine", "Georgia", serif;
+    color: #2d3748;
+    line-height: 1.5;
 }
 
 /* Headings */
 .main-heading {
-    font-size: 2.5rem;
-    font-weight: 700;
-    color: #2c3e50;
-    margin-bottom: 2rem;
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: #1a365d;
+    margin-bottom: 1.5rem;
     position: relative;
-    padding-bottom: 15px;
+    padding-bottom: 10px;
 }
 
 .main-heading::after {
@@ -21,49 +23,87 @@
     bottom: 0;
     left: 50%;
     transform: translateX(-50%);
-    width: 100px;
-    height: 4px;
+    width: 80px;
+    height: 3px;
     background: #e74c3c;
     border-radius: 2px;
 }
 
 .section-title {
-    font-size: 1.5rem;
+    font-size: 1.1rem;
     font-weight: 600;
-    color: #34495e;
-    margin-bottom: 1rem;
+    color: #1a365d;
+    margin-bottom: 8px;
+}
+
+/* Cards */
+.policy-card {
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    background-color: #fff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 /* Icons */
+.icon-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px;
+    min-height: 40px;
+    border-radius: 50%;
+    background-color: #f7fafc;
+}
+
+.icon {
+    font-size: 1.25rem;
+}
+
 .cancellation-icon {
     color: #e74c3c;
-    background-color: rgba(231, 76, 60, 0.1);
 }
 
 .return-icon {
     color: #3498db;
-    background-color: rgba(52, 152, 219, 0.1);
 }
 
 .nonreturnable-icon {
     color: #9b59b6;
-    background-color: rgba(155, 89, 182, 0.1);
 }
 
 .procedure-icon {
     color: #2ecc71;
-    background-color: rgba(46, 204, 113, 0.1);
+}
+
+/* Compact Items */
+.compact-item {
+    font-size: 0.9rem;
+    color: #4a5568;
+    border: none;
+    padding: 4px 0;
+    background: transparent;
+}
+
+.compact-text {
+    font-size: 0.9rem;
+    margin-bottom: 0;
+}
+
+.compact-alert {
+    font-size: 0.85rem;
+    padding: 8px 12px;
+    margin-bottom: 0;
 }
 
 /* Steps */
 .steps {
     position: relative;
-    padding-left: 30px;
+    padding-left: 25px;
 }
 
 .step {
     position: relative;
-    padding-bottom: 25px;
+    padding-bottom: 20px;
 }
 
 .step:last-child {
@@ -72,10 +112,10 @@
 
 .step-number {
     position: absolute;
-    left: -40px;
+    left: -35px;
     top: 0;
-    width: 30px;
-    height: 30px;
+    width: 25px;
+    height: 25px;
     background-color: #3498db;
     color: white;
     border-radius: 50%;
@@ -83,45 +123,69 @@
     align-items: center;
     justify-content: center;
     font-weight: bold;
+    font-size: 0.8rem;
 }
 
 .step-content {
-    padding: 10px 15px;
+    padding: 8px 12px;
     background-color: #f8f9fa;
     border-radius: 5px;
     position: relative;
+    font-size: 0.9rem;
 }
 
 .step-content::before {
     content: '';
     position: absolute;
-    left: -15px;
-    top: 10px;
+    left: -12px;
+    top: 8px;
     width: 0;
     height: 0;
-    border-top: 10px solid transparent;
-    border-bottom: 10px solid transparent;
-    border-right: 15px solid #f8f9fa;
+    border-top: 8px solid transparent;
+    border-bottom: 8px solid transparent;
+    border-right: 12px solid #f8f9fa;
 }
 
 .step:not(:last-child) .step-content::after {
     content: '';
     position: absolute;
-    left: -34px;
-    top: 30px;
+    left: -29px;
+    top: 25px;
     height: calc(100% + 5px);
     width: 2px;
     background-color: #3498db;
 }
 
-/* Responsive Adjustments */
+/* Badges */
+.badge {
+    font-size: 0.7rem;
+    padding: 0.25em 0.5em;
+}
+
+/* Responsive */
 @media (max-width: 768px) {
     .main-heading {
-        font-size: 2rem;
+        font-size: 1.4rem;
+        padding-bottom: 8px;
+    }
+
+    .main-heading::after {
+        width: 60px;
+        height: 2px;
     }
 
     .section-title {
-        font-size: 1.3rem;
+        font-size: 1rem;
+    }
+
+    .icon-wrapper {
+        min-width: 36px;
+        min-height: 36px;
+        margin-bottom: 0.5rem;
+    }
+
+    .icon {
+        font-size: 1.1rem;
     }
 
     .steps {
@@ -130,15 +194,13 @@
 
     .step-number {
         left: -30px;
-        width: 25px;
-        height: 25px;
-        font-size: 0.8rem;
+        width: 22px;
+        height: 22px;
+        font-size: 0.7rem;
     }
 
-    .d-flex {
-        flex-direction: column;
+    .step-content {
+        font-size: 0.85rem;
+        padding: 6px 10px;
     }
-
-    .icon-wrapper {
-        margin-bottom: 1rem;
-    } }
+}

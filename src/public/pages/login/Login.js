@@ -154,7 +154,7 @@ const Login = () => {
                         <motion.div className="login-brand-header" variants={itemVariants}>
                             <img src={Logo} alt="JaiGuru Jewellers Logo" className="login-logo" />
                             <h1 className="login-brand-title">
-                                JaiGuru Jewellers <span className="login-brand-sub-title">Private Limited</span>
+                                JaiGuru Jewellers 
                             </h1>
                         </motion.div>
                         <motion.p className="login-brand-tagline" variants={itemVariants}>

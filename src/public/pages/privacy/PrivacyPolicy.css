@@ -1,0 +1,108 @@
+/* PrivacyPolicy.css */
+@import url('https://fonts.googleapis.com/css2?family=Domine:wght@400;500;600;700&display=swap');
+
+/* Container */
+.privacy-policy {
+    font-family: "Domine", "Georgia", serif;
+    color: #2d3748;
+    line-height: 1.5;
+}
+
+/* Main Heading */
+.privacy-policy .main-heading {
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: #1a365d;
+}
+
+/* Section Cards */
+.privacy-policy .policy-card {
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    background-color: #fff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Section Titles */
+.privacy-policy .section-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #1a365d;
+}
+
+/* Icons */
+.privacy-policy .icon-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px;
+    min-height: 40px;
+    border-radius: 50%;
+    background-color: #f7fafc;
+}
+
+.privacy-policy .icon {
+    font-size: 1.25rem;
+    color: #1a365d;
+}
+
+/* Compact Lists */
+.privacy-policy .compact-item {
+    font-size: 0.9rem;
+    color: #4a5568;
+    border: none;
+    padding: 4px 0;
+    background: transparent;
+}
+
+.privacy-policy .compact-list {
+    font-size: 0.85rem;
+    margin-bottom: 0;
+}
+
+.privacy-policy .compact-list li {
+    margin-bottom: 2px;
+}
+
+.privacy-policy .compact-text {
+    font-size: 0.9rem;
+    margin-bottom: 0;
+}
+
+.privacy-policy .compact-alert {
+    font-size: 0.85rem;
+    padding: 8px 12px;
+    margin-bottom: 0;
+}
+
+.privacy-policy .badge {
+    font-size: 0.7rem;
+    padding: 0.25em 0.5em;
+}
+
+/* Alerts */
+.privacy-policy .alert {
+    border-radius: 6px;
+    border: none;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .privacy-policy .main-heading {
+        font-size: 1.4rem;
+    }
+
+    .privacy-policy .section-title {
+        font-size: 1rem;
+    }
+
+    .privacy-policy .icon-wrapper {
+        min-width: 36px;
+        min-height: 36px;
+    }
+
+    .privacy-policy .icon {
+        font-size: 1.1rem;
+    }
+}

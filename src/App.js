@@ -13,10 +13,11 @@ import { MyContextProvider } from './admin/context/themeContext/themeContext';
 import { PageTitleProvider } from './admin/context/pageTitle/PageTitleContext';
 import { AuthProvider } from './admin/context/auth/authContext';
 import { UserAuthProvider } from './public/context/authContext/UserAuthContext';
-
+// import { CompanyNameProvider } from './public/context/authContext/companyName/CompanyName';
 // Toast notifications
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { CompanyProvider } from './public/context/authContext/companyName/CompanyContext';
 
 function App() {
   const queryClient = new QueryClient(); // Initializes React Query client
@@ -37,9 +38,13 @@ function App() {
               <AuthProvider>
                 {/* Public user authentication context */}
                 <UserAuthProvider>
-
+                  <CompanyProvider>               
                   {/* Defines all routes of the app */}
                   <AppRoutes />
+                   
+
+                  </CompanyProvider> 
+
 
                   {/* Toast notifications */}
                   <ToastContainer position="top-center" autoClose={3000} />

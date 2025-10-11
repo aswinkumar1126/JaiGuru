@@ -76,7 +76,7 @@ function Home() {
 
 
 
-            <NewArrivalsPage />
+            {/* <NewArrivalsPage /> */}
 
             <ProtectedRecentlyViewedWrapper />
 

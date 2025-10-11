@@ -1,7 +1,10 @@
 import React from 'react';
+import { useCompany } from '../../context/authContext/companyName/CompanyContext';
 import './WhyUs.css';
 
 function WhyUs() {
+    const { companyName } = useCompany();
+
     const points = [
         { icon: '💎', title: 'Purity Guaranteed', desc: 'Only BIS Hallmarked and certified jewellery.' },
         { icon: '📜', title: 'Certified Jewellery', desc: 'Every piece comes with authenticity certification.' },
@@ -16,7 +19,7 @@ function WhyUs() {
             {/* Hero Section */}
             <section className="hero-section">
                 <div className="hero-content">
-                    <h1>Why Choose <span className="highlight">JaiGuru Jewellers</span>?</h1>
+                    <h1>Why Choose <span className="highlight">{companyName}</span>?</h1>
                     <p className="subtitle">Crafting trust with every sparkle since 1985</p>
                     <div className="divider"></div>
                 </div>
@@ -45,7 +48,7 @@ function WhyUs() {
                     <h2>Our Legacy of Trust</h2>
                     <div className="divider"></div>
                     <p>
-                        At JaiGuru Jewellers, we take pride in our legacy of trust, elegance, and excellence.
+                        At {companyName}, we take pride in our legacy of trust, elegance, and excellence.
                         From our humble beginnings in Madurai, we've grown into a name synonymous with
                         purity and craftsmanship. Our skilled artisans and customer-first philosophy have
                         made us one of the most beloved jewellers in Tamil Nadu.
@@ -70,7 +73,7 @@ function WhyUs() {
             {/* CTA Section */}
             <section className="cta-section">
                 <div className="cta-content">
-                    <h2>Experience the jaiguru Difference</h2>
+                    <h2>Experience the {companyName} Difference</h2>
                     <p>Discover our exquisite collection crafted with passion and precision</p>
                     <button className="cta-button" onClick={() => window.location.href = '/products'}>
                         Explore Our Collections
@@ -87,20 +90,27 @@ function WhyUs() {
 
                     <div className="address-container">
                         <div className="address-card">
-                            <h3>Showroom Address</h3>
+                            <h3>Tiruvallur Showroom</h3>
                             <address>
-                                M/s. Jaiguru Jewellers <br />
-                                Tiruvallur Showroom: 712, TNHB, Kakkalur Bypass Road, <br />
+                                712, TNHB, Kakkalur Bypass Road<br />
                                 Tiruvallur - 602001
                             </address>
                         </div>
 
                         <div className="address-card">
-                            <h3>Showroom Address</h3>
+                            <h3>Tiruttani Showroom</h3>
                             <address>
-                                M/s. JaiGuru Jewellers <br />
-                                Tiruttani Showroom: 321/322 Ma Po Si Salai, <br />
+                                321/322 Ma Po Si Salai<br />
                                 Tiruttani
+                            </address>
+                        </div>
+
+                        <div className="address-card">
+                            <h3>Jn Road Showroom</h3>
+                            <address>
+                                10, Jn Road, Opposite to Tiruvallur Municipality<br />
+                                Tiruvallur - 602001<br />
+                                Mobile: 8220771862
                             </address>
                         </div>
                     </div>
@@ -108,11 +118,10 @@ function WhyUs() {
                     <div className="contact-info">
                         <h3>Contact Us</h3>
                         <div className="contact-numbers">
-                            <a href="tel:7094670946">70946 70946</a>
-                            <a href="tel:8608596085">86085 96085</a>
-                            <a href="tel:8682996829">86829 96829</a>
+                            <a href="tel:9600972227">96009 72227</a>
+                            <a href="tel:8220771862">82207 71862</a>
+                            <a href="tel:9169161469">91691 61469</a>
                         </div>
-                        <a href="mailto:info@bmgjewellers.com" className="email-link">info@bmgjewellers.com</a>
                     </div>
 
                     <p className="note">* Shop images and virtual tour coming soon</p>

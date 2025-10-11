@@ -24,8 +24,7 @@ import VerifyPaymentResult from '../../public/pages/payment/VerifyPaymentResult'
 import PaymentCallback from '../../public/pages/payment/PaymentCallback';
 
 // Route guard for authenticated users
-import UserPrivateRoute from '../protecteRoute/UserProtecteRoute';
-import PrivacyPolicy from '../../public/PrivacyPolicy/PrivacyPolicy';
+import UserPrivateRoute from '../protecteRoute/UserProtecteRoute'
 import TermsConditions from '../../public/pages/TermsConditions/TermsConditions';
 import RefundPolicy from '../../public/pages/RefundPolicy/RefundPolicy';
 import CancellationReturnPolicy from '../../public/pages/CancellationReturnPolicy/CancellationReturnPolicy';
@@ -33,6 +32,8 @@ import DeliveryShippingPolicy from '../../public/pages/DeliveryShippingPolicy/De
 import NotFound from '../../public/pages/notFound/NotFound';
 import EnhancedProductDisplay from '../../public/pages/search/SearchResultsPage';
 import ProductsPage from '../../public/pages/categoryProducts.js/ProductsPage';
+import PrivacyPolicy from '../../public/pages/privacy/privacyPolicy';
+
 
 const PublicRoutes = () => {
     return (
@@ -65,11 +66,12 @@ const PublicRoutes = () => {
                     <Route path="payment/callback/:orderId" element={<PaymentCallback />} />
 
                     {/* Policies */}
-                    <Route path="privacy-policy" element={<PrivacyPolicy />} />
+              
                     <Route path="delivery-shipping" element={<DeliveryShippingPolicy />} />
                     <Route path="cancel-return" element={<CancellationReturnPolicy />} />
                     <Route path="refund" element={<RefundPolicy />} />
                     <Route path="terms-condition" element={<TermsConditions />} />
+                    <Route path="privacy-policy" element={<PrivacyPolicy />} />
                     {/* 404 Not Found */}
                     <Route path="*" element={<NotFound />} />
                 </Route>

@@ -8,6 +8,7 @@ import MainHeader from './MainHeader';
 import NavBar from './NavBar';
 import BottomNav from './BottomNav'; // New component
 import './Header.css';
+// import { useCompanyName } from '../../context/authContext/companyName/CompanyName';
 
 const Header = () => {
     const [isScrolled, setIsScrolled] = useState(false);

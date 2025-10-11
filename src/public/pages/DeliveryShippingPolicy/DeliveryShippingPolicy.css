@@ -1,18 +1,20 @@
-/* Main Container */
+/* DeliveryShippingPolicy.css */
+@import url('https://fonts.googleapis.com/css2?family=Domine:wght@400;500;600;700&display=swap');
+
 .delivery-shipping-policy {
-    max-width: 1200px;
-    margin: 0 auto;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: "Domine", "Georgia", serif;
+    color: #2d3748;
+    line-height: 1.5;
 }
 
 /* Headings */
 .main-heading {
-    font-size: 2.5rem;
-    font-weight: 700;
-    color: #2c3e50;
-    margin-bottom: 2rem;
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: #1a365d;
+    margin-bottom: 1.5rem;
     position: relative;
-    padding-bottom: 15px;
+    padding-bottom: 10px;
 }
 
 .main-heading::after {
@@ -21,90 +23,83 @@
     bottom: 0;
     left: 50%;
     transform: translateX(-50%);
-    width: 100px;
-    height: 4px;
+    width: 80px;
+    height: 3px;
     background: #3498db;
     border-radius: 2px;
 }
 
 .section-title {
-    font-size: 1.5rem;
+    font-size: 1.1rem;
     font-weight: 600;
-    color: #34495e;
-    margin-bottom: 1rem;
+    color: #1a365d;
+    margin-bottom: 8px;
 }
 
 /* Cards */
 .policy-card {
-    border: none;
-    border-radius: 10px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    overflow: hidden;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    background-color: #fff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .policy-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.12);
+    transform: translateY(-2px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
 /* Icons */
 .icon-wrapper {
-    min-width: 60px;
-    height: 60px;
-    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    flex-shrink: 0;
+    min-width: 40px;
+    min-height: 40px;
+    border-radius: 50%;
+    background-color: #f7fafc;
 }
 
 .icon {
-    font-size: 1.75rem;
+    font-size: 1.25rem;
 }
 
 .coverage-icon {
     color: #e74c3c;
-    background-color: rgba(231, 76, 60, 0.1);
 }
 
 .processing-icon {
     color: #3498db;
-    background-color: rgba(52, 152, 219, 0.1);
 }
 
 .partners-icon {
     color: #9b59b6;
-    background-color: rgba(155, 89, 182, 0.1);
 }
 
 .charges-icon {
     color: #27ae60;
-    background-color: rgba(39, 174, 96, 0.1);
 }
 
 .delivery-icon {
     color: #f39c12;
-    background-color: rgba(243, 156, 18, 0.1);
 }
 
 .tracking-icon {
     color: #1abc9c;
-    background-color: rgba(26, 188, 156, 0.1);
 }
 
 .packaging-icon {
     color: #d35400;
-    background-color: rgba(211, 84, 0, 0.1);
 }
 
 /* Partner Logos */
 .partner-logos {
-    margin-top: 1rem;
+    margin-top: 0.5rem;
 }
 
 .partner-logo {
-    height: 40px;
+    height: 35px;
     object-fit: contain;
     filter: grayscale(30%);
     opacity: 0.8;
@@ -117,30 +112,47 @@
     transform: scale(1.05);
 }
 
-/* List Items */
-.list-group-item {
-    border-left: none;
-    border-right: none;
-    padding-left: 0;
-    background-color: transparent;
+/* Compact Items */
+.compact-item {
+    font-size: 0.9rem;
+    color: #4a5568;
+    border: none;
+    padding: 4px 0;
+    background: transparent;
+}
+
+.compact-text {
+    font-size: 0.9rem;
+    margin-bottom: 0;
 }
 
 /* Responsive Adjustments */
 @media (max-width: 768px) {
     .main-heading {
-        font-size: 2rem;
+        font-size: 1.4rem;
+        padding-bottom: 8px;
+    }
+
+    .main-heading::after {
+        width: 60px;
+        height: 2px;
     }
 
     .section-title {
-        font-size: 1.3rem;
+        font-size: 1rem;
     }
 
     .icon-wrapper {
-        min-width: 50px;
-        height: 50px;
-        margin-bottom: 1rem;
+        min-width: 36px;
+        min-height: 36px;
+        margin-bottom: 0.5rem;
     }
 
-    .d-flex {
-        flex-direction: column;
-    } }
+    .icon {
+        font-size: 1.1rem;
+    }
+
+    .partner-logo {
+        height: 30px;
+    }
+}
