@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import "magic.css/dist/magic.min.css";
 import "./CategorySection.css"; // Renamed CSS file
-import goldIcon from "../../assets/icons/gold.jpg";
+import goldIcon from "../../assets/icons/silver.jpg";
 import silverIcon from "../../assets/icons/silver.jpg";
 import diamondIcon from "../../assets/icons/diamond.avif";
 import allProductsIcon from "../../assets/icons/pooja.jpg";
